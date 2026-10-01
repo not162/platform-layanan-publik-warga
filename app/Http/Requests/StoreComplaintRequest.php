@@ -27,9 +27,14 @@ class StoreComplaintRequest extends FormRequest
             'title' => ['required', 'string', 'max:180'],
             'description' => ['required', 'string'],
             'kategori' => ['nullable', 'string', 'max:80'],
+            'category' => ['nullable', 'string', 'max:80'],
             'lokasi' => ['nullable', 'string', 'max:255'],
+            'street_name' => ['nullable', 'string', 'max:150'],
+            'location_detail' => ['nullable', 'string', 'max:150'],
             'priority' => ['nullable', 'string', 'in:rendah,sedang,tinggi,darurat'],
             'is_anonymous' => ['nullable', 'boolean'],
+            'image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'attachment' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'attachment_path' => ['nullable', 'string', 'max:255'],
         ];
     }

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FinanceTransactionController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +19,17 @@ Route::get('/register', function () {
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
+Route::post('/login', [AuthController::class, 'webLogin'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'webLogout'])->name('logout');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/finance/reports/monthly', [FinanceTransactionController::class, 'downloadMonthlyReport'])->name('finance.report.monthly');
+    Route::get('/dashboard/finance/reports/citizen-dues', [FinanceTransactionController::class, 'downloadCitizenDuesReport'])->name('finance.report.citizen-dues');
+    Route::post('/dashboard/finance/backups', [FinanceTransactionController::class, 'createBackupStore'])->name('finance.backup.create');
+    Route::get('/dashboard/finance/backups', [FinanceTransactionController::class, 'listBackups'])->name('finance.backup.list');
+    Route::get('/dashboard/finance/backups/{filename}', [FinanceTransactionController::class, 'downloadBackup'])->name('finance.backup.download');
+});
 
 // -----------------------------------------------------------------
 // OpenAPI 3.1 & Interactive Swagger UI Documentation

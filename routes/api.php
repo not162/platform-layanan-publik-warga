@@ -130,6 +130,20 @@ Route::prefix('v1')->group(function () {
             Route::patch('/complaints/{id}/status', [ComplaintController::class, 'update'])
                 ->middleware('permission:complaint.manage');
 
+            // Finance reports & cryptographic backup store
+            Route::get('/finance/reports/monthly', [FinanceTransactionController::class, 'downloadMonthlyReport'])
+                ->middleware('permission:finance.report,finance.read,finance.manage');
+            Route::get('/finance/reports/citizen-dues', [FinanceTransactionController::class, 'downloadCitizenDuesReport'])
+                ->middleware('permission:finance.report,finance.read,finance.manage');
+            Route::post('/finance/backups', [FinanceTransactionController::class, 'createBackupStore'])
+                ->middleware('permission:finance.report,finance.manage');
+            Route::post('/finance/backup-store', [FinanceTransactionController::class, 'createBackupStore'])
+                ->middleware('permission:finance.report,finance.manage');
+            Route::get('/finance/backups', [FinanceTransactionController::class, 'listBackups'])
+                ->middleware('permission:finance.report,finance.read,finance.manage');
+            Route::get('/finance/backups/{filename}', [FinanceTransactionController::class, 'downloadBackup'])
+                ->middleware('permission:finance.report,finance.read,finance.manage');
+
             // Finance & Announcements
             Route::apiResource('finance', FinanceTransactionController::class)
                 ->except(['show'])

@@ -69,6 +69,7 @@ event.manage               - Mengatur agenda kegiatan warga RT
 
 finance.read               - Membaca mutasi kas dan ringkasan keuangan
 finance.manage             - Mencatat penerimaan/pengeluaran dan pembatalan kas
+finance.report             - Mengunduh rekapitulasi kas RT, iuran bulanan warga, dan snapshot backup store
 
 emergency.manage           - Mengelola nomor kontak darurat penting
 round_schedule.manage      - Mengatur jadwal ronda malam warga
@@ -86,3 +87,14 @@ Evaluasi izin dieksekusi secara berlapis dengan efisiensi memori tinggi:
 2. Pengecekan tabel pivot `admin_permissions` untuk izin khusus yang diberikan secara personal kepada staf `ADMIN`.
 3. Pengecekan matriks tugas baku peran struktural (`KETUA_RT`, `SEKRETARIS`, `BENDAHARA`, `PETUGAS_KEAMANAN`).
 4. Penolakan akses (`403 Forbidden`) jika tidak ada kecocokan izin.
+
+---
+
+## 5. Kebijakan Keamanan Unggah Berkas & Akses Kamera
+
+1. **Akses Kamera & Unggah Gambar Bukti Aduan:**
+   - Fitur upload foto / tangkapan kamera pada form pengaduan lingkungan dikunci secara ketat dan **hanya diizinkan untuk akun warga terdaftar (`isWarga()` / `WARGA`)** dan `SUPERADMIN`.
+   - Permintaan unggah berkas dari pengguna anonim / tamu (*guest*) secara otomatis ditolak dengan status **`403 Forbidden`** untuk mencegah *spamming*, gambar berbahaya, atau manipulasi laporan visual tanpa identitas yang dapat dipertanggungjawabkan.
+2. **Subfolder Privat & Hashing Bukti:**
+   - Semua lampiran aduan disimpan di subfolder privat `storage/app/private/complaints/` dan dokumen laporan keuangan di `storage/app/private/financial-reports/` dengan sanitasi nama berkas dan proteksi direct access traversal.
+

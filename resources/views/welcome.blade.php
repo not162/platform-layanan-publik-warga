@@ -770,9 +770,56 @@
                     </select>
                 </div>
 
+                <!-- Input Nama Jalan & Posisi Spesifik -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="complaintStreet">Nama Jalan / Gang</label>
+                        <input type="text" id="complaintStreet" class="form-input" required placeholder="Cth: Jl. Mawar Gang 2">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="complaintLocationDetail">Bagian / Posisi Spesifik</label>
+                        <input type="text" id="complaintLocationDetail" class="form-input" required placeholder="Cth: Depan No. 12 / Tiang listrik">
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label class="form-label" for="complaintDescription">Rincian Deskripsi & Lokasi</label>
-                    <textarea id="complaintDescription" class="form-textarea" rows="3" required placeholder="Jelaskan detail lokasi dan kronologi secara jelas..."></textarea>
+                    <label class="form-label" for="complaintDescription">Rincian Deskripsi Kronologi</label>
+                    <textarea id="complaintDescription" class="form-textarea" rows="2" required placeholder="Jelaskan detail kronologi kejadian secara jelas..."></textarea>
+                </div>
+
+                <!-- Permission Akses Kamera & Upload Foto (Khusus Akun Warga) -->
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                        <label class="form-label" style="margin-bottom: 0;">Bukti Foto Kejadian (Kamera)</label>
+                        <span id="cameraPermissionBadge" style="font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 9999px; background: #FEF3C7; color: #92400E;">
+                            🔒 Khusus Akun Warga
+                        </span>
+                    </div>
+
+                    <!-- Kotak Kamera Aktif (Hanya untuk Warga Terverifikasi) -->
+                    <div id="citizenCameraBox" style="display: none; border: 2px dashed #3A9696; border-radius: 0.5rem; padding: 1rem; text-align: center; background: #EBF7F7;">
+                        <input type="file" id="complaintImage" accept="image/*" capture="environment" style="display: none;" onchange="handleImagePreview(event)">
+                        <button type="button" onclick="document.getElementById('complaintImage').click()" class="btn btn-teal" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;">
+                            📷 Ambil Foto Kamera / Pilih Gambar
+                        </button>
+                        <p style="font-size: 0.75rem; color: #475569; margin-top: 0.4rem;">Format: JPG, PNG, WEBP (Maksimal 5MB)</p>
+                        
+                        <div id="imagePreviewContainer" style="display: none; margin-top: 0.75rem;">
+                            <img id="imagePreview" src="" alt="Pratinjau Foto" style="max-height: 120px; border-radius: 0.375rem; border: 1px solid #CBD5E1; margin: 0 auto; display: block; object-fit: contain;">
+                            <span id="imageFileName" style="font-size: 0.75rem; color: #0F172A; margin-top: 0.25rem; font-weight: 500; display: block;"></span>
+                            <button type="button" onclick="clearImage()" style="margin-top: 0.25rem; background: none; border: none; color: #DC2626; font-size: 0.75rem; cursor: pointer; text-decoration: underline;">
+                                Hapus Foto
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kotak Izin Terkunci (Tamu / Belum Login) -->
+                    <div id="lockedCameraBox" style="border: 1px solid #FCD34D; border-radius: 0.5rem; padding: 0.75rem 0.85rem; background: #FFFBEB; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+                        <div style="font-size: 0.8rem; color: #92400E;">
+                            <strong>Izin Akses Kamera Terkunci:</strong> Upload bukti foto kamera hanya diizinkan untuk akun warga RT terdaftar.
+                        </div>
+                        <a href="/login" class="btn btn-primary" style="font-size: 0.75rem; padding: 0.3rem 0.6rem; shrink-0; white-space: nowrap;">Masuk Akun</a>
+                    </div>
                 </div>
 
                 <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
@@ -844,13 +891,80 @@
             }
         }
 
-        function openComplaintModal() {
+        let selectedComplaintImage = null;
+
+        async function openComplaintModal() {
             document.getElementById('complaintModal').style.display = 'flex';
+            checkCameraPermission();
         }
 
         function closeComplaintModal() {
             document.getElementById('complaintModal').style.display = 'none';
             document.getElementById('complaintAlert').style.display = 'none';
+            clearImage();
+        }
+
+        function checkCameraPermission() {
+            const token = localStorage.getItem('auth_token');
+            const profileStr = localStorage.getItem('user_profile');
+            let isWarga = false;
+
+            if (profileStr) {
+                try {
+                    const profile = JSON.parse(profileStr);
+                    if (profile.role === 'WARGA' || profile.role === 'SUPERADMIN') {
+                        isWarga = true;
+                    }
+                } catch(e) {}
+            } else if (token) {
+                isWarga = true; // Has authenticated token
+            }
+
+            const citizenBox = document.getElementById('citizenCameraBox');
+            const lockedBox = document.getElementById('lockedCameraBox');
+            const badge = document.getElementById('cameraPermissionBadge');
+
+            if (isWarga) {
+                citizenBox.style.display = 'block';
+                lockedBox.style.display = 'none';
+                badge.style.background = '#ECFDF5';
+                badge.style.color = '#065F46';
+                badge.textContent = '✓ Izin Kamera Aktif (Warga)';
+            } else {
+                citizenBox.style.display = 'none';
+                lockedBox.style.display = 'flex';
+                badge.style.background = '#FEF3C7';
+                badge.style.color = '#92400E';
+                badge.textContent = '🔒 Khusus Akun Warga';
+            }
+        }
+
+        function handleImagePreview(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Ukuran foto terlalu besar. Maksimal 5 MB.');
+                event.target.value = '';
+                return;
+            }
+
+            selectedComplaintImage = file;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imagePreview').src = e.target.result;
+                document.getElementById('imageFileName').textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                document.getElementById('imagePreviewContainer').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearImage() {
+            selectedComplaintImage = null;
+            const fileInput = document.getElementById('complaintImage');
+            if (fileInput) fileInput.value = '';
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            if (previewContainer) previewContainer.style.display = 'none';
         }
 
         async function submitComplaint(e) {
@@ -861,21 +975,31 @@
             btn.disabled = true;
             btn.textContent = 'Mengirim...';
 
-            const payload = {
-                title: document.getElementById('complaintTitle').value.trim(),
-                category: document.getElementById('complaintCategory').value,
-                description: document.getElementById('complaintDescription').value.trim(),
-                is_anonymous: document.getElementById('complaintAnonymous').checked,
+            const formData = new FormData();
+            formData.append('title', document.getElementById('complaintTitle').value.trim());
+            formData.append('category', document.getElementById('complaintCategory').value);
+            formData.append('street_name', document.getElementById('complaintStreet').value.trim());
+            formData.append('location_detail', document.getElementById('complaintLocationDetail').value.trim());
+            formData.append('description', document.getElementById('complaintDescription').value.trim());
+            formData.append('is_anonymous', document.getElementById('complaintAnonymous').checked ? '1' : '0');
+
+            if (selectedComplaintImage) {
+                formData.append('image', selectedComplaintImage);
+            }
+
+            const headers = {
+                'Accept': 'application/json'
             };
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
 
             try {
                 const response = await fetch('/api/v1/complaints', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify(payload)
+                    headers: headers,
+                    body: formData
                 });
 
                 const json = await response.json();
@@ -884,11 +1008,12 @@
                     alertBox.style.display = 'block';
                     alertBox.style.background = '#ECFDF5';
                     alertBox.style.color = '#065F46';
-                    alertBox.textContent = 'Laporan Anda berhasil dikirim ke pengurus RT.';
+                    alertBox.textContent = '✓ Laporan pengaduan berhasil dikirim ke pengurus RT.';
                     document.getElementById('complaintForm').reset();
+                    clearImage();
                     setTimeout(() => {
                         closeComplaintModal();
-                    }, 2000);
+                    }, 2200);
                 } else {
                     alertBox.style.display = 'block';
                     alertBox.style.background = '#FEF2F2';
@@ -899,7 +1024,7 @@
                 alertBox.style.display = 'block';
                 alertBox.style.background = '#FEF2F2';
                 alertBox.style.color = '#991B1B';
-                alertBox.textContent = 'Terjadi kesalahan jaringan.';
+                alertBox.textContent = 'Terjadi kesalahan jaringan saat mengirim laporan.';
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Kirim Laporan';

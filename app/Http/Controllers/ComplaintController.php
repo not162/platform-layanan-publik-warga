@@ -66,8 +66,39 @@ class ComplaintController extends Controller
 
     public function store(StoreComplaintRequest $request): JsonResponse
     {
+        $user = $request->user();
+        $hasImage = $request->hasFile('image') || $request->hasFile('attachment');
+
+        // Security check: Only verified citizens (or superadmin) can upload camera/image proof
+        if ($hasImage) {
+            if (! $user || (! $user->isWarga() && ! $user->isSuperadmin())) {
+                abort(Response::HTTP_FORBIDDEN, 'Akses upload gambar/kamera hanya diizinkan untuk akun warga yang terverifikasi.');
+            }
+        }
+
         $data = $request->validated();
-        $complaint = $this->complaintService->create($data, $request->user());
+
+        // Format detailed street and location info
+        $street = $request->input('street_name');
+        $detail = $request->input('location_detail');
+        if ($street || $detail) {
+            $prefix = $street ? "Jalan/Gang: {$street}" : '';
+            $suffix = $detail ? " (Bagian/Posisi: {$detail})" : '';
+            $data['lokasi'] = trim($prefix.$suffix);
+        }
+
+        if (empty($data['kategori']) && ! empty($data['category'])) {
+            $data['kategori'] = $data['category'];
+        }
+
+        // Store camera image to private storage
+        if ($hasImage) {
+            $file = $request->file('image') ?? $request->file('attachment');
+            $path = $file->store('private/complaints', 'local');
+            $data['attachment_path'] = $path;
+        }
+
+        $complaint = $this->complaintService->create($data, $user);
 
         return (new ComplaintResource($complaint))
             ->response()

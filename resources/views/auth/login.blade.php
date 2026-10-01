@@ -33,20 +33,24 @@
         </div>
     </template>
 
-    <form @submit.prevent="submit" class="space-y-4">
-        <!-- Email -->
+    <form method="POST" action="{{ route('login.post') }}" @submit.prevent="submit" class="space-y-4">
+        @csrf
+        <!-- Email / No Telepon -->
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Alamat Email</label>
+            <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Alamat Email / No. Telepon</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <i data-lucide="mail" :class="(errors.email || (isError && !errors.password)) ? 'text-red-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
                 </div>
-                <input type="email" 
+                <input type="text" 
+                       name="email"
+                       id="email"
                        x-ref="emailInput"
                        x-model="form.email" 
+                       value="{{ old('email') }}"
                        :class="(errors.email || (isError && !errors.password)) ? 'border-red-400 focus:border-red-500 focus:ring-red-200 ring-2 ring-red-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
                        class="block w-full pl-10 pr-10 py-2.5 border rounded-lg focus:ring-2 sm:text-sm text-slate-900 transition-all placeholder:text-slate-400" 
-                       placeholder="email@contoh.com" 
+                       placeholder="email@contoh.com atau 081234567890" 
                        required>
                 
                 <template x-if="errors.email || (isError && !errors.password)">
@@ -62,12 +66,14 @@
 
         <!-- Password -->
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Kata Sandi</label>
+            <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Kata Sandi</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <i data-lucide="lock" :class="(errors.password || isError) ? 'text-red-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
                 </div>
                 <input :type="showPassword ? 'text' : 'password'" 
+                       name="password"
+                       id="password"
                        x-ref="passwordInput"
                        x-model="form.password" 
                        :class="(errors.password || isError) ? 'border-red-400 focus:border-red-500 focus:ring-red-200 ring-2 ring-red-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
@@ -86,7 +92,7 @@
 
         <div class="flex items-center justify-between pt-1">
             <div class="flex items-center">
-                <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded cursor-pointer">
+                <input id="remember-me" name="remember" type="checkbox" value="1" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded cursor-pointer">
                 <label for="remember-me" class="ml-2 block text-sm text-slate-600 cursor-pointer">
                     Ingat saya
                 </label>
@@ -172,12 +178,23 @@ document.addEventListener('alpine:init', () => {
             this.message = null;
             this.isError = false;
 
+            // Pastikan nilai tersinkronisasi jika browser melakukan autofill
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            if (emailInput && (!this.form.email || this.form.email.trim() === '')) {
+                this.form.email = emailInput.value.trim();
+            }
+            if (passwordInput && (!this.form.password || this.form.password.trim() === '')) {
+                this.form.password = passwordInput.value;
+            }
+
             try {
                 const response = await fetch('/api/v1/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || ''
                     },
                     body: JSON.stringify(this.form)
                 });
@@ -201,14 +218,19 @@ document.addEventListener('alpine:init', () => {
                     this.isError = false;
                     this.message = "Kredensial sesuai! Mengalihkan ke portal...";
                     
-                    // Simpan token autentikasi Sanctum
-                    localStorage.setItem('auth_token', data.access_token);
+                    // Simpan token autentikasi Sanctum dan user profile
+                    if (data.access_token) {
+                        localStorage.setItem('auth_token', data.access_token);
+                    }
+                    if (data.user) {
+                        localStorage.setItem('user_profile', JSON.stringify(data.user));
+                    }
                     
                     setTimeout(() => lucide.createIcons(), 10);
                     
                     setTimeout(() => {
-                        window.location.href = '/dashboard';
-                    }, 1200);
+                        window.location.href = data.redirect_url || '/dashboard';
+                    }, 800);
                 }
             } catch (error) {
                 this.isError = true;

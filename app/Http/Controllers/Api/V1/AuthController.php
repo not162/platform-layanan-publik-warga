@@ -87,12 +87,29 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $loginInput = trim((string) ($request->input('email') ?? $request->input('login') ?? $request->input('username') ?? ''));
+
+        if ($loginInput === '') {
+            throw ValidationException::withMessages([
+                'email' => ['Alamat email atau nomor telepon wajib diisi.'],
+            ]);
+        }
+
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::query()
+            ->whereRaw('LOWER(email) = ?', [strtolower($loginInput)])
+            ->orWhere('name', $loginInput)
+            ->first();
+
+        if (! $user) {
+            $citizen = Citizen::query()->where('phone', $loginInput)->first();
+            if ($citizen && $citizen->user) {
+                $user = $citizen->user;
+            }
+        }
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
@@ -102,17 +119,23 @@ class AuthController extends Controller
 
         if (! $user->is_active) {
             throw ValidationException::withMessages([
-                'email' => ['Akun ini dinonaktifkan.'],
+                'email' => ['Akun ini dinonaktifkan. Silakan hubungi admin.'],
             ]);
         }
 
         $user->update(['last_login_at' => now()]);
+
+        // If called from browser with session, also authenticate web guard
+        if ($request->hasSession() || auth()->guard('web')->check()) {
+            auth()->guard('web')->login($user, $request->boolean('remember'));
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'redirect_url' => '/dashboard',
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -120,12 +143,66 @@ class AuthController extends Controller
                 'role' => $user->role,
                 'is_active' => $user->is_active,
             ],
+            'message' => 'Login berhasil.',
         ]);
+    }
+
+    public function webLogin(Request $request)
+    {
+        $loginInput = trim((string) ($request->input('email') ?? $request->input('login') ?? $request->input('username') ?? ''));
+
+        if ($loginInput === '') {
+            return back()->withErrors(['email' => 'Alamat email atau nomor telepon wajib diisi.'])->withInput();
+        }
+
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        $user = User::query()
+            ->whereRaw('LOWER(email) = ?', [strtolower($loginInput)])
+            ->orWhere('name', $loginInput)
+            ->first();
+
+        if (! $user) {
+            $citizen = Citizen::query()->where('phone', $loginInput)->first();
+            if ($citizen && $citizen->user) {
+                $user = $citizen->user;
+            }
+        }
+
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            return back()->withErrors(['email' => 'Kredensial yang diberikan tidak cocok dengan data kami.'])->withInput();
+        }
+
+        if (! $user->is_active) {
+            return back()->withErrors(['email' => 'Akun ini dinonaktifkan. Silakan hubungi admin.'])->withInput();
+        }
+
+        $user->update(['last_login_at' => now()]);
+        auth()->guard('web')->login($user, $request->boolean('remember'));
+
+        return redirect()->intended('/dashboard');
+    }
+
+    public function webLogout(Request $request)
+    {
+        auth()->guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login')->with('status', 'Anda telah berhasil keluar.');
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        if ($request->user() && $request->user()->currentAccessToken()) {
+            $request->user()->currentAccessToken()->delete();
+        }
+
+        if ($request->hasSession()) {
+            auth()->guard('web')->logout();
+        }
 
         return response()->json([
             'message' => 'Berhasil logout',
