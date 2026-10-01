@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Shield Outline Base (Navy & Teal split for dual trust & openness) -->
+  <path d="M60 12 C42 22 28 28 28 52 C28 82 56 102 60 106 C60 106 60 12 60 12 Z" fill="#1B365D" />
+  <path d="M60 12 C78 22 92 28 92 52 C92 82 64 102 60 106 C60 106 60 12 60 12 Z" fill="#3A9696" />
+
+  <!-- Shield Inner Cutout (White background negative space) -->
+  <path d="M60 20 C46 29 36 34 36 53 C36 76 57 93 60 96 C63 93 84 76 84 53 C84 34 74 29 60 20 Z" fill="#FFFFFF" />
+
+  <!-- Community / Citizen Motif: Heads -->
+  <circle cx="48" cy="40" r="6" fill="#1B365D" />
+  <circle cx="68" cy="35" r="5" fill="#3A9696" />
+
+  <!-- Citizen Body & Open Document / Window -->
+  <path d="M42 56 C42 49 46 47 54 47 C57 47 60 48 62 50 L62 66 L42 66 Z" fill="#1B365D" opacity="0.9" />
+  <path d="M62 50 C65 47 70 45 76 47 C80 48 82 52 82 57 L82 66 L62 66 Z" fill="#3A9696" opacity="0.85" />
+  
+  <!-- Open Document / Translucent Window Sheet Motif -->
+  <path d="M50 56 L70 56 L70 72 L50 72 Z" fill="#E2E8F0" />
+  <line x1="54" y1="61" x2="66" y2="61" stroke="#3A9696" stroke-width="1.5" stroke-linecap="round" />
+  <line x1="54" y1="66" x2="63" y2="66" stroke="#1B365D" stroke-width="1.5" stroke-linecap="round" />
+
+  <!-- Verified Trust Checkmark (Forward upward stroke representing clear service progression) -->
+  <path d="M40 70 L54 83 L88 49" stroke="#1B365D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M54 83 L88 49" stroke="#3A9696" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
