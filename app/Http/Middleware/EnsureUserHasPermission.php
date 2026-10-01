@@ -11,7 +11,7 @@ class EnsureUserHasPermission
     /**
      * Handle an incoming request.
      */
-    public function handle(Request $request, Closure $next, string $permission): Response
+    public function handle(Request $request, Closure $next, string ...$permissions): Response
     {
         $user = $request->user();
 
@@ -23,8 +23,21 @@ class EnsureUserHasPermission
             abort(403, 'Akun Anda dinonaktifkan.');
         }
 
-        if (! $user->hasPermission($permission)) {
-            abort(403, "Akses ditolak: Membutuhkan izin '{$permission}'.");
+        if ($user->isSuperadmin()) {
+            return $next($request);
+        }
+
+        $hasAny = false;
+        foreach ($permissions as $permission) {
+            if ($user->hasPermission($permission)) {
+                $hasAny = true;
+                break;
+            }
+        }
+
+        if (! $hasAny) {
+            $required = implode(' atau ', $permissions);
+            abort(403, "Akses ditolak: Membutuhkan izin '{$required}'.");
         }
 
         return $next($request);

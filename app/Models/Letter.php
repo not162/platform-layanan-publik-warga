@@ -34,6 +34,8 @@ class Letter extends Model
         'approved_by',
         'approved_at',
         'verification_token',
+        'document_hash',
+        'generated_at',
         'file_path',
         'attachment_path',
         'version',
@@ -45,6 +47,7 @@ class Letter extends Model
             'data_tambahan' => 'array',
             'verified_at' => 'datetime',
             'approved_at' => 'datetime',
+            'generated_at' => 'datetime',
         ];
     }
 

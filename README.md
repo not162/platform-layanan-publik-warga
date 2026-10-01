@@ -17,6 +17,7 @@
    - [Flowchart Algoritma Sistem](#6-flowchart-algoritma-sistem)
 5. [Panduan Instalasi & Menjalankan Proyek](#-panduan-instalasi--menjalankan-proyek)
 6. [Pengujian (Automated Testing)](#-pengujian-automated-testing)
+7. [Dokumentasi Teknis & Spesifikasi API](#-dokumentasi-teknis--spesifikasi-api)
 
 ---
 
@@ -66,9 +67,10 @@ Sistem telah dilengkapi data awal pengurus RT (**Seeders**) yang siap digunakan 
 |---|---|---|---|---|
 | **SUPERADMIN** | Sistem Administrator | `superadmin@warga.local` | `password` | **Akses Penuh Tanpa Batas**:<br>• Manajemen sistem, permission, role user.<br>• Akses semua modul data warga, surat, keuangan, dan audit trail. |
 | **KETUA_RT** | Pengurus Inti | `ketua_rt@warga.local` | `password` | **Persetujuan Akhir & Supervisi**:<br>• Pengesahan/Persetujuan akhir Surat Pengantar (`letter.approve`).<br>• Monitoring transparansi kas & tindak lanjut aduan warga.<br>• Supervisi kependudukan lingkungan RT. |
-| **SEKRETARIS** | Pengurus Administrasi | `sekretaris@warga.local` | `password` | **Administrasi & Pengumuman**:<br>• Verifikasi kelengkapan berkas surat warga (`letter.verify`).<br>• Pengelolaan master data kependudukan RT (`citizens.manage`).<br>• Buat, edit, dan publikasi agenda pengumuman (`announcements.manage`). |
+| **SEKRETARIS** | Pengurus Administrasi | `sekretaris@warga.local` | `password` | **Administrasi & Pengumuman**:<br>• Verifikasi kelengkapan berkas surat warga (`letter.verify`).<br>• Pengelolaan master data kependudukan RT (`citizen.manage`).<br>• Template surat (`letter.template.manage`) & Agenda Pengumuman (`announcement.manage`). |
 | **BENDAHARA** | Pengurus Keuangan | `bendahara@warga.local` | `password` | **Tata Kelola Keuangan Kas** (`finance.manage`):<br>• Pencatatan kas masuk (iuran warga) & kas keluar.<br>• Publikasi laporan transparansi kas ke portal publik.<br>• Reversal audit transaksi kas jika ada koreksi data. |
-| **WARGA** | Pengguna Publik | *(Sesuai registrasi warga)* | *(Ditentukan warga)* | **Layanan Mandiri Warga**:<br>• Mengajukan surat pengantar mandiri.<br>• Tracking status surat & verifikasi keaslian surat via token.<br>• Mengirimkan aduan/keluhan (bisa anonim).<br>• Melihat laporan transparansi kas & pengumuman RT. |
+| **PETUGAS_KEAMANAN** | Keamanan Lingkungan | `keamanan@warga.local` | `password` | **Pengelolaan Keamanan & Ketertiban** (`security.manage`):<br>• Manajemen & penugasan laporan insiden keamanan (`security_reports`).<br>• Investigasi dan resolusi tiket keamanan warga.<br>• Pengelolaan jadwal ronda lingkungan & kontak darurat. |
+| **WARGA** | Pengguna Publik | *(Sesuai registrasi warga)* | *(Ditentukan warga)* | **Layanan Mandiri Warga**:<br>• Mengajukan surat pengantar mandiri (`letter.create`).<br>• Tracking status surat & verifikasi keaslian surat via token.<br>• Mengirimkan aduan warga & laporan insiden keamanan lingkungan.<br>• Melihat laporan transparansi kas & pengumuman RT. |
 
 ---
 
@@ -701,7 +703,7 @@ flowchart TD
 
 ## 🧪 Pengujian (Automated Testing)
 
-Aplikasi memiliki rangkaian pengujian unit dan fitur (*Feature Tests*) dengan cakupan menyeluruh untuk menjamin keandalan sistem:
+Aplikasi memiliki rangkaian pengujian unit dan fitur (*Feature Tests*) dengan cakupan menyeluruh untuk menjamin keandalan sistem dan RBAC matrix:
 
 ```bash
 # Menjalankan seluruh pengujian:
@@ -711,7 +713,9 @@ php artisan test
 ### Hasil Ringkasan Pengujian:
 ```text
 PASS  Tests\Feature\CitizenModuleTest
+PASS  Tests\Feature\CitizenServiceRoleMatrixTest
 PASS  Tests\Feature\ComplaintModuleTest
+PASS  Tests\Feature\DocumentWorkflowAndGenerationTest
 PASS  Tests\Feature\ExampleTest
 PASS  Tests\Feature\FinanceModuleTest
 PASS  Tests\Feature\LetterModuleTest
@@ -719,11 +723,38 @@ PASS  Tests\Feature\NotificationModuleTest
 PASS  Tests\Feature\PublicContentModuleTest
 PASS  Tests\Feature\PwaModuleTest
 PASS  Tests\Feature\RoleAndAuthorizationTest
+PASS  Tests\Feature\SecurityReportModuleTest
 
-Tests:    53 passed (184 assertions)
-Duration: 8.36s
+Tests:    75 passed (264 assertions)
+Duration: 13.82s
 Status:   100% OK
 ```
+
+---
+
+## 📚 Dokumentasi Teknis & Spesifikasi API
+
+Dokumentasi arsitektur, RBAC, alur kerja dokumen, dan API lengkap tersedia di direktori `docs/`:
+
+1. **[Spesifikasi API Lengkap (`docs/API_SPEC.md`)](docs/API_SPEC.md)**
+   - Daftar 69 RESTful endpoints lengkap dengan method, request payload, query params, response schema, validation rules, dan error codes.
+   - Meliputi Public APIs, Authenticated Warga APIs, dan Role-Secured Administrative APIs.
+2. **[Matriks Akses & RBAC (`docs/RBAC.md`)](docs/RBAC.md)**
+   - Normalisasi permission menggunakan *singular resource name* (`letter.read`, `letter.create`, `letter.verify`, `letter.approve`, `security.manage`, dll.).
+   - Matriks perbandingan hak akses antara `WARGA`, `ADMIN`, `SEKRETARIS`, `KETUA_RT`, `BENDAHARA`, `PETUGAS_KEAMANAN`, dan `SUPERADMIN`.
+   - Prinsip *Least Privilege* dan *Superadmin Bypass*.
+3. **[Workflow & State Machine Persuratan (`docs/LETTER_WORKFLOW.md`)](docs/LETTER_WORKFLOW.md)**
+   - Diagram status eksplisit: `draft` ➔ `submitted` ➔ `verified` ➔ `approved` ➔ `completed` (dan `rejected`).
+   - Penomoran surat bebas tabrakan konkurensi berbasis `document_sequences` dengan `SELECT ... FOR UPDATE`.
+   - Pencegahan race condition dan konflik versi via *Optimistic Locking* (`version` check, return `409 Conflict`).
+4. **[Sistem Template Dokumen & Idempotensi (`docs/DOCUMENT_TEMPLATE.md`)](docs/DOCUMENT_TEMPLATE.md)**
+   - 5 Blank document templates terstandarisasi (`resources/views/documents/templates/`):
+     - `surat-keterangan.blade.php` (SK-UMUM)
+     - `surat-kematian.blade.php` (SK-KEMATIAN)
+     - `surat-pindah.blade.php` (SK-PINDAH)
+     - `surat-keterangan-tidak-mampu.blade.php` (SKTM)
+     - `laporan-keamanan.blade.php` (Security Incident Report)
+   - Penyimpanan privat di `storage/app/private/` dengan hash SHA-256 dan token verifikasi publik tanpa bocor data pribadi (PII).
 
 ---
 

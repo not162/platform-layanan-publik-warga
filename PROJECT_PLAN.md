@@ -382,16 +382,34 @@ Deliverables:
 - `.env` excluded from Git.
 - Daily database/private storage backup; regular restore test.
 
-## 14. Definition of Done
+## 15. Feature Milestones: Citizen Service & Role API Refactoring (`v0.6.0-snapshot`)
 
-A task is complete only when:
+Status: **COMPLETED** (Branch: `feature/citizen-service-role-api`)
 
-- code is implemented
-- acceptance criteria are met
-- tests pass
-- authorization is verified
-- migration and rollback behavior are checked
-- docs/API contract are updated
-- no sensitive data or secrets are exposed
-- staging behavior is verified before production release
+- [x] **Phase 1: RBAC Normalization & Least Privilege:**
+  - Standardized singular permission scopes (`citizen.read`, `letter.verify`, `finance.manage`, etc.).
+  - Added `PETUGAS_KEAMANAN` role to `UserRole` enum.
+  - Strict least-privilege boundary: `KETUA_RT` cannot manage finance or system permissions; `WARGA` restricted to own resources.
+  - Superadmin automatic bypass logic.
+- [x] **Phase 2: Master Letter Catalog & Dynamic Form Schemas:**
+  - Database migration extending `jenis_surat` (`template_key`, `template_version`, `form_schema`, `approval_flow`, `estimated_process_hours`).
+  - Master seeders for `SK-UMUM`, `SK-KEMATIAN`, `SK-PINDAH`, and `SKTM`.
+- [x] **Phase 3: Secure Multipart Letter API & Storage:**
+  - Strict multipart validation in `StoreLetterRequest` (MIME, size max 5MB, max 5 files).
+  - Private storage in `storage/app/private/letter-attachments/` with ownership-verified downloads.
+  - Encrypted NIK with masked presentation (`nik_masked`) in API responses.
+- [x] **Phase 4: Explicit Letter Workflow & Concurrency Protection:**
+  - State machine: `draft` ➔ `submitted` ➔ `verified` ➔ `approved` ➔ `completed`.
+  - Illegal status jumps rejected with `409 Conflict`.
+  - Concurrency-safe sequential letter numbering via `document_sequences` table and `lockForUpdate()`.
+  - Removal of unsafe fallback users (`Auth::user() ?? User::first()`).
+- [x] **Phase 5: Document Templates & DocumentGeneratorService:**
+  - 5 official document templates in `resources/views/documents/templates/`.
+  - Idempotent document generation, SHA-256 integrity hash, and public non-PII verification token.
+- [x] **Phase 6: Security Reports Domain:**
+  - Dedicated `security_reports` table, lifecycle, and emergency contacts disclosure for emergency severity.
+  - Printable official security report generation.
+- [x] **Phase 7 & 8: Testing & Documentation:**
+  - 75 automated feature tests (100% passing).
+  - Complete documentation: `API_SPEC.md`, `RBAC.md`, `LETTER_WORKFLOW.md`, `DOCUMENT_TEMPLATE.md`.
 

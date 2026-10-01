@@ -92,34 +92,91 @@ class User extends Authenticatable
         return $this->role === UserRole::SEKRETARIS;
     }
 
+    public function isPetugasKeamanan(): bool
+    {
+        return $this->role === UserRole::PETUGAS_KEAMANAN;
+    }
+
     /**
      * Determine if the user has a specific permission scope.
-     * Superadmin automatically possesses all permissions.
+     * Superadmin automatically possesses all permissions (bypass).
+     * Other roles use explicit permissions combined with predefined role duties.
      */
     public function hasPermission(string $permission): bool
     {
-        if ($this->isSuperadmin() || $this->isKetuaRt()) {
+        if ($this->isSuperadmin()) {
             return true;
         }
 
-        if ($this->isBendahara() && $permission === 'finance.manage') {
-            return true;
-        }
-
-        if ($this->isSekretaris() && in_array($permission, ['citizens.manage', 'letters.manage', 'announcements.manage', 'complaints.manage'])) {
-            return true;
-        }
-
-        if (! $this->isAdmin()) {
-            return false;
-        }
-
-        // Check if relation is loaded to avoid N+1
+        // Check explicit permissions assigned in admin_permissions table
         if ($this->relationLoaded('permissions')) {
-            return $this->permissions->contains('permission', $permission);
+            if ($this->permissions->contains('permission', $permission)) {
+                return true;
+            }
+        } elseif ($this->permissions()->where('permission', $permission)->exists()) {
+            return true;
         }
 
-        return $this->permissions()->where('permission', $permission)->exists();
+        // Default role permissions matrix based on singular resource names
+        $rolePermissions = match ($this->role) {
+            UserRole::KETUA_RT => [
+                'citizen.read',
+                'letter.read',
+                'letter.approve',
+                'letter.reject',
+                'complaint.read',
+                'complaint.manage',
+                'complaints.manage',
+                'security.read',
+                'announcement.manage',
+                'announcements.manage',
+                'event.manage',
+                'finance.read',
+                'round_schedule.manage',
+                'emergency.manage',
+                'audit.read',
+            ],
+            UserRole::SEKRETARIS => [
+                'citizen.read',
+                'citizen.manage',
+                'citizens.manage',
+                'letter.read',
+                'letter.create',
+                'letter.verify',
+                'letter.reject',
+                'letter.template.manage',
+                'letters.manage',
+                'complaint.read',
+                'complaint.manage',
+                'complaints.manage',
+                'security.read',
+                'announcement.manage',
+                'announcements.manage',
+                'event.manage',
+                'round_schedule.manage',
+                'emergency.manage',
+            ],
+            UserRole::BENDAHARA => [
+                'finance.read',
+                'finance.manage',
+                'announcement.manage',
+                'announcements.manage',
+                'emergency.manage',
+            ],
+            UserRole::PETUGAS_KEAMANAN => [
+                'security.read',
+                'security.manage',
+                'round_schedule.manage',
+                'emergency.manage',
+                'citizen.read',
+            ],
+            UserRole::WARGA => [
+                'letter.create',
+            ],
+            default => [],
+        };
+
+        return in_array($permission, $rolePermissions, true);
     }
 
     public function givePermission(string $permission): void

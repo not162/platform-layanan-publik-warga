@@ -10,6 +10,7 @@ enum UserRole: string
     case KETUA_RT = 'KETUA_RT';
     case BENDAHARA = 'BENDAHARA';
     case SEKRETARIS = 'SEKRETARIS';
+    case PETUGAS_KEAMANAN = 'PETUGAS_KEAMANAN';
 
     public function label(): string
     {
@@ -20,6 +21,7 @@ enum UserRole: string
             self::KETUA_RT => 'Ketua RT',
             self::BENDAHARA => 'Bendahara RT',
             self::SEKRETARIS => 'Sekretaris RT',
+            self::PETUGAS_KEAMANAN => 'Petugas Keamanan RT',
         };
     }
 }

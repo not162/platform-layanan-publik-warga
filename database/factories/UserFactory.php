@@ -71,6 +71,34 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function ketuaRt(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::KETUA_RT->value,
+        ]);
+    }
+
+    public function sekretaris(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::SEKRETARIS->value,
+        ]);
+    }
+
+    public function bendahara(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::BENDAHARA->value,
+        ]);
+    }
+
+    public function petugasKeamanan(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::PETUGAS_KEAMANAN->value,
+        ]);
+    }
+
     public function inactive(): static
     {
         return $this->state(fn (array $attributes) => [

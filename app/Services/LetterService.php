@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\DocumentSequence;
 use App\Models\Letter;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,10 @@ use Illuminate\Support\Str;
 
 class LetterService
 {
-    public function __construct(protected AuditService $auditService) {}
+    public function __construct(
+        protected AuditService $auditService,
+        protected DocumentGeneratorService $documentGeneratorService
+    ) {}
 
     /**
      * Create a new letter request (draft or directly submitted).
@@ -69,7 +73,7 @@ class LetterService
      */
     public function verify(Letter $letter, User $user, int $version, ?string $notes = null): Letter
     {
-        if (! $user->hasPermission('letter.verify')) {
+        if (! $user->hasPermission('letter.verify') && ! $user->isSuperadmin()) {
             abort(403, 'Akses ditolak: Membutuhkan izin verifikasi surat (letter.verify).');
         }
 
@@ -106,7 +110,7 @@ class LetterService
      */
     public function approve(Letter $letter, User $user, int $version, ?string $customLetterNumber = null): Letter
     {
-        if (! $user->hasPermission('letter.approve')) {
+        if (! $user->hasPermission('letter.approve') && ! $user->isSuperadmin()) {
             abort(403, 'Akses ditolak: Membutuhkan izin persetujuan surat (letter.approve).');
         }
 
@@ -131,7 +135,45 @@ class LetterService
             $locked->version = $locked->version + 1;
             $locked->save();
 
+            // Automatically generate official printable document
+            $this->documentGeneratorService->generateLetterDocument($locked);
+
             $this->auditService->log('letter.approved', 'Letter', $locked->id, $oldValues, $locked->toArray());
+
+            return $locked;
+        });
+    }
+
+    /**
+     * Transition: approved -> completed
+     */
+    public function complete(Letter $letter, User $user, int $version): Letter
+    {
+        if (! $user->hasPermission('letter.complete') && ! $user->hasPermission('letter.approve') && ! $user->isSuperadmin()) {
+            abort(403, 'Akses ditolak: Membutuhkan izin penyelesaian surat.');
+        }
+
+        return DB::transaction(function () use ($letter, $version) {
+            /** @var Letter $locked */
+            $locked = Letter::query()->lockForUpdate()->findOrFail($letter->id);
+
+            if ((int) $version !== (int) $locked->version) {
+                abort(409, 'Konflik data: Versi surat telah diperbarui pengguna lain.');
+            }
+
+            if ($locked->status !== 'approved') {
+                abort(409, "Transisi tidak sah: Hanya surat berstatus approved yang dapat diselesaikan (status saat ini: {$locked->status}).");
+            }
+
+            $oldValues = $locked->toArray();
+            $locked->status = 'completed';
+            $locked->version = $locked->version + 1;
+
+            // Ensure document is generated
+            $this->documentGeneratorService->generateLetterDocument($locked);
+            $locked->save();
+
+            $this->auditService->log('letter.completed', 'Letter', $locked->id, $oldValues, $locked->toArray());
 
             return $locked;
         });
@@ -142,7 +184,7 @@ class LetterService
      */
     public function reject(Letter $letter, User $user, int $version, string $reason): Letter
     {
-        if (! $user->hasPermission('letter.verify') && ! $user->hasPermission('letter.approve') && ! $user->isSuperadmin()) {
+        if (! $user->hasPermission('letter.verify') && ! $user->hasPermission('letter.approve') && ! $user->hasPermission('letter.reject') && ! $user->isSuperadmin()) {
             abort(403, 'Akses ditolak: Tidak memiliki wewenang penolakan surat.');
         }
 
@@ -158,7 +200,7 @@ class LetterService
                 abort(409, 'Konflik data: Versi surat telah diperbarui.');
             }
 
-            if (! in_array($locked->status, ['submitted', 'verified'])) {
+            if (! in_array($locked->status, ['submitted', 'verified'], true)) {
                 abort(409, "Transisi tidak sah: Surat berstatus '{$locked->status}' tidak dapat ditolak.");
             }
 
@@ -176,18 +218,25 @@ class LetterService
 
     /**
      * Generic status updater for backward-compatible controller routing.
+     *
+     * @deprecated Use dedicated action endpoints: submit(), verify(), approve(), complete(), reject()
      */
-    public function updateStatus(Letter $letter, string $newStatus, array $data = []): Letter
+    public function updateStatus(Letter $letter, string $newStatus, array $data = [], ?User $user = null): Letter
     {
-        /** @var User $user */
-        $user = Auth::user() ?? User::query()->first();
+        $actor = $user ?? Auth::user();
+
+        if (! $actor) {
+            abort(401, 'Unauthenticated: Aktor pengguna harus terotentikasi.');
+        }
+
         $version = (int) ($data['version'] ?? $letter->version);
 
         return match ($newStatus) {
-            'submitted' => $this->submit($letter, $user, $version),
-            'verified' => $this->verify($letter, $user, $version, $data['catatan_admin'] ?? null),
-            'approved' => $this->approve($letter, $user, $version, $data['letter_number'] ?? null),
-            'rejected' => $this->reject($letter, $user, $version, $data['rejection_reason'] ?? 'Persyaratan tidak memenuhi kriteria'),
+            'submitted' => $this->submit($letter, $actor, $version),
+            'verified' => $this->verify($letter, $actor, $version, $data['catatan_admin'] ?? null),
+            'approved' => $this->approve($letter, $actor, $version, $data['letter_number'] ?? null),
+            'completed' => $this->complete($letter, $actor, $version),
+            'rejected' => $this->reject($letter, $actor, $version, $data['rejection_reason'] ?? 'Persyaratan tidak memenuhi kriteria'),
             default => abort(409, "Transisi status '{$newStatus}' tidak didukung."),
         };
     }
@@ -201,14 +250,37 @@ class LetterService
         return "{$prefix}-{$date}-{$random}";
     }
 
+    /**
+     * Concurrency-safe document numbering using transactional sequence lock.
+     */
     protected function generateOfficialNumber(Letter $letter): string
     {
-        $year = now()->year;
-        $month = now()->format('m');
-        $sequence = Letter::query()->whereNotNull('letter_number')->get()->count() + 1;
-        $padded = str_pad((string) $sequence, 4, '0', STR_PAD_LEFT);
+        $letter->loadMissing('letterType');
+        $docType = $letter->letterType?->kode_surat ?? 'SK';
+        $year = (int) now()->year;
+        $month = (int) now()->month;
 
-        return "SK/{$padded}/RT01/{$month}/{$year}";
+        /** @var DocumentSequence $sequence */
+        $sequence = DocumentSequence::query()
+            ->lockForUpdate()
+            ->firstOrCreate(
+                ['document_type' => $docType, 'year' => $year, 'month' => $month],
+                ['last_number' => 0]
+            );
+
+        $sequence->last_number += 1;
+        $sequence->save();
+
+        $padded = str_pad((string) $sequence->last_number, 4, '0', STR_PAD_LEFT);
+        $monthStr = str_pad((string) $month, 2, '0', STR_PAD_LEFT);
+
+        $format = $letter->letterType?->format_penomoran ?? 'SK/{nomor}/RT01/{bulan}/{tahun}';
+
+        return str_replace(
+            ['{nomor}', '{bulan}', '{tahun}'],
+            [$padded, $monthStr, (string) $year],
+            $format
+        );
     }
 
     public function findByToken(string $token): ?Letter
