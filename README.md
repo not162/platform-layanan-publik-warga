@@ -140,24 +140,33 @@ flowchart LR
 ---
 
 ### 2. Entity Relationship Diagram (ERD)
-Diagram relasi entitas basis data MySQL yang memperlihatkan struktur tabel, tipe data, serta kardinalitas relasi (*one-to-one*, *one-to-many*).
+Diagram relasi entitas basis data MySQL yang memperlihatkan struktur tabel, tipe data, serta **kardinalitas relasi secara eksplisit (*One-to-One [1:1]*, *One-to-Many [1:N]*, dan resolusi *Many-to-Many [M:N]*)**.
 
 ```mermaid
 erDiagram
-    FAMILY_CARDS ||--o{ CITIZENS : "memiliki anggota"
-    CITIZENS ||--o| USERS : "terhubung ke akun"
-    USERS ||--o{ ADMIN_PERMISSIONS : "memiliki hak akses"
-    USERS ||--o{ PUSH_SUBSCRIPTIONS : "memiliki perangkat push"
-    USERS ||--o{ LETTERS : "mengajukan surat"
-    LETTER_TYPES ||--o{ LETTERS : "kategori surat"
-    LETTERS ||--o{ LETTER_ATTACHMENTS : "memiliki lampiran"
-    USERS ||--o{ COMPLAINTS : "mengirim keluhan"
-    USERS ||--o{ FINANCE_TRANSACTIONS : "mencatat transaksi kas"
-    USERS ||--o{ AUDIT_LOGS : "memicu aktivitas sistem"
+    %% =======================================================
+    %% RELASI KARDINALITAS BASIS DATA
+    %% [1:N]  = One-to-Many  (||--o{)
+    %% [1:1]  = One-to-One   (||--o|)
+    %% [M:N]  = Many-to-Many terurai melalui Junction/Pivot Table
+    %% =======================================================
+
+    FAMILY_CARDS ||--o{ CITIZENS : "1:N (1 KK menampung N Warga)"
+    CITIZENS ||--o| USERS : "1:1 (1 Warga memiliki 0..1 Akun Login)"
+    
+    USERS ||--o{ ADMIN_PERMISSIONS : "1:N (Resolusi M:N User ke Hak Akses)"
+    USERS ||--o{ PUSH_SUBSCRIPTIONS : "1:N (1 User memiliki N Token Perangkat)"
+    USERS ||--o{ LETTERS : "1:N (1 Warga mengajukan N Permohonan Surat)"
+    LETTER_TYPES ||--o{ LETTERS : "1:N (1 Format Surat digunakan N Permohonan)"
+    LETTERS ||--o{ LETTER_ATTACHMENTS : "1:N (1 Surat memuat N Berkas Lampiran)"
+    
+    USERS ||--o{ COMPLAINTS : "1:N (1 Warga membuat N Aduan Keluhan)"
+    USERS ||--o{ FINANCE_TRANSACTIONS : "1:N (1 Bendahara mencatat N Transaksi Kas)"
+    USERS ||--o{ AUDIT_LOGS : "1:N (1 User memicu N Rekaman Jejak Audit)"
 
     FAMILY_CARDS {
         bigint id PK
-        varchar nomor_kk UK
+        varchar nomor_kk UK "Nomor KK 16 Digit"
         varchar kepala_keluarga_name
         text alamat
         varchar rt
@@ -168,9 +177,9 @@ erDiagram
 
     CITIZENS {
         bigint id PK
-        bigint family_card_id FK
-        bigint user_id FK
-        varchar nik_hash UK "SHA-256 Hash"
+        bigint family_card_id FK "Relasi 1:N dari FAMILY_CARDS"
+        bigint user_id FK "Relasi 1:1 ke USERS"
+        varchar nik_hash UK "SHA-256 Blind Index"
         varchar full_name
         varchar birth_place
         date birth_date
@@ -180,16 +189,16 @@ erDiagram
         varchar occupation
         varchar religion
         varchar status_warga
-        int version
+        int version "Optimistic Locking"
         datetime created_at
     }
 
     USERS {
         bigint id PK
-        bigint warga_id FK
+        bigint warga_id FK "Relasi 1:1 ke CITIZENS"
         varchar name
-        varchar email UK
-        varchar password
+        varchar email UK "Email Login Unik"
+        varchar password "Bcrypt Hash"
         enum role "SUPERADMIN,ADMIN,KETUA_RT,BENDAHARA,SEKRETARIS,WARGA"
         boolean is_active
         datetime last_login_at
@@ -198,43 +207,43 @@ erDiagram
 
     ADMIN_PERMISSIONS {
         bigint id PK
-        bigint user_id FK
-        varchar permission
+        bigint user_id FK "Relasi 1:N dari USERS (Pivot M:N Akses)"
+        varchar permission "Nama Otorisasi Spesifik"
         datetime created_at
     }
 
     LETTER_TYPES {
         bigint id PK
-        varchar code UK
+        varchar code UK "Kode Surat Unik (SKTM, SKU, dll)"
         varchar name
         text description
-        json required_documents
+        json required_documents "Daftar Syarat Berkas"
         boolean is_active
         datetime created_at
     }
 
     LETTERS {
         bigint id PK
-        varchar ticket_number UK
-        varchar tracking_token UK
-        bigint user_id FK
-        bigint citizen_id FK
-        bigint letter_type_id FK
+        varchar ticket_number UK "No. Tiket Pelacakan Unik"
+        varchar tracking_token UK "Token Akses Publik"
+        bigint user_id FK "Relasi 1:N Pemohon (USERS)"
+        bigint citizen_id FK "Relasi 1:N Profil Pemohon (CITIZENS)"
+        bigint letter_type_id FK "Relasi 1:N Jenis Surat (LETTER_TYPES)"
         text purpose
         enum status "draft,submitted,verified,approved,rejected"
         text remarks
         text rejection_reason
-        bigint verified_by FK
-        bigint approved_by FK
+        bigint verified_by FK "Relasi Petugas Verifikator (USERS)"
+        bigint approved_by FK "Relasi Pejabat Penyetuju (USERS)"
         datetime verified_at
         datetime approved_at
-        int version
+        int version "Optimistic Locking"
         datetime created_at
     }
 
     LETTER_ATTACHMENTS {
         bigint id PK
-        bigint letter_id FK
+        bigint letter_id FK "Relasi 1:N dari Surat Induk (LETTERS)"
         varchar file_path
         varchar file_name
         varchar file_type
@@ -244,33 +253,33 @@ erDiagram
 
     FINANCE_TRANSACTIONS {
         bigint id PK
-        varchar transaction_number UK
+        varchar transaction_number UK "Nomor Bukti Transaksi Unik"
         enum type "income,expense"
         varchar category
-        decimal amount
+        decimal amount "Presisi Keuangan 15,2"
         text description
         date transaction_date
         enum status "draft,published,reversed"
         text reversal_reason
-        bigint recorded_by FK
-        int version
+        bigint recorded_by FK "Relasi 1:N Pencatat (USERS)"
+        int version "Optimistic Locking"
         datetime created_at
     }
 
     COMPLAINTS {
         bigint id PK
-        varchar ticket_number UK
-        varchar tracking_token UK
-        bigint user_id FK
-        bigint citizen_id FK
+        varchar ticket_number UK "Nomor Aduan Unik"
+        varchar tracking_token UK "Token Pelacakan Publik"
+        bigint user_id FK "Relasi 1:N Pelapor (USERS)"
+        bigint citizen_id FK "Relasi 1:N Data Warga (CITIZENS)"
         varchar category
         varchar title
         text description
         boolean is_anonymous
         enum status "submitted,in_review,in_progress,resolved,rejected"
         text response
-        bigint handled_by FK
-        int version
+        bigint handled_by FK "Relasi Pengurus Penangan (USERS)"
+        int version "Optimistic Locking"
         datetime created_at
     }
 
@@ -300,18 +309,18 @@ erDiagram
 
     AUDIT_LOGS {
         bigint id PK
-        bigint user_id FK
+        bigint user_id FK "Relasi 1:N Pelaku Aksi (USERS)"
         varchar action
         varchar entity_type
         bigint entity_id
-        json old_values
-        json new_values
+        json old_values "Snapshot Sebelum Update"
+        json new_values "Snapshot Setelah Update"
         datetime created_at
     }
 
     PUSH_SUBSCRIPTIONS {
         bigint id PK
-        bigint user_id FK
+        bigint user_id FK "Relasi 1:N Perangkat Pemilik (USERS)"
         text endpoint
         varchar public_key
         varchar auth_token
@@ -319,52 +328,100 @@ erDiagram
     }
 ```
 
+#### Matriks Klasifikasi Kardinalitas Relasi (ERD)
+
+| Entitas Asal (Parent) | Entitas Tujuan (Child) | Kardinalitas | Kunci Relasi (PK ➔ FK) | Penjelasan Logika Bisnis & Mekanisme Relasi |
+| :--- | :--- | :---: | :--- | :--- |
+| **`FAMILY_CARDS`** | **`CITIZENS`** | **`1 : N`** (One-to-Many) | `FAMILY_CARDS.id` ➔ `CITIZENS.family_card_id` | **Satu** Kartu Keluarga menaungi **banyak** anggota keluarga warga RT. Satu warga wajib terdaftar pada tepat satu KK. |
+| **`CITIZENS`** | **`USERS`** | **`1 : 1`** (One-to-One) | `CITIZENS.user_id` ➔ `USERS.id`<br>`USERS.warga_id` ➔ `CITIZENS.id` | **Satu** data kependudukan warga memiliki tepat **satu** akun autentikasi portal (relasi bi-directional untuk integritas identitas). |
+| **`USERS`** | **`ADMIN_PERMISSIONS`** | **`1 : N`** *(Pecahan M:N)* | `USERS.id` ➔ `ADMIN_PERMISSIONS.user_id` | **Satu** akun pengguna dapat memiliki **banyak** hak akses granular (*role-permission assignment*). |
+| **`USERS`** <br>*(Konseptual)* | **`PERMISSIONS`** <br>*(Konseptual)* | **`M : N`** *(Many-to-Many)* | Diurai via Junction Table:<br>**`ADMIN_PERMISSIONS`** | **Banyak** User dapat memiliki **banyak** Permission yang sama. Relasi Many-to-Many dinormalisasi menjadi dua relasi One-to-Many (1:N) melalui tabel pivot `ADMIN_PERMISSIONS`. |
+| **`LETTER_TYPES`** | **`LETTERS`** | **`1 : N`** (One-to-Many) | `LETTER_TYPES.id` ➔ `LETTERS.letter_type_id` | **Satu** jenis formulir surat (SKTM, SKU, dll.) digunakan sebagai template permohonan oleh **banyak** surat warga. |
+| **`USERS`** | **`LETTERS`** | **`1 : N`** (One-to-Many) | `USERS.id` ➔ `LETTERS.user_id` | **Satu** akun warga dapat mengajukan **banyak** surat pengantar sepanjang waktu. |
+| **`LETTERS`** | **`LETTER_ATTACHMENTS`**| **`1 : N`** (One-to-Many) | `LETTERS.id` ➔ `LETTER_ATTACHMENTS.letter_id` | **Satu** berkas surat permohonan dapat memiliki **banyak** lampiran dokumen pendukung (KTP, KK, Bukti Bayar, dll.). |
+| **`USERS`** | **`COMPLAINTS`** | **`1 : N`** (One-to-Many) | `USERS.id` ➔ `COMPLAINTS.user_id` | **Satu** warga dapat menyampaikan **banyak** laporan keluhan aspirasi lingkungan RT. |
+| **`USERS`** | **`FINANCE_TRANSACTIONS`** | **`1 : N`** (One-to-Many) | `USERS.id` ➔ `FINANCE_TRANSACTIONS.recorded_by` | **Satu** pengurus kas (Bendahara) dapat mencatat dan mengelola **banyak** mutasi kas masuk/keluar. |
+| **`USERS`** | **`AUDIT_LOGS`** | **`1 : N`** (One-to-Many) | `USERS.id` ➔ `AUDIT_LOGS.user_id` | **Satu** pengguna dapat memicu **banyak** baris pencatatan jejak audit audit trail sistem. |
+| **`USERS`** | **`PUSH_SUBSCRIPTIONS`**| **`1 : N`** (One-to-Many) | `USERS.id` ➔ `PUSH_SUBSCRIPTIONS.user_id` | **Satu** pengguna dapat mendaftarkan **banyak** token browser/perangkat mobile untuk WebPush Notification. |
+| **`USERS` (Warga)** <br>*(Konseptual)* | **`USERS` (Pengurus)** <br>*(Konseptual)* | **`M : N`** *(Many-to-Many)* | Diurai via Associative Entity:<br>**`LETTERS`** & **`COMPLAINTS`** | **Banyak** warga dapat dilayani oleh **banyak** pengurus (Sekretaris & Ketua RT). Relasi M:N ini dihubungkan secara ternormalisasi melalui entitas transaksi `LETTERS` (`user_id`, `verified_by`, `approved_by`). |
+
 ---
 
 ### 3. Logical Record Structure (LRS)
-Representasi relasional tabel skema database dengan relasi kunci utama (*Primary Key*) dan kunci tamu (*Foreign Key*):
+Representasi relasional tabel skema database dengan relasi kunci utama (*Primary Key* / `PK`), kunci tamu (*Foreign Key* / `FK`), serta penanda kardinalitas relasi **`[1:1]`**, **`[1:N]`**, dan **`[M:N (Tabel Pivot/Perantara)]`**:
 
 ```
-┌──────────────────────────────────────────────┐
-│                 FAMILY_CARDS                 │
-├──────────────────────────────────────────────┤
-│ PK  id                                       │
-│     nomor_kk (Unique)                        │
-│     kepala_keluarga_name, alamat, rt, rw     │
-└──────────────────────┬───────────────────────┘
-                       │ 1:N
-┌──────────────────────▼───────────────────────┐          1:1          ┌──────────────────────────────────────────────┐
-│                   CITIZENS                   ├───────────────────────►│                    USERS                     │
-├──────────────────────────────────────────────┤                       ├──────────────────────────────────────────────┤
-│ PK  id                                       │                       │ PK  id                                       │
-│ FK  family_card_id                           │                       │ FK  warga_id ────────────────────────────────┤ (balik)
-│ FK  user_id ─────────────────────────────────┼───────────────────────┤     name, email (Unique), password           │
-│     nik_hash (Unique, SHA-256), full_name    │                       │     role (SUPERADMIN..WARGA), is_active      │
-│     gender, address, phone_number, version   │                       └───────┬──────────────┬──────────────┬────────┘
-└──────────────────────┬───────────────────────┘                               │ 1:N          │ 1:N          │ 1:N
-                       │ 1:N                                                   │              │              │
-                       ▼                                                       ▼              ▼              ▼
-┌──────────────────────────────────────────────┐                       ┌──────────────┐┌──────────────┐┌──────────────┐
-│                   LETTERS                    │                       │ADMIN_PERMISS ││AUDIT_LOGS    ││PUSH_SUBSCRIPT│
-├──────────────────────────────────────────────┤                       ├──────────────┤├──────────────┤├──────────────┤
-│ PK  id                                       │                       │PK id         ││PK id         ││PK id         │
-│     ticket_number (Unique), tracking_token   │                       │FK user_id    ││FK user_id    ││FK user_id    │
-│ FK  user_id                                  │                       │   permission ││   action...  ││   endpoint.. │
-│ FK  citizen_id                               │                       └──────────────┘└──────────────┘└──────────────┘
-│ FK  letter_type_id ────────┐                 │
-│     status (submitted..approved), version    │                       ┌──────────────────────────────────────────────┐
-│ FK  verified_by, FK approved_by              │                       │             FINANCE_TRANSACTIONS             │
-└──────────────────────┬─────┴─────────────────┘                       ├──────────────────────────────────────────────┤
-                       │ 1:N                                           │ PK  id                                       │
-                       ▼                                               │     transaction_number (Unique)              │
-┌──────────────────────────────────────────────┐                       │     type (income/expense), amount, status    │
-│              LETTER_ATTACHMENTS              │                       │ FK  recorded_by (Users.id)                   │
-├──────────────────────────────────────────────┤                       │     reversal_reason, version                 │
-│ PK  id                                       │                       └──────────────────────────────────────────────┘
-│ FK  letter_id                                │
-│     file_path, file_name, file_size          │
-└──────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│                      FAMILY_CARDS                      │
+├────────────────────────────────────────────────────────┤
+│ PK   id                                                │
+│      nomor_kk (Unique, 16 Digit)                       │
+│      kepala_keluarga_name, alamat, rt, rw, kode_pos    │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            │ [1:N] (One-to-Many)
+                            ▼
+┌────────────────────────────────────────────────────────┐                [1:1] (One-to-One)               ┌────────────────────────────────────────────────────────┐
+│                        CITIZENS                        ├────────────────────────────────────────────────►│                         USERS                          │
+├────────────────────────────────────────────────────────┤                                                 ├────────────────────────────────────────────────────────┤
+│ PK   id                                                │                                                 │ PK   id                                                │
+│ FK   family_card_id ───────────────────────────────────┼── (Relasi 1:N dari FAMILY_CARDS)                │ FK   warga_id ─────────────────────────────────────────┤ (Relasi 1:1 ke CITIZENS)
+│ FK   user_id ──────────────────────────────────────────┼── (Relasi 1:1 ke USERS)                         │      name, email (Unique), password (Bcrypt)           │
+│      nik_hash (Unique, SHA-256), full_name             │                                                 │      role (SUPERADMIN, KETUA_RT, BENDAHARA, ..), active│
+│      birth_place, birth_date, gender, address, phone   │                                                 └────────┬──────────────┬──────────────┬──────────────┬───┘
+│      occupation, religion, status_warga, version       │                                                          │ [1:N]        │ [1:N]        │ [1:N]        │ [1:N]
+└───────────────────────────┬────────────────────────────┘                                                          │              │              │              │
+                            │ [1:N]                                                                                 ▼              ▼              ▼              │
+                            ▼                                                                              ┌────────────────┐┌────────────┐┌─────────────┐       │
+┌────────────────────────────────────────────────────────┐                                                 │ADMIN_PERMISSION││ AUDIT_LOGS ││PUSH_SUBSCRIP│       │
+│                        LETTERS                         │                                                 ├────────────────┤├────────────┤├─────────────┤       │
+├────────────────────────────────────────────────────────┤                                                 │PK  id          ││PK  id      ││PK  id       │       │
+│ PK   id                                                │                                                 │FK  user_id     ││FK  user_id ││FK  user_id  │       │
+│      ticket_number (Unique), tracking_token (Unique)   │                                                 │    permission  ││    action  ││    endpoint │       │
+│ FK   user_id ──────────────────────────────────────────┼── (Relasi 1:N dari USERS Pemohon)               └────────────────┘└────────────┘└─────────────┘       │
+│ FK   citizen_id ───────────────────────────────────────┼── (Relasi 1:N dari Profil CITIZENS)              [M:N Pivot Table]                                    │
+│ FK   letter_type_id ◄──────────┐                       │                                                                                                       │
+│      purpose, status (submitted..approved), version    │                                                 ┌──────────────────────────────────────────────┐      │
+│ FK   verified_by (Users.id)    │ [1:N]                 │                                                 │             FINANCE_TRANSACTIONS             │◄─────┘
+│ FK   approved_by (Users.id)    │                       │                                                 ├──────────────────────────────────────────────┤
+└───────────────────────────┬────┴───────────────────────┘                                                 │ PK   id                                      │
+                            │                                                                              │      transaction_number (Unique)             │
+                            │ [1:N] (One-to-Many)                                                          │      type (income, expense), category, amount│
+                            ▼                                                                              │      description, date, status, reversal     │
+┌────────────────────────────────────────────────────────┐  ┌───────────────────────────────────────────┐  │ FK   recorded_by (Users.id) ─────────────────┼── (Relasi 1:N Pencatat)
+│                   LETTER_ATTACHMENTS                   │  │               LETTER_TYPES                │  │      version (Optimistic Lock)               │
+├────────────────────────────────────────────────────────┤  ├───────────────────────────────────────────┤  └──────────────────────────────────────────────┘
+│ PK   id                                                │  │ PK   id                                   │
+│ FK   letter_id ────────────────────────────────────────┤  │      code (Unique, SKTM/SKU), name, desc  │  ┌──────────────────────────────────────────────┐
+│      file_path, file_name, file_type, file_size        │  │      required_documents (JSON), is_active │  │                  COMPLAINTS                  │
+└────────────────────────────────────────────────────────┘  └─────────────────────┬─────────────────────┘  ├──────────────────────────────────────────────┤
+                                                                                  │ [1:N]                  │ PK   id                                      │
+                                                                                  └────────────────────────┤      ticket_number (Unique), tracking_token  │
+                                                                                                           │ FK   user_id (Users.id) ─────────────────────┼── (Relasi 1:N Pembuat Aduan)
+                                                                                                           │ FK   citizen_id (Citizens.id)                │
+                                                                                                           │      category, title, description, status    │
+                                                                                                           │ FK   handled_by (Users.id)                   │
+                                                                                                           └──────────────────────────────────────────────┘
 ```
+
+#### Notasi Relasional LRS (Relational Mapping Notation)
+Menunjukkan struktur relasi antar tabel secara formal (`PK = Primary Key Garis Bawah`, `FK = Foreign Key Prefix #`):
+
+1. **`FAMILY_CARDS`** (<u>id</u>, *nomor_kk*, kepala_keluarga_name, alamat, rt, rw, kode_pos, created_at)
+2. **`CITIZENS`** (<u>id</u>, **#family_card_id** *(1:N)*, **#user_id** *(1:1)*, *nik_hash*, full_name, birth_place, birth_date, gender, address, phone_number, occupation, religion, status_warga, version, created_at)
+3. **`USERS`** (<u>id</u>, **#warga_id** *(1:1)*, name, *email*, password, role, is_active, last_login_at, created_at)
+4. **`ADMIN_PERMISSIONS`** (<u>id</u>, **#user_id** *(1:N / Resolusi M:N)*, permission, created_at)
+   - *Mekanisme Normalisasi M:N:* Menguraikan relasi Many-to-Many antara kumpulan Pengguna (`USERS`) dan Hak Otorisasi (`PERMISSIONS`) menjadi tabel asosiatif independen.
+5. **`LETTER_TYPES`** (<u>id</u>, *code*, name, description, required_documents, is_active, created_at)
+6. **`LETTERS`** (<u>id</u>, *ticket_number*, *tracking_token*, **#user_id** *(1:N)*, **#citizen_id** *(1:N)*, **#letter_type_id** *(1:N)*, purpose, status, remarks, rejection_reason, **#verified_by** *(1:N)*, **#approved_by** *(1:N)*, verified_at, approved_at, version, created_at)
+   - *Mekanisme Normalisasi M:N:* Menghubungkan relasi Many-to-Many antara Warga Pemohon dengan Multi-Pengurus Penyetuju (Sekretaris & Ketua RT) dalam alur verifikasi surat bertingkat.
+7. **`LETTER_ATTACHMENTS`** (<u>id</u>, **#letter_id** *(1:N)*, file_path, file_name, file_type, file_size, created_at)
+8. **`COMPLAINTS`** (<u>id</u>, *ticket_number*, *tracking_token*, **#user_id** *(1:N)*, **#citizen_id** *(1:N)*, category, title, description, is_anonymous, status, response, **#handled_by** *(1:N)*, version, created_at)
+9. **`FINANCE_TRANSACTIONS`** (<u>id</u>, *transaction_number*, type, category, amount, description, transaction_date, status, reversal_reason, **#recorded_by** *(1:N)*, version, created_at)
+10. **`AUDIT_LOGS`** (<u>id</u>, **#user_id** *(1:N)*, action, entity_type, entity_id, old_values, new_values, created_at)
+11. **`PUSH_SUBSCRIPTIONS`** (<u>id</u>, **#user_id** *(1:N)*, endpoint, public_key, auth_token, created_at)
+12. **`ANNOUNCEMENTS`** (<u>id</u>, title, category, content, is_pinned, is_published, published_at, version, created_at)
+13. **`COMMUNITY_EVENTS`** (<u>id</u>, title, description, location, event_date, start_time, end_time, is_published, created_at)
 
 ---
 
