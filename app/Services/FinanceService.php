@@ -3,76 +3,157 @@
 namespace App\Services;
 
 use App\Models\FinanceTransaction;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class FinanceService
 {
-    /**
-     * Create a new class instance.
-     */
     public function __construct(protected AuditService $auditService) {}
 
-    public function create(array $data): FinanceTransaction
+    public function create(array $data, ?User $user = null): FinanceTransaction
     {
-        $transaction = FinanceTransaction::create($data);
+        return DB::transaction(function () use ($data, $user) {
+            $data['status'] = $data['status'] ?? 'draft';
+            $data['version'] = 1;
+            if ($user) {
+                $data['created_by'] = $user->id;
+            }
 
-        $this->auditService->log('create', 'FinanceTransaction', $transaction->id, null, $transaction->toArray());
+            $transaction = FinanceTransaction::query()->create($data);
 
-        return $transaction;
+            $this->auditService->log(
+                action: 'finance.created',
+                entityType: 'FinanceTransaction',
+                entityId: $transaction->id,
+                oldValues: null,
+                newValues: $transaction->toArray()
+            );
+
+            return $transaction;
+        });
     }
 
     public function publish(FinanceTransaction $transaction, int $version): FinanceTransaction
     {
-        $oldValues = $transaction->toArray();
+        return DB::transaction(function () use ($transaction, $version) {
+            /** @var FinanceTransaction $locked */
+            $locked = FinanceTransaction::query()->lockForUpdate()->findOrFail($transaction->id);
 
-        if ($version !== (int) $transaction->version) {
-            abort(409, 'Conflict: Transaction has been modified.');
-        }
+            if ($version !== (int) $locked->version) {
+                abort(409, 'Konflik data: Transaksi kas telah diubah oleh pengguna lain.');
+            }
 
-        $transaction->status = 'published';
-        $transaction->version = $version + 1;
-        $transaction->save();
+            if ($locked->status === 'published') {
+                abort(409, 'Transaksi telah dipublikasikan sebelumnya.');
+            }
 
-        $this->auditService->log('publish', 'FinanceTransaction', $transaction->id, $oldValues, $transaction->toArray());
+            $oldValues = $locked->toArray();
 
-        return $transaction;
+            $locked->status = 'published';
+            $locked->published_at = now();
+            $locked->version = $version + 1;
+            $locked->save();
+
+            $this->auditService->log(
+                action: 'finance.published',
+                entityType: 'FinanceTransaction',
+                entityId: $locked->id,
+                oldValues: $oldValues,
+                newValues: $locked->toArray()
+            );
+
+            return $locked;
+        });
     }
 
     /**
-     * Immutable published report rule: We do not edit/delete published transactions.
+     * Immutable published report rule: We do not delete published transactions.
      * We create a reversal transaction and mark the original as reversed.
      */
     public function reverse(FinanceTransaction $transaction, int $version, string $reason): FinanceTransaction
     {
-        if ($transaction->status !== 'published') {
-            abort(422, 'Only published transactions can be reversed.');
-        }
+        return DB::transaction(function () use ($transaction, $version, $reason) {
+            /** @var FinanceTransaction $locked */
+            $locked = FinanceTransaction::query()->lockForUpdate()->findOrFail($transaction->id);
 
-        if ($version !== (int) $transaction->version) {
-            abort(409, 'Conflict: Transaction has been modified.');
+            if ($locked->status !== 'published') {
+                abort(422, 'Hanya transaksi kas yang telah dipublikasikan yang dapat dibatalkan (reverse).');
+            }
+
+            if ($version !== (int) $locked->version) {
+                abort(409, 'Konflik data: Transaksi kas telah diubah.');
+            }
+
+            if (trim($reason) === '') {
+                abort(422, 'Alasan pembatalan (reversal reason) wajib diisi.');
+            }
+
+            $oldValues = $locked->toArray();
+
+            // 1. Mark original as reversed
+            $locked->status = 'reversed';
+            $locked->reversal_reason = $reason;
+            $locked->version = $version + 1;
+            $locked->save();
+
+            // 2. Create reversal offsetting transaction
+            $reversal = FinanceTransaction::query()->create([
+                'type' => $locked->type === 'income' ? 'expense' : 'income',
+                'category' => 'Jurnal Pembalik: '.$locked->category,
+                'amount' => $locked->amount,
+                'description' => "Pembalik transaksi #{$locked->id}. Alasan: {$reason}",
+                'transaction_date' => now()->toDateString(),
+                'status' => 'published',
+                'created_by' => Auth::id(),
+                'published_at' => now(),
+                'original_transaction_id' => $locked->id,
+                'version' => 1,
+            ]);
+
+            $this->auditService->log('finance.reversed', 'FinanceTransaction', $locked->id, $oldValues, $locked->toArray());
+            $this->auditService->log('finance.created', 'FinanceTransaction', $reversal->id, null, $reversal->toArray());
+
+            return $reversal;
+        });
+    }
+
+    public function delete(FinanceTransaction $transaction): void
+    {
+        if ($transaction->status === 'published') {
+            abort(403, 'Transaksi yang telah dipublikasikan tidak boleh dihapus. Buat transaksi pembalik (reversal).');
         }
 
         $oldValues = $transaction->toArray();
+        $id = $transaction->id;
 
-        // 1. Mark original as reversed
-        $transaction->status = 'reversed';
-        $transaction->version = $version + 1;
-        $transaction->save();
+        FinanceTransaction::query()->whereKey($id)->delete();
 
-        // 2. Create reversal transaction
-        $reversal = FinanceTransaction::create([
-            'type' => $transaction->type === 'income' ? 'expense' : 'income',
-            'category' => 'Reversal: '.$transaction->category,
-            'amount' => $transaction->amount,
-            'description' => 'Reversal for ID '.$transaction->id.'. Reason: '.$reason,
-            'transaction_date' => now()->toDateString(),
-            'status' => 'published',
-            'original_transaction_id' => $transaction->id,
-            'version' => 1,
-        ]);
+        $this->auditService->log('finance.deleted', 'FinanceTransaction', $id, $oldValues, null);
+    }
 
-        $this->auditService->log('reverse', 'FinanceTransaction', $transaction->id, $oldValues, $transaction->toArray());
-        $this->auditService->log('create', 'FinanceTransaction', $reversal->id, null, $reversal->toArray());
+    public function getPublicSummary(?int $year = null, ?int $month = null): array
+    {
+        $query = FinanceTransaction::query()->where('status', 'published');
 
-        return $reversal;
+        if ($year) {
+            $query->whereYear('transaction_date', $year);
+        }
+        if ($month) {
+            $query->whereMonth('transaction_date', $month);
+        }
+
+        $transactions = $query->latest('transaction_date')->get();
+
+        $totalIncome = (float) $transactions->where('type', 'income')->sum('amount');
+        $totalExpense = (float) $transactions->where('type', 'expense')->sum('amount');
+        $balance = $totalIncome - $totalExpense;
+
+        return [
+            'total_income' => $totalIncome,
+            'total_expense' => $totalExpense,
+            'net_balance' => $balance,
+            'transactions' => $transactions,
+        ];
     }
 }
