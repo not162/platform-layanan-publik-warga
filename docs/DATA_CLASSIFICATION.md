@@ -16,8 +16,9 @@ Personally Identifiable Information (PII) that must be strictly protected, both 
 
 ## 2. Handling Sensitive Data
 - **Storage**: `nik` and `no_kk` are stored using Laravel's `encrypted` cast.
-- **Searchability**: To allow lookup without decrypting every row, deterministic hashes (`nik_hash`, `no_kk_hash`) using SHA-256 are stored alongside the encrypted fields. Lookups must be performed against the hash.
+- **Searchability**: To allow lookup without decrypting every row, deterministic hashes (`nik_hash`, `no_kk_hash`) using SHA-256 (64 characters) are stored alongside the encrypted fields. Lookups must be performed against the hash. For detailed benchmark and memory/storage metrics, see [STORAGE_MEMORY_PERFORMANCE_ANALYSIS.md](./STORAGE_MEMORY_PERFORMANCE_ANALYSIS.md).
 - **API Exposure**: Sensitive fields must NOT be exposed in public endpoints or standard API JSON resources unless explicitly authorized (e.g., to the user themselves or to the Admin).
 
 ## 3. Auditing and Traceability
 - All writes, updates, and deletes to sensitive or financial data must generate an audit log entry detailing the actor (user ID), action, timestamp, and IP address.
+
