@@ -33,7 +33,7 @@ Route::prefix('v1')->group(function () {
             Route::patch('/complaints/{id}/status', [ComplaintController::class, 'update']);
             Route::get('/complaints', [ComplaintController::class, 'adminIndex']);
 
-            Route::apiResource('finance', FinanceTransactionController::class)->except(['show', 'destroy']);
+            Route::apiResource('finance', FinanceTransactionController::class)->except(['show'])->middleware('permission:finance.manage');
             Route::apiResource('announcements', AnnouncementController::class)->except(['show', 'destroy']);
         });
     });
@@ -46,6 +46,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/complaints', [ComplaintController::class, 'store']);
 
     // Public routes (published finance & announcements)
+    Route::get('/finance/summary', [FinanceTransactionController::class, 'publicSummary']);
     Route::get('/finance', [FinanceTransactionController::class, 'publicIndex']);
     Route::get('/announcements', [AnnouncementController::class, 'publicIndex']);
 });
