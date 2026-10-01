@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('type', 20); // income, expense
             $table->string('category', 100);
             $table->decimal('amount', 15, 2);
-            $table->string('description', 500);
+            $table->string('description', 500)->nullable();
             $table->date('transaction_date');
             $table->string('receipt_path', 500)->nullable();
             $table->string('status', 30)->default('draft'); // draft, published, reversed

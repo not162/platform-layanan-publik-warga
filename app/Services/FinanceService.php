@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\FinanceTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class FinanceService
@@ -63,6 +64,8 @@ class FinanceService
                 newValues: $locked->toArray()
             );
 
+            $this->clearCache();
+
             return $locked;
         });
     }
@@ -114,6 +117,8 @@ class FinanceService
             $this->auditService->log('finance.reversed', 'FinanceTransaction', $locked->id, $oldValues, $locked->toArray());
             $this->auditService->log('finance.created', 'FinanceTransaction', $reversal->id, null, $reversal->toArray());
 
+            $this->clearCache();
+
             return $reversal;
         });
     }
@@ -130,30 +135,52 @@ class FinanceService
         FinanceTransaction::query()->whereKey($id)->delete();
 
         $this->auditService->log('finance.deleted', 'FinanceTransaction', $id, $oldValues, null);
+        $this->clearCache();
+    }
+
+    public function getCacheKey(?int $year = null, ?int $month = null): string
+    {
+        $y = $year ?? 'all';
+        $m = $month ?? 'all';
+
+        return "public_finance_summary_{$y}_{$m}";
+    }
+
+    public function clearCache(?int $year = null, ?int $month = null): void
+    {
+        Cache::forget($this->getCacheKey(null, null));
+        if ($year || $month) {
+            Cache::forget($this->getCacheKey($year, $month));
+        }
+        Cache::forget('public_finance_summary');
     }
 
     public function getPublicSummary(?int $year = null, ?int $month = null): array
     {
-        $query = FinanceTransaction::query()->where('status', 'published');
+        $cacheKey = $this->getCacheKey($year, $month);
 
-        if ($year) {
-            $query->whereYear('transaction_date', $year);
-        }
-        if ($month) {
-            $query->whereMonth('transaction_date', $month);
-        }
+        return Cache::remember($cacheKey, 1800, function () use ($year, $month) {
+            $query = FinanceTransaction::query()->where('status', 'published');
 
-        $transactions = $query->latest('transaction_date')->get();
+            if ($year) {
+                $query->whereYear('transaction_date', $year);
+            }
+            if ($month) {
+                $query->whereMonth('transaction_date', $month);
+            }
 
-        $totalIncome = (float) $transactions->where('type', 'income')->sum('amount');
-        $totalExpense = (float) $transactions->where('type', 'expense')->sum('amount');
-        $balance = $totalIncome - $totalExpense;
+            $transactions = $query->latest('transaction_date')->get();
 
-        return [
-            'total_income' => $totalIncome,
-            'total_expense' => $totalExpense,
-            'net_balance' => $balance,
-            'transactions' => $transactions,
-        ];
+            $totalIncome = (float) $transactions->where('type', 'income')->sum('amount');
+            $totalExpense = (float) $transactions->where('type', 'expense')->sum('amount');
+            $balance = $totalIncome - $totalExpense;
+
+            return [
+                'total_income' => $totalIncome,
+                'total_expense' => $totalExpense,
+                'net_balance' => $balance,
+                'transactions' => $transactions,
+            ];
+        });
     }
 }
