@@ -41,4 +41,15 @@ class AnnouncementService
 
         return $announcement;
     }
+
+    public function delete(Announcement $announcement): bool
+    {
+        $id = $announcement->id;
+        $oldValues = $announcement->toArray();
+        $deleted = (bool) Announcement::query()->whereKey($id)->delete();
+
+        $this->auditService->log('delete', 'Announcement', $id, $oldValues, null);
+
+        return $deleted;
+    }
 }

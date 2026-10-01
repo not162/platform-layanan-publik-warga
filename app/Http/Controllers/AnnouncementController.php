@@ -38,6 +38,13 @@ class AnnouncementController extends Controller
         return new AnnouncementResource($announcement);
     }
 
+    public function show($id)
+    {
+        $announcement = Announcement::findOrFail($id);
+
+        return new AnnouncementResource($announcement);
+    }
+
     public function update(UpdateAnnouncementRequest $request, $id)
     {
         $announcement = Announcement::findOrFail($id);
@@ -45,5 +52,13 @@ class AnnouncementController extends Controller
         $announcement = $this->announcementService->update($announcement, $request->validated());
 
         return new AnnouncementResource($announcement);
+    }
+
+    public function destroy($id)
+    {
+        $announcement = Announcement::findOrFail($id);
+        $this->announcementService->delete($announcement);
+
+        return response()->json(['message' => 'Pengumuman berhasil dihapus.'], 200);
     }
 }

@@ -77,13 +77,36 @@ class User extends Authenticatable
         return $this->role === UserRole::WARGA;
     }
 
+    public function isKetuaRt(): bool
+    {
+        return $this->role === UserRole::KETUA_RT;
+    }
+
+    public function isBendahara(): bool
+    {
+        return $this->role === UserRole::BENDAHARA;
+    }
+
+    public function isSekretaris(): bool
+    {
+        return $this->role === UserRole::SEKRETARIS;
+    }
+
     /**
      * Determine if the user has a specific permission scope.
      * Superadmin automatically possesses all permissions.
      */
     public function hasPermission(string $permission): bool
     {
-        if ($this->isSuperadmin()) {
+        if ($this->isSuperadmin() || $this->isKetuaRt()) {
+            return true;
+        }
+
+        if ($this->isBendahara() && $permission === 'finance.manage') {
+            return true;
+        }
+
+        if ($this->isSekretaris() && in_array($permission, ['citizens.manage', 'letters.manage', 'announcements.manage', 'complaints.manage'])) {
             return true;
         }
 
