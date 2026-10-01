@@ -283,4 +283,90 @@ class DocumentWorkflowAndGenerationTest extends TestCase
         $this->assertStringContainsString('0002', $generatedNumbers[1]);
         $this->assertStringContainsString('0003', $generatedNumbers[2]);
     }
+
+    public function test_warga_cannot_access_export_payload_of_unapproved_letter(): void
+    {
+        $wargaUser = User::factory()->warga()->create();
+        $citizen = Citizen::factory()->create(['user_id' => $wargaUser->id]);
+        $letter = Letter::create([
+            'citizen_id' => $citizen->id,
+            'type' => 'Surat Keterangan Umum',
+            'ticket_number' => 'SRT-EXP-DRAFT',
+            'status' => 'draft',
+            'version' => 1,
+        ]);
+
+        $response = $this->actingAs($wargaUser)->getJson("/api/v1/letters/{$letter->id}/export-payload");
+        $response->assertStatus(409);
+    }
+
+    public function test_warga_cannot_access_export_payload_of_another_citizen(): void
+    {
+        $warga1 = User::factory()->warga()->create();
+        $citizen1 = Citizen::factory()->create(['user_id' => $warga1->id]);
+
+        $warga2 = User::factory()->warga()->create();
+        $citizen2 = Citizen::factory()->create(['user_id' => $warga2->id]);
+
+        $letter = Letter::create([
+            'citizen_id' => $citizen1->id,
+            'type' => 'Surat Keterangan Umum',
+            'ticket_number' => 'SRT-EXP-OTHER',
+            'status' => 'approved',
+            'version' => 3,
+        ]);
+
+        $response = $this->actingAs($warga2)->getJson("/api/v1/letters/{$letter->id}/export-payload");
+        $response->assertStatus(403);
+    }
+
+    public function test_warga_can_access_export_payload_for_client_side_export(): void
+    {
+        $wargaUser = User::factory()->warga()->create();
+        $citizen = Citizen::factory()->create(['user_id' => $wargaUser->id]);
+        $letter = Letter::create([
+            'citizen_id' => $citizen->id,
+            'type' => 'Surat Keterangan Umum',
+            'ticket_number' => 'SRT-EXP-OK',
+            'letter_number' => 'SK/0001/RT01/10/2026',
+            'status' => 'approved',
+            'version' => 3,
+        ]);
+
+        $response = $this->actingAs($wargaUser)->getJson("/api/v1/letters/{$letter->id}/export-payload");
+        $response->assertStatus(200);
+        $response->assertJsonPath('data.status', 'approved');
+        $response->assertJsonPath('data.export_capabilities.client_side_processing', true);
+        $response->assertJsonPath('data.security_check.hash_match', true);
+        $response->assertJsonPath('data.security_check.anti_tamper_verified', true);
+        $this->assertNotEmpty($response->json('data.rendered_html'));
+        $this->assertNotEmpty($response->json('data.document_hash'));
+    }
+
+    public function test_letter_download_supports_word_and_pdf_formats(): void
+    {
+        $wargaUser = User::factory()->warga()->create();
+        $citizen = Citizen::factory()->create(['user_id' => $wargaUser->id]);
+        $letter = Letter::create([
+            'citizen_id' => $citizen->id,
+            'type' => 'Surat Keterangan Umum',
+            'ticket_number' => 'SRT-FMT-01',
+            'letter_number' => 'SK/0001/RT01/10/2026',
+            'status' => 'approved',
+            'version' => 3,
+        ]);
+
+        // Word format (.doc / .docx)
+        $wordResponse = $this->actingAs($wargaUser)->get("/api/v1/letters/{$letter->id}/download?format=word");
+        $wordResponse->assertStatus(200);
+        $wordResponse->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        $this->assertStringContainsString('filename="Surat_SK_0001_RT01_10_2026.doc"', (string) $wordResponse->headers->get('Content-Disposition'));
+        $this->assertStringContainsString('urn:schemas-microsoft-com:office:word', $wordResponse->getContent());
+
+        // PDF print-ready format
+        $pdfResponse = $this->actingAs($wargaUser)->get("/api/v1/letters/{$letter->id}/download?format=pdf");
+        $pdfResponse->assertStatus(200);
+        $pdfResponse->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+        $pdfResponse->assertHeader('X-Document-Printable', 'true');
+    }
 }

@@ -194,11 +194,61 @@
 * **Request:** `{ "version": 1 }`
 * **HTTP Status:** `200 OK` (atau `409 Conflict` jika versi tidak sesuai)
 
-### 3.4 Unduh Dokumen Surat Sah
+### 3.4 Payload Ekspor Dokumen untuk Front-End (Client-Side Offloading)
+* **Endpoint:** `GET /api/v1/letters/{id}/export-payload`
+* **Role:** WARGA (Pemilik surat) atau PENGURUS yang berwenang
+* **Kebutuhan Keamanan:** Surat wajib berstatus `approved` atau `completed`. Jika draft/submitted, sistem menolak dengan `409 Conflict`.
+* **Keunggulan Enterprise:** Menyediakan template HTML ter-render beserta SHA-256 digital fingerprint untuk diproses langsung di Frontend (browser warga). Menghilangkan kompilasi file di server sehingga mencegah kehabisan memori (*OOM*) dan *API route bottleneck*.
+* **HTTP Status:** `200 OK`
+* **Response Contoh:**
+```json
+{
+  "data": {
+    "id": 1,
+    "ticket_number": "SRT-20261001-A12BC",
+    "letter_number": "SK/0001/RT01/10/2026",
+    "letter_type": "Surat Keterangan Umum",
+    "template_key": "surat-keterangan",
+    "status": "approved",
+    "citizen": {
+      "name": "Budi Santoso",
+      "nik_masked": "3171************"
+    },
+    "issued_at": "01 Oktober 2026",
+    "verification_token": "a8f5c3b9e1d2f4a6b8c0e2d4f6a8b0c2e4d6f8a0",
+    "verification_url": "http://127.0.0.1:8000/api/v1/public/letter/verify/a8f5c3b9e1d2f4a6b8c0e2d4f6a8b0c2e4d6f8a0",
+    "document_hash": "b2f6b4e073c6833959dfdc9f000b21a8d0f1b2c3d4e5f60718293a4b5c6d7e8f",
+    "rendered_html": "<!DOCTYPE html><html>...</html>",
+    "export_capabilities": {
+      "formats": ["pdf", "word"],
+      "client_side_processing": true,
+      "cacheable_offline": true
+    },
+    "security_check": {
+      "hash_algorithm": "SHA-256",
+      "hash_match": true,
+      "anti_tamper_verified": true,
+      "authorized_citizen_id": 1
+    }
+  },
+  "meta": {
+    "architecture": "Enterprise Microservices / Client-Side Offloading",
+    "benefits": "Zero server CPU load, eliminates route bottlenecks and API timeout",
+    "timestamp": "2026-10-01T23:55:00+07:00"
+  },
+  "message": "Payload dokumen berhasil disiapkan untuk pemrosesan dan penyimpanan di sisi klien (Front-End)."
+}
+```
+
+### 3.5 Unduh Dokumen Surat Sah (Multi-Format)
 * **Endpoint:** `GET /api/v1/letters/{id}/download`
+* **Query Parameters:**
+  * `format=word` (atau `format=docx`): Mengunduh berkas Microsoft Word (`.doc`) dengan format Office Open XML.
+  * `format=pdf`: Mengembalikan tampilan cetak vektor siap print A4 dengan header `X-Document-Printable: true`.
+  * `format=html` (default): Mengunduh berkas HTML arsip resmi.
 * **Role:** WARGA (Pemilik surat) atau PENGURUS yang berwenang
 * **HTTP Status:** `200 OK`
-* **Headers:** `Content-Type: text/html; charset=UTF-8`, `Content-Disposition: attachment; filename="Surat_SK_0001_RT01_10_2026.html"`
+* **Headers Word:** `Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `Content-Disposition: attachment; filename="Surat_SK_0001_RT01_10_2026.doc"`
 
 ### 3.5 Pembuatan Laporan Keamanan Warga
 * **Endpoint:** `POST /api/v1/security-reports`

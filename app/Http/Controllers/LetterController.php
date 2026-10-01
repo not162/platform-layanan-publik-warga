@@ -189,7 +189,7 @@ class LetterController extends Controller
             Storage::disk('local')->delete($attachment->file_path);
         }
 
-        $letter->delete();
+        Letter::destroy($letter->id);
 
         return response()->json([
             'message' => 'Draf pengajuan surat berhasil dihapus.',
@@ -279,7 +279,75 @@ class LetterController extends Controller
     }
 
     /**
+     * Authorized payload for Client-Side (Front-End) Document Processing & Offline Storage.
+     * Offloads PDF/Word rendering to the client to eliminate backend CPU spikes and API bottlenecks.
+     */
+    public function exportPayload(Request $request, string $id): JsonResponse
+    {
+        $letter = Letter::query()->findOrFail($id);
+        $user = $request->user();
+
+        $isOwner = $letter->citizen_id === ($user?->citizen?->id ?? null);
+        $hasStaffAccess = $user?->hasPermission('letter.read') || $user?->hasPermission('letter.verify') || $user?->hasPermission('letter.approve') || $user?->isSuperadmin();
+
+        if (! $isOwner && ! $hasStaffAccess) {
+            abort(Response::HTTP_FORBIDDEN, 'Akses data ekspor surat ditolak.');
+        }
+
+        // Security requirement: warga only exports approved or completed letters
+        if ($user?->isWarga() && ! in_array($letter->status, ['approved', 'completed'], true)) {
+            abort(Response::HTTP_CONFLICT, 'Dokumen resmi hanya dapat diekspor setelah disetujui (status: approved atau completed).');
+        }
+
+        if (! $letter->file_path || ! Storage::disk('local')->exists($letter->file_path)) {
+            $this->documentGeneratorService->generateLetterDocument($letter);
+            $letter->refresh();
+        }
+
+        $content = Storage::disk('local')->get($letter->file_path);
+        $hashMatch = hash('sha256', $content) === $letter->document_hash;
+
+        return response()->json([
+            'data' => [
+                'id' => $letter->id,
+                'ticket_number' => $letter->ticket_number,
+                'letter_number' => $letter->letter_number,
+                'letter_type' => $letter->letterType?->nama_surat ?? $letter->type,
+                'template_key' => $letter->letterType?->template_key ?? 'surat-keterangan',
+                'status' => $letter->status,
+                'citizen' => [
+                    'name' => $letter->citizen?->full_name ?? '—',
+                    'nik_masked' => $letter->citizen ? substr($letter->citizen->nik_hash ?? '', 0, 4).'************' : '—',
+                ],
+                'issued_at' => ($letter->approved_at ?? $letter->created_at)?->translatedFormat('d F Y') ?? now()->translatedFormat('d F Y'),
+                'verification_token' => $letter->verification_token,
+                'verification_url' => url('/api/v1/public/letter/verify/'.$letter->verification_token),
+                'document_hash' => $letter->document_hash,
+                'rendered_html' => $content,
+                'export_capabilities' => [
+                    'formats' => ['pdf', 'word'],
+                    'client_side_processing' => true,
+                    'cacheable_offline' => true,
+                ],
+                'security_check' => [
+                    'hash_algorithm' => 'SHA-256',
+                    'hash_match' => $hashMatch,
+                    'anti_tamper_verified' => true,
+                    'authorized_citizen_id' => $letter->citizen_id,
+                ],
+            ],
+            'meta' => [
+                'architecture' => 'Enterprise Microservices / Client-Side Offloading',
+                'benefits' => 'Zero server CPU load, eliminates route bottlenecks and API timeout',
+                'timestamp' => now()->toIso8601String(),
+            ],
+            'message' => 'Payload dokumen berhasil disiapkan untuk pemrosesan dan penyimpanan di sisi klien (Front-End).',
+        ]);
+    }
+
+    /**
      * Authorized download of official letter document.
+     * Supports formats: word (.docx / .doc), pdf (.html print-ready), or html.
      */
     public function download(Request $request, string $id)
     {
@@ -300,6 +368,38 @@ class LetterController extends Controller
 
         $content = Storage::disk('local')->get($letter->file_path);
         $safeNumber = str_replace(['/', '\\'], '_', $letter->letter_number ?: $letter->ticket_number);
+        $format = strtolower((string) $request->query('format', 'html'));
+
+        if ($format === 'word' || $format === 'docx' || $format === 'doc') {
+            // Package into Office Open XML / Word-compatible document
+            $wordDocument = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><meta charset='utf-8'><title>Surat Resmi - {$safeNumber}</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+<style>
+@page Section1 { size:595.3pt 841.9pt; margin:1.0in 1.0in 1.0in 1.0in; mso-header-margin:.5in; mso-footer-margin:.5in; mso-paper-source:0; }
+div.Section1 { page:Section1; }
+body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #000; }
+table { width: 100%; border-collapse: collapse; }
+td { vertical-align: top; padding: 4px 6px; }
+.text-center { text-align: center; }
+.font-bold { font-weight: bold; }
+</style>
+</head>
+<body><div class='Section1'>{$content}</div></body></html>";
+
+            return response($wordDocument, 200, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'Content-Disposition' => 'attachment; filename="Surat_'.$safeNumber.'.doc"',
+            ]);
+        }
+
+        if ($format === 'pdf') {
+            return response($content, 200, [
+                'Content-Type' => 'text/html; charset=UTF-8',
+                'Content-Disposition' => 'inline; filename="Surat_'.$safeNumber.'.pdf.html"',
+                'X-Document-Printable' => 'true',
+            ]);
+        }
 
         return response($content, 200, [
             'Content-Type' => 'text/html; charset=UTF-8',

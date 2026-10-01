@@ -725,8 +725,8 @@ PASS  Tests\Feature\PwaModuleTest
 PASS  Tests\Feature\RoleAndAuthorizationTest
 PASS  Tests\Feature\SecurityReportModuleTest
 
-Tests:    75 passed (264 assertions)
-Duration: 13.82s
+Tests:    79 passed (283 assertions)
+Duration: 6.67s
 Status:   100% OK
 ```
 
@@ -737,7 +737,7 @@ Status:   100% OK
 Dokumentasi arsitektur, RBAC, alur kerja dokumen, dan API lengkap tersedia di direktori `docs/`:
 
 1. **[Spesifikasi API Lengkap (`docs/API_SPEC.md`)](docs/API_SPEC.md)**
-   - Daftar 69 RESTful endpoints lengkap dengan method, request payload, query params, response schema, validation rules, dan error codes.
+   - Daftar RESTful endpoints lengkap dengan method, request payload, query params, response schema, validation rules, dan error codes.
    - Meliputi Public APIs, Authenticated Warga APIs, dan Role-Secured Administrative APIs.
 2. **[Matriks Akses & RBAC (`docs/RBAC.md`)](docs/RBAC.md)**
    - Normalisasi permission menggunakan *singular resource name* (`letter.read`, `letter.create`, `letter.verify`, `letter.approve`, `security.manage`, dll.).
@@ -755,6 +755,10 @@ Dokumentasi arsitektur, RBAC, alur kerja dokumen, dan API lengkap tersedia di di
      - `surat-keterangan-tidak-mampu.blade.php` (SKTM)
      - `laporan-keamanan.blade.php` (Security Incident Report)
    - Penyimpanan privat di `storage/app/private/` dengan hash SHA-256 dan token verifikasi publik tanpa bocor data pribadi (PII).
+5. **[Arsitektur Enterprise Microservices & Client-Side Offloading (`docs/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md`)](docs/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md)**
+   - Strategi enterprise: Komputasi rendering & penyimpanan file Word (`.docx`) dan PDF dialihkan ke **Client-Side (Front-End Compute)** untuk mencegah lonjakan CPU server, kehabisan memori (*OOM*), dan kemacetan rute API (*504 Gateway Timeout*).
+   - Layanan frontend `CitizenDocumentExporter` (`public/js/citizen-document-exporter.js`) dengan verifikasi Anti-Tamper SHA-256 via Web Crypto API.
+   - Caching dokumen di storage browser (LocalStorage / IndexedDB / PWA Cache) untuk akses offline dan unduh ulang instan tanpa beban server.
 
 ---
 
