@@ -15,16 +15,19 @@ return new class extends Migration
             $table->id();
             $table->text('no_kk'); // encrypted
             $table->char('no_kk_hash', 64)->unique();
-            $table->string('address')->nullable();
-            $table->string('rt', 5)->nullable();
-            $table->string('rw', 5)->nullable();
-            $table->string('province')->nullable();
-            $table->string('city')->nullable();
-            $table->string('district')->nullable();
-            $table->string('village')->nullable();
+            $table->string('address', 255);
+            $table->string('rt', 3)->default('001');
+            $table->string('rw', 3)->default('001');
+            $table->string('province', 100)->nullable();
+            $table->string('city', 100)->nullable();
+            $table->string('district', 100)->nullable();
+            $table->string('village', 100)->nullable();
+            $table->string('postal_code', 10)->nullable();
             $table->unsignedInteger('version')->default(1);
             $table->timestamps();
 
+            $table->index('no_kk_hash');
+            $table->index(['rt', 'rw']);
             $table->index('updated_at');
         });
     }

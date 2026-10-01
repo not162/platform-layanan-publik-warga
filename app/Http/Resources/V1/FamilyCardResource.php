@@ -26,6 +26,7 @@ class FamilyCardResource extends JsonResource
             'city' => $this->city,
             'district' => $this->district,
             'village' => $this->village,
+            'postal_code' => $this->postal_code,
             'version' => $this->version,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),

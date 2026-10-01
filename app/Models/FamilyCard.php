@@ -22,6 +22,7 @@ class FamilyCard extends Model
         'city',
         'district',
         'village',
+        'postal_code',
         'version',
     ];
 

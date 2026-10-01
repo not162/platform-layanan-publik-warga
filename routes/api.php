@@ -12,6 +12,7 @@ Route::prefix('v1')->group(function () {
     // Authenticated endpoints
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [ProfileController::class, 'show']);
+        Route::patch('/me', [ProfileController::class, 'update']);
 
         Route::get('/letters', [LetterController::class, 'index']);
         Route::post('/letters', [LetterController::class, 'store']);
