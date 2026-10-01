@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Citizen\ProfileController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\FinanceTransactionController;
 use App\Http\Controllers\LetterController;
+use App\Http\Controllers\PublicContentController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -49,4 +50,12 @@ Route::prefix('v1')->group(function () {
     Route::get('/finance/summary', [FinanceTransactionController::class, 'publicSummary']);
     Route::get('/finance', [FinanceTransactionController::class, 'publicIndex']);
     Route::get('/announcements', [AnnouncementController::class, 'publicIndex']);
+
+    // Public community information (announcements, events, officers, emergency, round schedules)
+    Route::get('/public/overview', [PublicContentController::class, 'portalOverview']);
+    Route::get('/public/announcements', [PublicContentController::class, 'announcements']);
+    Route::get('/public/events', [PublicContentController::class, 'events']);
+    Route::get('/public/officers', [PublicContentController::class, 'officers']);
+    Route::get('/public/emergency-contacts', [PublicContentController::class, 'emergencyContacts']);
+    Route::get('/public/schedules', [PublicContentController::class, 'roundSchedules']);
 });

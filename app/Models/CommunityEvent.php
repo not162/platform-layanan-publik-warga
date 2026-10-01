@@ -2,29 +2,29 @@
 
 namespace App\Models;
 
-use Database\Factories\AnnouncementFactory;
+use Database\Factories\CommunityEventFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Announcement extends Model
+class CommunityEvent extends Model
 {
-    /** @use HasFactory<AnnouncementFactory> */
+    /** @use HasFactory<CommunityEventFactory> */
     use HasFactory;
 
     protected $fillable = [
         'title',
-        'category',
-        'content',
-        'is_pinned',
+        'description',
+        'location',
+        'event_date',
+        'start_time',
+        'end_time',
         'is_published',
-        'published_at',
         'version',
     ];
 
     protected $casts = [
-        'is_pinned' => 'boolean',
+        'event_date' => 'date',
         'is_published' => 'boolean',
-        'published_at' => 'datetime',
         'version' => 'integer',
     ];
 }

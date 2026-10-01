@@ -11,18 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('announcements', function (Blueprint $table) {
+        Schema::create('community_events', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('category')->default('umum');
-            $table->text('content');
-            $table->boolean('is_pinned')->default(false);
-            $table->boolean('is_published')->default(false);
-            $table->timestamp('published_at')->nullable();
+            $table->text('description')->nullable();
+            $table->string('location');
+            $table->date('event_date');
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
+            $table->boolean('is_published')->default(true);
             $table->integer('version')->default(1);
             $table->timestamps();
 
-            $table->index(['is_published', 'is_pinned', 'published_at']);
+            $table->index(['is_published', 'event_date']);
         });
     }
 
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('announcements');
+        Schema::dropIfExists('community_events');
     }
 };

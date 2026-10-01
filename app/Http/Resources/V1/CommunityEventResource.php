@@ -5,26 +5,21 @@ namespace App\Http\Resources\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AnnouncementResource extends JsonResource
+class CommunityEventResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'category' => $this->category,
-            'content' => $this->content,
-            'is_pinned' => $this->is_pinned,
+            'description' => $this->description,
+            'location' => $this->location,
+            'event_date' => $this->event_date?->format('Y-m-d'),
+            'start_time' => $this->start_time,
+            'end_time' => $this->end_time,
             'is_published' => $this->is_published,
-            'published_at' => $this->published_at?->toIso8601String(),
             'version' => $this->version,
             'created_at' => $this->created_at?->toIso8601String(),
-            'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }
 }
