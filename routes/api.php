@@ -3,6 +3,7 @@
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Api\V1\Admin\CitizenController;
 use App\Http\Controllers\Api\V1\Citizen\ProfileController;
+use App\Http\Controllers\Api\V1\PushSubscriptionController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\FinanceTransactionController;
 use App\Http\Controllers\LetterController;
@@ -58,4 +59,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/public/officers', [PublicContentController::class, 'officers']);
     Route::get('/public/emergency-contacts', [PublicContentController::class, 'emergencyContacts']);
     Route::get('/public/schedules', [PublicContentController::class, 'roundSchedules']);
+
+    // Web push subscription registration
+    Route::post('/push/subscribe', [PushSubscriptionController::class, 'store']);
 });
