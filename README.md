@@ -725,8 +725,8 @@ PASS  Tests\Feature\PwaModuleTest
 PASS  Tests\Feature\RoleAndAuthorizationTest
 PASS  Tests\Feature\SecurityReportModuleTest
 
-Tests:    79 passed (283 assertions)
-Duration: 6.67s
+Tests:    80 passed (290 assertions)
+Duration: 8.15s
 Status:   100% OK
 ```
 
@@ -759,6 +759,10 @@ Dokumentasi arsitektur, RBAC, alur kerja dokumen, dan API lengkap tersedia di di
    - Strategi enterprise: Komputasi rendering & penyimpanan file Word (`.docx`) dan PDF dialihkan ke **Client-Side (Front-End Compute)** untuk mencegah lonjakan CPU server, kehabisan memori (*OOM*), dan kemacetan rute API (*504 Gateway Timeout*).
    - Layanan frontend `CitizenDocumentExporter` (`public/js/citizen-document-exporter.js`) dengan verifikasi Anti-Tamper SHA-256 via Web Crypto API.
    - Caching dokumen di storage browser (LocalStorage / IndexedDB / PWA Cache) untuk akses offline dan unduh ulang instan tanpa beban server.
+6. **[Spesifikasi OpenAPI 3.0 & Swagger UI Interaktif (`docs/openapi.yaml`)](docs/openapi.yaml)**
+   - Akses antarmuka interaktif langsung via browser: **`/docs/api`** atau **`/api/documentation`**.
+   - Raw OpenAPI Schema: **`/docs/openapi.yaml`**.
+   - Penegakan tipe data ketat (*Strongly Typed Contract*): Enums (`UserRole`, `LetterStatus`, `SecurityReportSeverity`, `SecurityReportCategory`), Format `date-time` / `binary` file upload, regex pattern NIK 16 digit, skema respons terstruktur, dan otentikasi Sanctum Bearer token.
 
 ---
 

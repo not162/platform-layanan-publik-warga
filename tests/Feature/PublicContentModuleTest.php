@@ -155,4 +155,17 @@ class PublicContentModuleTest extends TestCase
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.day_of_week', 'sabtu');
     }
+
+    public function test_openapi_spec_and_swagger_ui_are_accessible(): void
+    {
+        $yamlResponse = $this->get('/docs/openapi.yaml');
+        $yamlResponse->assertStatus(200);
+        $yamlResponse->assertHeader('Content-Type', 'text/yaml; charset=UTF-8');
+        $this->assertStringContainsString('openapi: 3.0.3', $yamlResponse->getContent());
+        $this->assertStringContainsString('title: Platform Layanan Publik Warga', $yamlResponse->getContent());
+
+        $swaggerUiResponse = $this->get('/docs/api');
+        $swaggerUiResponse->assertStatus(200);
+        $this->assertStringContainsString('SwaggerUIBundle', $swaggerUiResponse->getContent());
+    }
 }
