@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Api\V1\Admin\CitizenController;
+use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Citizen\ProfileController;
 use App\Http\Controllers\Api\V1\PushSubscriptionController;
 use App\Http\Controllers\ComplaintController;
@@ -11,8 +12,13 @@ use App\Http\Controllers\PublicContentController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
+    // Auth endpoints
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+
     // Authenticated endpoints
     Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [ProfileController::class, 'show']);
         Route::patch('/me', [ProfileController::class, 'update']);
 
@@ -25,7 +31,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/complaints/{id}', [ComplaintController::class, 'show']);
 
         // Admin routes
-        Route::prefix('admin')->middleware('role:ADMIN,SUPERADMIN')->group(function () {
+        Route::prefix('admin')->middleware('role:ADMIN,SUPERADMIN,KETUA_RT,BENDAHARA,SEKRETARIS')->group(function () {
             Route::apiResource('citizens', CitizenController::class);
             Route::get('/letters', [LetterController::class, 'adminIndex']);
             Route::patch('/letters/{id}/verify', [LetterController::class, 'adminVerify']);
@@ -36,7 +42,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/complaints', [ComplaintController::class, 'adminIndex']);
 
             Route::apiResource('finance', FinanceTransactionController::class)->except(['show'])->middleware('permission:finance.manage');
-            Route::apiResource('announcements', AnnouncementController::class)->except(['show', 'destroy']);
+            Route::apiResource('announcements', AnnouncementController::class);
         });
     });
 
