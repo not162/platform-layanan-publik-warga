@@ -79,33 +79,33 @@ Diagram use case memetakan interaksi seluruh aktor (Warga, Sekretaris, Bendahara
 
 ```mermaid
 flowchart LR
-    Warga((fa:fa-user Warga))
-    Sekretaris((fa:fa-id-badge Sekretaris))
-    Bendahara((fa:fa-calculator Bendahara))
-    KetuaRT((fa:fa-user-tie Ketua RT))
-    Superadmin((fa:fa-crown Superadmin))
+    Warga["👤 Warga"]
+    Sekretaris["📋 Sekretaris RT"]
+    Bendahara["💰 Bendahara RT"]
+    KetuaRT["👔 Ketua RT"]
+    Superadmin["👑 Superadmin"]
 
     subgraph Portal Layanan Publik Warga
-        UC1[Daftar Akun & Verifikasi NIK]
-        UC2[Login & Manajemen Profil]
-        UC3[Pengajuan Surat Pengantar]
-        UC4[Lacak & Verifikasi Surat]
-        UC5[Kirim Keluhan / Aspirasi]
-        UC6[Lihat Kas Transparan & Pengumuman]
+        UC1["Daftar Akun & Verifikasi NIK"]
+        UC2["Login & Manajemen Profil"]
+        UC3["Pengajuan Surat Pengantar"]
+        UC4["Lacak & Verifikasi Surat"]
+        UC5["Kirim Keluhan / Aspirasi"]
+        UC6["Lihat Kas Transparan & Pengumuman"]
         
-        UC7[Kelola Master Data Warga]
-        UC8[Verifikasi Berkas Surat]
-        UC9[Kelola Pengumuman & Agenda RT]
+        UC7["Kelola Master Data Warga"]
+        UC8["Verifikasi Berkas Surat"]
+        UC9["Kelola Pengumuman & Agenda RT"]
         
-        UC10[Kelola Transaksi Kas RT]
-        UC11[Reversal / Koreksi Kas]
-        UC12[Publikasi Laporan Kas]
+        UC10["Kelola Transaksi Kas RT"]
+        UC11["Reversal / Koreksi Kas"]
+        UC12["Publikasi Laporan Kas"]
         
-        UC13[Persetujuan Akhir Surat]
-        UC14[Tindak Lanjut Aduan Warga]
+        UC13["Persetujuan Akhir Surat"]
+        UC14["Tindak Lanjut Aduan Warga"]
         
-        UC15[Manajemen Pengguna & Izin Akses]
-        UC16[Audit Log & Sistem Pengaturan]
+        UC15["Manajemen Pengguna & Izin Akses"]
+        UC16["Audit Log & Sistem Pengaturan"]
     end
 
     Warga --> UC1
@@ -373,64 +373,64 @@ Representasi relasional tabel skema database dengan relasi kunci utama (*Primary
 #### A. Alur Pengajuan dan Persetujuan Surat Pengantar Warga
 ```mermaid
 flowchart TD
-    Start([Mulai: Warga Butuh Surat]) --> A1[Warga Login ke Portal]
-    A1 --> A2[Pilih Jenis Surat & Isi Keperluan]
-    A2 --> A3[Upload Dokumen Persyaratan KTP/KK]
-    A3 --> A4[Klik Kirim Permohonan]
-    A4 --> A5[(Sistem Simpan Status: SUBMITTED)]
-    A5 --> A6[Generate Nomor Tiket & Token Pelacakan]
-    A6 --> A7[Notifikasi Realtime ke Dashboard Sekretaris]
+    Start(["Mulai: Warga Butuh Surat"]) --> A1["Warga Login ke Portal"]
+    A1 --> A2["Pilih Jenis Surat & Isi Keperluan"]
+    A2 --> A3["Upload Dokumen Persyaratan KTP/KK"]
+    A3 --> A4["Klik Kirim Permohonan"]
+    A4 --> A5[("Sistem Simpan Status: SUBMITTED")]
+    A5 --> A6["Generate Nomor Tiket & Token Pelacakan"]
+    A6 --> A7["Notifikasi Realtime ke Dashboard Sekretaris"]
     
-    A7 --> B1[Sekretaris Buka Menu Verifikasi Surat]
-    B1 --> B2{Berkas Lengkap & Sesuai?}
+    A7 --> B1["Sekretaris Buka Menu Verifikasi Surat"]
+    B1 --> B2{"Berkas Lengkap & Sesuai?"}
     
-    B2 -- Tidak Sesuai --> B3[Sekretaris Isi Alasan Penolakan]
-    B3 --> B4[(Status Diperbarui: REJECTED)]
-    B4 --> B5[Kirim Notifikasi Alasan ke Warga]
-    B5 --> EndTolak([Selesai: Surat Ditolak])
+    B2 -- "Tidak Sesuai" --> B3["Sekretaris Isi Alasan Penolakan"]
+    B3 --> B4[("Status Diperbarui: REJECTED")]
+    B4 --> B5["Kirim Notifikasi Alasan ke Warga"]
+    B5 --> EndTolak(["Selesai: Surat Ditolak"])
     
-    B2 -- Lengkap --> B6[Sekretaris Klik Verifikasi Berkas]
-    B6 --> B7[(Status Diperbarui: VERIFIED)]
-    B7 --> B8[Notifikasi Otomatis ke Akun Ketua RT]
+    B2 -- "Lengkap" --> B6["Sekretaris Klik Verifikasi Berkas"]
+    B6 --> B7[("Status Diperbarui: VERIFIED")]
+    B7 --> B8["Notifikasi Otomatis ke Akun Ketua RT"]
     
-    B8 --> C1[Ketua RT Buka Menu Persetujuan Surat]
-    C1 --> C2{Disetujui Ketua RT?}
+    B8 --> C1["Ketua RT Buka Menu Persetujuan Surat"]
+    C1 --> C2{"Disetujui Ketua RT?"}
     
-    C2 -- Ditolak --> C3[Ketua RT Masukkan Alasan Penolakan]
+    C2 -- "Ditolak" --> C3["Ketua RT Masukkan Alasan Penolakan"]
     C3 --> B4
     
-    C2 -- Disetujui --> C4[Ketua RT Beri Tanda Tangan & Setujui]
-    C4 --> C5[(Status Diperbarui: APPROVED)]
-    C5 --> C6[Generate QR Code Keaslian & PDF Surat]
-    C6 --> C7[Warga Dapat Mengunduh Surat Resmi]
-    C7 --> EndSukses([Selesai: Surat Siap Digunakan])
+    C2 -- "Disetujui" --> C4["Ketua RT Beri Tanda Tangan & Setujui"]
+    C4 --> C5[("Status Diperbarui: APPROVED")]
+    C5 --> C6["Generate QR Code Keaslian & PDF Surat"]
+    C6 --> C7["Warga Dapat Mengunduh Surat Resmi"]
+    C7 --> EndSukses(["Selesai: Surat Siap Digunakan"])
 ```
 
 #### B. Alur Pencatatan & Pembatalan Transaksi Kas RT (Immutable Reversal)
 ```mermaid
 flowchart TD
-    Start([Mulai: Transaksi Kas RT]) --> K1[Bendahara Input Pemasukan / Pengeluaran]
-    K1 --> K2[(Sistem Simpan Status: DRAFT)]
-    K2 --> K3{Perlu Publikasi Transparansi?}
+    Start(["Mulai: Transaksi Kas RT"]) --> K1["Bendahara Input Pemasukan / Pengeluaran"]
+    K1 --> K2[("Sistem Simpan Status: DRAFT")]
+    K2 --> K3{"Perlu Publikasi Transparansi?"}
     
-    K3 -- Belum --> K4[Bisa Diedit / Dihapus oleh Bendahara]
-    K4 --> EndDraft([Tetap sebagai Draft])
+    K3 -- "Belum" --> K4["Bisa Diedit / Dihapus oleh Bendahara"]
+    K4 --> EndDraft(["Tetap sebagai Draft"])
     
-    K3 -- Ya, Publikasikan --> K5[Bendahara Klik Publikasikan Laporan]
-    K5 --> K6[(Status Diperbarui: PUBLISHED)]
-    K6 --> K7[Cache Laporan Publik Dibersihkan Otomatis]
-    K7 --> K8[Laporan Tampil Real-time di Portal Warga]
+    K3 -- "Ya, Publikasikan" --> K5["Bendahara Klik Publikasikan Laporan"]
+    K5 --> K6[("Status Diperbarui: PUBLISHED")]
+    K6 --> K7["Cache Laporan Publik Dibersihkan Otomatis"]
+    K7 --> K8["Laporan Tampil Real-time di Portal Warga"]
     
-    K8 --> K9{Ditemukan Kesalahan Angka di Kemudian Hari?}
-    K9 -- Tidak Ada --> EndPublikasi([Selesai: Kas Transparan Selesai])
+    K8 --> K9{"Ditemukan Kesalahan Angka di Kemudian Hari?"}
+    K9 -- "Tidak Ada" --> EndPublikasi(["Selesai: Kas Transparan Selesai"])
     
-    K9 -- Ada Kesalahan Input --> K10[Sistem Tolak Hard Delete / Update Langsung]
-    K10 --> K11[Bendahara Ajukan Transaksi Reversal Pembalik]
-    K11 --> K12[Wajib Mengisi Alasan Pembatalan & Optimistic Lock Check]
-    K12 --> K13[(Transaksi Asal Ditandai: REVERSED)]
-    K13 --> K14[(Sistem Buat Transaksi Pembalik Baru Secara Otomatis)]
-    K14 --> K15[(Catat Riwayat Lengkap di Tabel Audit Logs)]
-    K15 --> EndReversal([Selesai: Rekonsiliasi Kas Bersih Sesuai Standar Akuntansi])
+    K9 -- "Ada Kesalahan Input" --> K10["Sistem Tolak Hard Delete / Update Langsung"]
+    K10 --> K11["Bendahara Ajukan Transaksi Reversal Pembalik"]
+    K11 --> K12["Wajib Mengisi Alasan Pembatalan & Optimistic Lock Check"]
+    K12 --> K13[("Transaksi Asal Ditandai: REVERSED")]
+    K13 --> K14[("Sistem Buat Transaksi Pembalik Baru Secara Otomatis")]
+    K14 --> K15[("Catat Riwayat Lengkap di Tabel Audit Logs")]
+    K15 --> EndReversal(["Selesai: Rekonsiliasi Kas Bersih Sesuai Standar Akuntansi"])
 ```
 
 ---
@@ -526,49 +526,49 @@ sequenceDiagram
 #### A. Algoritma Verifikasi Hashing NIK (Proteksi Privasi Warga)
 ```mermaid
 flowchart TD
-    Start([Mulai: Input NIK]) --> In[Warga Input 16 Digit NIK]
-    In --> V1{Apakah NIK tepat 16 digit angka?}
-    V1 -- Tidak --> E1[Tolak: Tampilkan Error Format NIK]
-    E1 --> Shake[Jalankan Efek Shake Input]
-    Shake --> End1([Selesai])
+    Start(["Mulai: Input NIK"]) --> In["Warga Input 16 Digit NIK"]
+    In --> V1{"Apakah NIK tepat 16 digit angka?"}
+    V1 -- "Tidak" --> E1["Tolak: Tampilkan Error Format NIK"]
+    E1 --> Shake["Jalankan Efek Shake Input"]
+    Shake --> End1(["Selesai"])
     
-    V1 -- Ya --> Hash[Lakukan Enkripsi One-Way: hash('sha256', NIK)]
-    Hash --> Query[(Cari di tabel citizens WHERE nik_hash = hash)]
-    Query --> Check{Ditemukan?}
+    V1 -- "Ya" --> Hash["Lakukan Enkripsi One-Way: SHA-256 NIK"]
+    Hash --> Query[("Cari di tabel citizens WHERE nik_hash = hash")]
+    Query --> Check{"Ditemukan?"}
     
-    Check -- Tidak --> E2[Tolak: NIK Belum Terdaftar di Sensus RT]
+    Check -- "Tidak" --> E2["Tolak: NIK Belum Terdaftar di Sensus RT"]
     E2 --> Shake
     
-    Check -- Ya --> Linked{user_id != null?}
-    Linked -- Ya --> E3[Tolak: Akun NIK Ini Sudah Aktif]
+    Check -- "Ya" --> Linked{"Sudah punya akun (user_id != null)?"}
+    Linked -- "Ya" --> E3["Tolak: Akun NIK Ini Sudah Aktif"]
     E3 --> Shake
     
-    Linked -- Tidak --> Link[Hubungkan user_id ke baris citizen]
-    Link --> Create[Buat Akun User Baru dengan Role: WARGA]
-    Create --> Event[Pusher Broadcast: CitizenRegistered]
-    Event --> Token[Generate Personal Sanctum Token]
-    Token --> Sukses([Verifikasi Sukses: Masuk ke Dashboard])
+    Linked -- "Tidak" --> Link["Hubungkan user_id ke data citizen"]
+    Link --> Create["Buat Akun User Baru (Role: WARGA)"]
+    Create --> Event["Pusher Broadcast: Event CitizenRegistered"]
+    Event --> Token["Generate Personal Sanctum Token"]
+    Token --> Sukses(["Verifikasi Sukses: Masuk ke Dashboard"])
 ```
 
 #### B. Algoritma Optimistic Locking & Audit Trail Pembukuan Kas RT
 ```mermaid
 flowchart TD
-    Start([Mulai: Update Transaksi Kas]) --> Q1[Ambil Data Transaksi + Input Versi Saat Ini]
-    Q1 --> Lock[Lock Baris Transaksi di Database]
-    Lock --> C1{status == 'published'?}
+    Start(["Mulai: Update Transaksi Kas"]) --> Q1["Ambil Data Transaksi + Input Versi Saat Ini"]
+    Q1 --> Lock["Lock Baris Transaksi di Database"]
+    Lock --> C1{"Status Transaksi == 'published'?"}
     
-    C1 -- Ya, Mau Dihapus Langsung --> RejectDel[Larangan: Data Kas Terpublikasi Tidak Boleh Hard Delete]
-    RejectDel --> ReversalReq[Arahkan Menggunakan Alur Reversal Transaksi]
+    C1 -- "Ya, Mau Dihapus Langsung" --> RejectDel["Larangan: Data Kas Terpublikasi Tidak Boleh Hard Delete"]
+    RejectDel --> ReversalReq["Arahkan Menggunakan Alur Reversal Transaksi"]
     
-    C1 -- Update / Reversal --> C2{version_input == db.version?}
-    C2 -- Tidak Sama --> Conflict[Gagal: 409 Conflict. Data telah diubah pengguna lain secara simultan]
+    C1 -- "Update / Reversal" --> C2{"Versi Input == Versi Database?"}
+    C2 -- "Tidak Sama" --> Conflict["Gagal: 409 Conflict (Data telah diubah pengguna lain)"]
     
-    C2 -- Sama Sesuai --> Exec[Lakukan Operasi Reversal / Perubahan Data]
-    Exec --> IncVersion[Naikkan Version: db.version = db.version + 1]
-    IncVersion --> Audit[(Tulis Riwayat di Tabel audit_logs: Old Values vs New Values)]
-    Audit --> CacheFlush[Hapus Cache Ringkasan Kas Publik]
-    CacheFlush --> Commit[(Database Commit Transaction)]
-    Commit --> Done([Selesai: Transaksi Bersih & Sesuai Mutasi Kas])
+    C2 -- "Sama Sesuai" --> Exec["Lakukan Operasi Reversal / Perubahan Data"]
+    Exec --> IncVersion["Naikkan Versi: version = version + 1"]
+    IncVersion --> Audit[("Tulis Riwayat di Tabel audit_logs: Old vs New")]
+    Audit --> CacheFlush["Hapus Cache Ringkasan Kas Publik"]
+    CacheFlush --> Commit[("Database Commit Transaction")]
+    Commit --> Done(["Selesai: Transaksi Bersih & Sesuai Mutasi Kas"])
 ```
 
 ---
