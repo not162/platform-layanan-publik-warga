@@ -25,6 +25,9 @@ Route::prefix('v1')->group(function () {
         Route::prefix('admin')->middleware('role:ADMIN,SUPERADMIN')->group(function () {
             Route::apiResource('citizens', CitizenController::class);
             Route::get('/letters', [LetterController::class, 'adminIndex']);
+            Route::patch('/letters/{id}/verify', [LetterController::class, 'adminVerify']);
+            Route::patch('/letters/{id}/approve', [LetterController::class, 'adminApprove']);
+            Route::patch('/letters/{id}/reject', [LetterController::class, 'adminReject']);
 
             Route::patch('/complaints/{id}/status', [ComplaintController::class, 'update']);
             Route::get('/complaints', [ComplaintController::class, 'adminIndex']);
@@ -33,6 +36,10 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('announcements', AnnouncementController::class)->except(['show', 'destroy']);
         });
     });
+
+    // Public letter verification and tracking
+    Route::get('/public/letter/verify/{token}', [LetterController::class, 'verifyPublic']);
+    Route::get('/public/track/{ticket}', [LetterController::class, 'trackPublic']);
 
     // Public routes (complaints can be submitted anonymously)
     Route::post('/complaints', [ComplaintController::class, 'store']);
