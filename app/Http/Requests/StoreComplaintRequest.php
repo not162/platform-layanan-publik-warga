@@ -12,7 +12,7 @@ class StoreComplaintRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Public/guests can submit anonymously
+        // Public/citizens can submit (including anonymously)
         return true;
     }
 
@@ -24,8 +24,11 @@ class StoreComplaintRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:180'],
             'description' => ['required', 'string'],
+            'kategori' => ['nullable', 'string', 'max:80'],
+            'lokasi' => ['nullable', 'string', 'max:255'],
+            'priority' => ['nullable', 'string', 'in:rendah,sedang,tinggi,darurat'],
             'is_anonymous' => ['nullable', 'boolean'],
             'attachment_path' => ['nullable', 'string', 'max:255'],
         ];

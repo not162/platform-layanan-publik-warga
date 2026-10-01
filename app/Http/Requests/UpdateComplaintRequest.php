@@ -23,7 +23,9 @@ class UpdateComplaintRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['sometimes', 'string', 'in:submitted,in_progress,resolved,rejected'],
+            'status' => ['required', 'string', 'in:submitted,reviewed,processing,resolved,closed,rejected,in_progress'],
+            'admin_response' => ['nullable', 'string'],
+            'priority' => ['nullable', 'string', 'in:rendah,sedang,tinggi,darurat'],
             'version' => ['required', 'integer', 'min:1'], // Optimistic locking
         ];
     }
