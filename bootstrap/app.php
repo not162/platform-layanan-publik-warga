@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureUserHasPermission;
+use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\ETagMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(append: [
             ETagMiddleware::class,
+        ]);
+
+        $middleware->alias([
+            'role' => EnsureUserHasRole::class,
+            'permission' => EnsureUserHasPermission::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

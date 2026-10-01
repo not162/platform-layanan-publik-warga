@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Enums\UserRole;
 use App\Models\Citizen;
 use App\Models\FamilyCard;
 use App\Models\Letter;
@@ -16,7 +15,7 @@ class LetterModuleTest extends TestCase
 
     public function test_citizen_can_create_letter(): void
     {
-        $user = User::factory()->create(['role' => UserRole::Citizen->value]);
+        $user = User::factory()->warga()->create();
         $familyCard = FamilyCard::factory()->create();
         $citizen = Citizen::factory()->create(['user_id' => $user->id, 'family_card_id' => $familyCard->id]);
 
@@ -40,14 +39,15 @@ class LetterModuleTest extends TestCase
         ]);
     }
 
-    public function test_letter_status_workflow(): void
+    public function test_letter_status_workflow_with_scoped_permissions(): void
     {
-        $citizenUser = User::factory()->create(['role' => UserRole::Citizen->value]);
+        $citizenUser = User::factory()->warga()->create();
         $familyCard = FamilyCard::factory()->create();
         $citizen = Citizen::factory()->create(['user_id' => $citizenUser->id, 'family_card_id' => $familyCard->id]);
 
-        $secretary = User::factory()->create(['role' => UserRole::Secretary->value]);
-        $rtHead = User::factory()->create(['role' => UserRole::RtHead->value]);
+        $verifierAdmin = User::factory()->admin(['letter.verify'])->create();
+        $approverAdmin = User::factory()->admin(['letter.approve'])->create();
+        $unscopedAdmin = User::factory()->admin(['finance.manage'])->create();
 
         $letter = Letter::create([
             'citizen_id' => $citizen->id,
@@ -69,23 +69,37 @@ class LetterModuleTest extends TestCase
             'status' => 'approved',
             'version' => 2,
         ]);
-        $response->assertStatus(409); // Or 403
+        $response->assertStatus(409);
 
-        // 3. Secretary verifies letter (submitted -> verified)
-        $response = $this->actingAs($secretary)->patchJson('/api/v1/letters/'.$letter->id.'/status', [
+        // 3. Unscoped admin cannot verify (lacks letter.verify scope)
+        $response = $this->actingAs($unscopedAdmin)->patchJson('/api/v1/letters/'.$letter->id.'/status', [
+            'status' => 'verified',
+            'version' => 2,
+        ]);
+        $response->assertStatus(403);
+
+        // 4. Verifier Admin verifies letter (submitted -> verified)
+        $response = $this->actingAs($verifierAdmin)->patchJson('/api/v1/letters/'.$letter->id.'/status', [
             'status' => 'verified',
             'version' => 2,
         ]);
         $response->assertStatus(200);
         $this->assertDatabaseHas('letters', ['id' => $letter->id, 'status' => 'verified', 'version' => 3]);
 
-        // 4. RT Head approves letter (verified -> approved)
-        $response = $this->actingAs($rtHead)->patchJson('/api/v1/letters/'.$letter->id.'/status', [
+        // 5. Approver Admin approves letter (verified -> approved)
+        $response = $this->actingAs($approverAdmin)->patchJson('/api/v1/letters/'.$letter->id.'/status', [
             'status' => 'approved',
             'version' => 3,
             'letter_number' => 'SURAT/123/2026',
         ]);
         $response->assertStatus(200);
         $this->assertDatabaseHas('letters', ['id' => $letter->id, 'status' => 'approved', 'letter_number' => 'SURAT/123/2026', 'version' => 4]);
+
+        // 6. Optimistic Locking Test: Re-updating using old version 3 returns 409 Conflict
+        $response = $this->actingAs($approverAdmin)->patchJson('/api/v1/letters/'.$letter->id.'/status', [
+            'status' => 'approved',
+            'version' => 3,
+        ]);
+        $response->assertStatus(409);
     }
 }

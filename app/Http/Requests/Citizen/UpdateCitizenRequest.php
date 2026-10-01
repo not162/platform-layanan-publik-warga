@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Citizen;
 
-use App\Enums\UserRole;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,7 +12,7 @@ class UpdateCitizenRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->role === UserRole::Admin;
+        return $this->user()?->hasPermission('citizen.manage') ?? false;
     }
 
     /**
