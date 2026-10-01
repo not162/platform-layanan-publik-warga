@@ -19,10 +19,44 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* Very light slate for non-AI feel */
+            background-color: #f8fafc; /* Very light slate for clean aesthetic */
         }
         
         [x-cloak] { display: none !important; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            15%, 45%, 75% { transform: translateX(-6px); }
+            30%, 60%, 90% { transform: translateX(6px); }
+        }
+        
+        .animate-shake {
+            animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        @keyframes slideDownFade {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .animate-slide-down {
+            animation: slideDownFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes softPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            50% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.18); }
+        }
+
+        .animate-pulse-error {
+            animation: softPulse 1.2s ease-in-out infinite;
+        }
     </style>
 
     <!-- Tailwind CSS (Vite) -->
