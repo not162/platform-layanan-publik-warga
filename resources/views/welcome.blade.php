@@ -2,9 +2,43 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="light">
-    <title>{{ config('app.name', 'Layanan Publik Warga') }} - Portal Layanan Publik RT</title>
+    <title>{{ config('app.name', 'Layanan Publik Warga') }} - Portal Layanan Publik RT & Administrasi Digital</title>
+
+    <!-- SEO & Core Web Vitals Optimization -->
+    <meta name="description" content="Portal digital layanan publik RT 01 / RW 05: pengurusan surat pengantar digital, transparansi buku kas lingkungan anti-fraud, pelaporan aduan warga, jadwal ronda kamling, dan kontak darurat penting.">
+    <meta name="keywords" content="layanan publik warga, portal warga rt, surat pengantar digital, transparansi kas rt, pengaduan lingkungan, jadwal ronda kamling, administrasi kependudukan">
+    <meta name="author" content="Pengurus RT 01 / RW 05">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <!-- OpenGraph (OG) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="Portal Layanan Publik Warga - Administrasi RT Terpadu">
+    <meta property="og:description" content="Akses layanan mandiri warga: buat permohonan surat pengantar, pantau status real-time, transparansi kas lingkungan, dan laporkan keluhan fasilitas.">
+    <meta property="og:image" content="{{ asset('images/logo-horizontal.svg') }}">
+    <meta property="og:site_name" content="Portal Layanan Publik Warga">
+    <meta property="og:locale" content="id_ID">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Portal Layanan Publik Warga RT">
+    <meta name="twitter:description" content="Sistem administrasi mandiri warga, transparansi kas RT, dan pengaduan lingkungan terverifikasi.">
+    <meta name="twitter:image" content="{{ asset('images/logo-horizontal.svg') }}">
+
+    <!-- Geolocation Meta (GEO) -->
+    <meta name="geo.region" content="ID-JK">
+    <meta name="geo.placename" content="Jakarta">
+    <meta name="geo.position" content="-6.2088;106.8456">
+    <meta name="ICBM" content="-6.2088, 106.8456">
+
+    <!-- Priority Hints & Font Resource Hints (LCP & CLS Optimization) -->
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link rel="preload" as="image" href="{{ asset('images/logo-horizontal.svg') }}" type="image/svg+xml" fetchpriority="high">
+    <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
 
     <!-- Favicon & PWA meta -->
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
@@ -13,8 +47,46 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Portal Warga">
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
+
+    <!-- Structured Data (JSON-LD) for Local Governance & WebSite -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@graph": [
+            {
+                "@@type": "GovernmentOrganization",
+                "@@id": "{{ url('/') }}#organization",
+                "name": "Rukun Tetangga 01 / Rukun Warga 05",
+                "alternateName": "Portal Layanan Publik Warga RT 01",
+                "url": "{{ url('/') }}",
+                "logo": "{{ asset('images/logo-horizontal.svg') }}",
+                "address": {
+                    "@@type": "PostalAddress",
+                    "addressLocality": "Jakarta",
+                    "addressRegion": "DKI Jakarta",
+                    "addressCountry": "ID"
+                },
+                "geo": {
+                    "@@type": "GeoCoordinates",
+                    "latitude": -6.2088,
+                    "longitude": 106.8456
+                }
+            },
+            {
+                "@@type": "WebSite",
+                "@@id": "{{ url('/') }}#website",
+                "url": "{{ url('/') }}",
+                "name": "Platform Layanan Publik Warga",
+                "inLanguage": "id-ID",
+                "potentialAction": {
+                    "@@type": "SearchAction",
+                    "target": "{{ url('/api/v1/public/track/') }}/{ticket_number}",
+                    "query-input": "required name=ticket_number"
+                }
+            }
+        ]
+    }
+    </script>
 
     <style>
         :root {
@@ -75,9 +147,10 @@
             align-items: center;
             justify-content: space-between;
             height: 4.5rem;
+            position: relative;
         }
 
-        .nav-links {
+        .nav-primary-group {
             display: flex;
             align-items: center;
             gap: 1.5rem;
@@ -88,12 +161,276 @@
             text-decoration: none;
             color: var(--color-slate);
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 600;
             transition: color 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
         }
 
         .nav-link:hover {
             color: var(--color-primary);
+        }
+
+        .nav-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Hamburger Button */
+        .hamburger-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--color-border);
+            background: #FFFFFF;
+            color: var(--color-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hamburger-btn:hover {
+            background: var(--color-slate-light);
+            border-color: var(--color-primary);
+        }
+
+        /* Off-canvas Navigation Drawer */
+        .nav-drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 990;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .nav-drawer-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 320px;
+            max-width: 88vw;
+            height: 100vh;
+            background: #FFFFFF;
+            box-shadow: -8px 0 30px rgba(0, 0, 0, 0.12);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .nav-drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-body {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            flex: 1;
+        }
+
+        .drawer-heading {
+            font-size: 0.725rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-slate-muted);
+            font-weight: 700;
+            margin: 0.75rem 0 0.25rem 0.5rem;
+        }
+
+        .drawer-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 0.85rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: var(--color-slate);
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+
+        .drawer-item:hover {
+            background: var(--color-slate-light);
+            color: var(--color-primary);
+        }
+
+        /* Carousel Styles */
+        .carousel-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .carousel-wrapper {
+            background: #FFFFFF;
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px -10px rgba(27, 54, 93, 0.06);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel-header {
+            padding: 1.5rem 2rem 1.25rem;
+            border-bottom: 1px solid var(--color-slate-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .carousel-track-outer {
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            min-height: 220px;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+            touch-action: pan-y;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+            padding: 2rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .carousel-slide-badge-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .carousel-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .carousel-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            font-size: 0.85rem;
+            color: var(--color-teal);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .carousel-desc {
+            font-size: 0.95rem;
+            color: var(--color-slate);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            max-width: 860px;
+        }
+
+        .carousel-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 2rem 1.25rem;
+            border-top: 1px solid var(--color-slate-light);
+            background: #FAFAFC;
+        }
+
+        .carousel-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .carousel-ctrl-btn {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            border: 1px solid var(--color-border);
+            background: #FFFFFF;
+            color: var(--color-primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .carousel-ctrl-btn:hover {
+            background: var(--color-primary);
+            color: #FFFFFF;
+            border-color: var(--color-primary);
+        }
+
+        .carousel-dots {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .carousel-dot {
+            width: 0.65rem;
+            height: 0.65rem;
+            border-radius: 9999px;
+            background: var(--color-border);
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .carousel-dot.active {
+            width: 1.75rem;
+            background: var(--color-teal);
+        }
+
+        /* Responsive rules */
+        @media (max-width: 860px) {
+            .nav-primary-group {
+                display: none;
+            }
+            .carousel-slide {
+                padding: 1.5rem;
+            }
+            .carousel-header {
+                padding: 1.25rem 1.5rem;
+            }
+            .carousel-footer {
+                padding: 0.75rem 1.5rem 1rem;
+            }
         }
 
         .btn {
@@ -492,33 +829,103 @@
         <div class="container">
             <nav class="navbar">
                 <a href="{{ url('/') }}" aria-label="Layanan Publik Warga Home" style="display: flex; align-items: center; text-decoration: none;">
-                    <x-brand-logo variant="horizontal" class="h-10" />
+                    <x-brand-logo variant="horizontal" fetchpriority="high" class="h-10" />
                 </a>
 
-                <ul class="nav-links">
+                <!-- 3 Prioritized Desktop Navigation Links -->
+                <ul class="nav-primary-group">
+                    <li><a href="#pengumuman-carousel" class="nav-link">Warta & Agenda</a></li>
                     <li><a href="#transparansi-kas" class="nav-link">Kas RT</a></li>
-                    <li><a href="#pengumuman" class="nav-link">Pengumuman</a></li>
-                    <li><a href="#agenda" class="nav-link">Agenda</a></li>
-                    <li><a href="#keamanan" class="nav-link">Jadwal Ronda</a></li>
-                    <li><a href="#darurat" class="nav-link">Kontak Darurat</a></li>
-                    <li><button onclick="openComplaintModal()" class="btn btn-secondary" style="padding: 0.5rem 0.9rem; font-size: 0.85rem;">📝 Lapor Pengaduan</button></li>
+                    <li>
+                        <button type="button" onclick="openComplaintModal()" class="btn btn-secondary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem; font-weight: 600;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.25rem;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                            Lapor Pengaduan
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Desktop Action & Hamburger Toggle -->
+                <div class="nav-actions-group">
                     @if (Route::has('login'))
                         @auth
-                            <li><a href="{{ url('/dashboard') }}" class="btn btn-primary">Dashboard Warga</a></li>
+                            <a href="{{ url('/dashboard') }}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Dashboard Warga</a>
                         @else
-                            <li><a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="btn btn-primary">Masuk Portal</a></li>
+                            <a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Masuk Portal</a>
                         @endauth
                     @endif
-                </ul>
+
+                    <!-- Hamburger Button for Remaining Navigation Links -->
+                    <button type="button" id="hamburgerBtn" onclick="toggleNavDrawer()" class="hamburger-btn" aria-label="Buka Menu Navigasi Lengkap">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    </button>
+                </div>
             </nav>
         </div>
     </header>
+
+    <!-- Off-canvas Navigation Drawer (Remaining Links) -->
+    <div id="navDrawerBackdrop" class="nav-drawer-backdrop" onclick="toggleNavDrawer()"></div>
+    <aside id="navDrawer" class="nav-drawer" aria-label="Menu Lengkap Layanan">
+        <div class="drawer-header">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <x-brand-logo variant="symbol" class="h-7" />
+                <span style="font-weight: 700; color: var(--color-primary); font-size: 0.95rem;">Navigasi Portal RT</span>
+            </div>
+            <button type="button" onclick="toggleNavDrawer()" style="background: none; border: none; font-size: 1.25rem; color: var(--color-slate); cursor: pointer;" aria-label="Tutup Menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <div class="drawer-heading">Informasi Utama</div>
+            <a href="#pengumuman-carousel" class="drawer-item" onclick="toggleNavDrawer()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                Warta & Pengumuman Baru
+            </a>
+            <a href="#transparansi-kas" class="drawer-item" onclick="toggleNavDrawer()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                Transparansi Kas Lingkungan
+            </a>
+            <button type="button" onclick="toggleNavDrawer(); openComplaintModal();" class="drawer-item" style="background: transparent; border: none; text-align: left; width: 100%; cursor: pointer;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Form Pengaduan Warga
+            </button>
+
+            <div class="drawer-heading">Pelayanan & Keamanan</div>
+            <a href="#agenda" class="drawer-item" onclick="toggleNavDrawer()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Agenda Kegiatan Warga
+            </a>
+            <a href="#keamanan" class="drawer-item" onclick="toggleNavDrawer()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Jadwal Ronda & Kamling
+            </a>
+            <a href="#darurat" class="drawer-item" onclick="toggleNavDrawer()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Kontak Darurat 24 Jam
+            </a>
+            <a href="#pengurus" class="drawer-item" onclick="toggleNavDrawer()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Struktur Pengurus RT 01
+            </a>
+
+            <div class="drawer-heading">Akses Pengembang & Akun</div>
+            <a href="/docs/api" target="_blank" class="drawer-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Swagger OpenAPI Spec
+            </a>
+            <a href="{{ route('login') }}" class="drawer-item" style="color: var(--color-primary); font-weight: 700;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                Masuk ke Portal Pengurus & Warga
+            </a>
+        </div>
+    </aside>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <div class="hero-badge">
-                <span>🛡️</span> Portal Administrasi RT Terbuka, Transparan & Terverifikasi
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Portal Administrasi RT Terbuka, Transparan & Terverifikasi
             </div>
             <h1>Layanan Publik <span>Warga RT</span></h1>
             <p>
@@ -529,7 +936,8 @@
             <div class="ticket-box">
                 <input type="text" id="trackInput" class="ticket-input" placeholder="Lacak surat? Masukkan nomor tiket (cth: SRT-202610-0001)...">
                 <button type="button" onclick="trackTicket()" class="btn btn-teal">
-                    <span>🔍</span> Lacak Tiket
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Lacak Tiket
                 </button>
             </div>
 
@@ -540,7 +948,9 @@
                         <span id="ticketBadge" class="badge badge-umum">Status</span>
                         <h4 id="ticketNumberText" style="color: var(--color-primary); margin-top: 0.25rem;">-</h4>
                     </div>
-                    <button onclick="document.getElementById('ticketResult').style.display='none'" style="border: none; background: transparent; cursor: pointer; color: var(--color-slate); font-size: 1.1rem;">✕</button>
+                    <button type="button" onclick="document.getElementById('ticketResult').style.display='none'" style="border: none; background: transparent; cursor: pointer; color: var(--color-slate); font-size: 1.1rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
                 </div>
                 <div style="font-size: 0.875rem; color: var(--color-slate); line-height: 1.5;">
                     <p><strong>Jenis Surat:</strong> <span id="ticketLetterType">-</span></p>
@@ -555,7 +965,7 @@
                 @else
                     <a href="{{ Route::has('login') ? route('login') : url('/login') }}" class="btn btn-primary">Masuk ke Portal Warga</a>
                 @endauth
-                <button onclick="openComplaintModal()" class="btn btn-secondary">Pengaduan Lingkungan Cepat</button>
+                <button type="button" onclick="openComplaintModal()" class="btn btn-secondary">Pengaduan Lingkungan Cepat</button>
             </div>
         </div>
     </section>
@@ -583,6 +993,79 @@
         </div>
     </section>
 
+    <!-- Interactive Carousel: Event & Pengumuman Baru dengan Teks Penjelasan -->
+    <section id="pengumuman-carousel" class="container carousel-section">
+        <div class="carousel-wrapper" id="carouselWrapper" onmouseenter="pauseCarousel()" onmouseleave="resumeCarousel()">
+            <div class="carousel-header">
+                <div>
+                    <span class="badge badge-primary">Informasi Unggulan Lingkungan</span>
+                    <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--color-primary); margin-top: 0.35rem;">
+                        Warta, Pengumuman & Agenda Warga Terbaru
+                    </h2>
+                    <p style="font-size: 0.875rem; color: var(--color-slate-muted);">
+                        Pembaruan berkala seputar pelayanan, kegiatan kemasyarakatan, dan transparansi lingkungan RT 01
+                    </p>
+                </div>
+                <div class="carousel-controls">
+                    <button type="button" class="carousel-ctrl-btn" onclick="prevSlide()" aria-label="Slide Sebelumnya">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <button type="button" class="carousel-ctrl-btn" onclick="nextSlide()" aria-label="Slide Selanjutnya">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="carousel-track-outer">
+                <div class="carousel-track" id="carouselTrack">
+                    @foreach($carouselItems as $idx => $item)
+                        <div class="carousel-slide" data-slide-index="{{ $idx }}">
+                            <div class="carousel-slide-badge-row">
+                                <span class="badge {{ $item['badge_class'] ?? 'badge-primary' }}">{{ $item['badge'] }}</span>
+                                <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-slate-muted);">{{ $item['subtitle'] }}</span>
+                                @if(!empty($item['category']))
+                                    <span style="font-size: 0.75rem; padding: 0.15rem 0.5rem; background: var(--color-slate-light); border-radius: 0.25rem; color: var(--color-slate); font-weight: 600;">
+                                        Kategori: {{ $item['category'] }}
+                                    </span>
+                                @endif
+                            </div>
+
+                            <h3 class="carousel-title">{{ $item['title'] }}</h3>
+
+                            @if(!empty($item['location']))
+                                <div class="carousel-meta-row">
+                                    <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        Lokasi: {{ $item['location'] }}
+                                    </span>
+                                </div>
+                            @endif
+
+                            <p class="carousel-desc">{{ $item['description'] }}</p>
+
+                            <div style="margin-top: 0.5rem;">
+                                <a href="{{ $item['action_url'] }}" class="btn btn-secondary" style="font-size: 0.825rem; padding: 0.4rem 0.9rem;">
+                                    {{ $item['action_label'] }}
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="carousel-footer">
+                <div class="carousel-dots" id="carouselDots">
+                    @foreach($carouselItems as $idx => $item)
+                        <button type="button" class="carousel-dot {{ $idx === 0 ? 'active' : '' }}" onclick="goToSlide({{ $idx }})" aria-label="Slide {{ $idx + 1 }}"></button>
+                    @endforeach
+                </div>
+                <div style="font-size: 0.8rem; color: var(--color-slate-muted);">
+                    <span id="currentSlideNumber">1</span> dari {{ $carouselItems->count() }} informasi
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Public Community Content: Pengumuman & Agenda -->
     <section id="pengumuman" class="container" style="margin-bottom: 4rem;">
         <div class="content-grid-2">
@@ -590,8 +1073,11 @@
             <div class="panel-card">
                 <div class="section-header" style="margin-bottom: 1.25rem;">
                     <div>
-                        <h2>📢 Papan Pengumuman</h2>
-                        <p>Kabar penting dan warta lingkungan RT</p>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-primary);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--color-primary); margin: 0;">Papan Pengumuman Warga</h2>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--color-slate-muted); margin-top: 0.25rem;">Kabar penting dan warta lingkungan RT</p>
                     </div>
                 </div>
 
@@ -600,7 +1086,7 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
                             <span class="badge badge-{{ $announcement->category ?? 'umum' }}">{{ $announcement->category ?? 'umum' }}</span>
                             @if($announcement->is_pinned)
-                                <span class="pinned-badge">📌 PENTING</span>
+                                <span class="pinned-badge">PENTING</span>
                             @endif
                             <span style="font-size: 0.775rem; color: var(--color-slate-muted); margin-left: auto;">
                                 {{ $announcement->published_at ? $announcement->published_at->format('d M Y') : '' }}
@@ -624,16 +1110,20 @@
             <div id="agenda" class="panel-card">
                 <div class="section-header" style="margin-bottom: 1.25rem;">
                     <div>
-                        <h2>🗓️ Agenda Kegiatan Warga</h2>
-                        <p>Jadwal kegiatan sosial, rapat, & kerja bakti</p>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-teal);"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--color-primary); margin: 0;">Agenda Kegiatan Warga</h2>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--color-slate-muted); margin-top: 0.25rem;">Jadwal kegiatan sosial, rapat, & kerja bakti</p>
                     </div>
                 </div>
 
                 @forelse($upcomingEvents as $event)
                     <div class="announcement-item">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
-                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-teal);">
-                                📍 {{ $event->location }}
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-teal); display: inline-flex; align-items: center; gap: 0.25rem;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                {{ $event->location }}
                             </span>
                             <span style="font-size: 0.775rem; color: var(--color-slate-muted);">
                                 {{ $event->event_date?->format('d M Y') }} @if($event->start_time)• {{ substr($event->start_time, 0, 5) }} WIB @endif
@@ -662,8 +1152,11 @@
             <div class="panel-card">
                 <div class="section-header" style="margin-bottom: 1.25rem;">
                     <div>
-                        <h2>🛡️ Jadwal Ronda & Kamling</h2>
-                        <p>Petugas jaga malam pos keamanan lingkungan</p>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-primary);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--color-primary); margin: 0;">Jadwal Ronda & Kamling</h2>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--color-slate-muted); margin-top: 0.25rem;">Petugas jaga malam pos keamanan lingkungan</p>
                     </div>
                 </div>
 
@@ -697,8 +1190,11 @@
             <div id="darurat" class="panel-card">
                 <div class="section-header" style="margin-bottom: 1.25rem;">
                     <div>
-                        <h2>🚨 Kontak Darurat 24 Jam</h2>
-                        <p>Akses cepat panggilan darurat & pengurus</p>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-red);"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--color-primary); margin: 0;">Kontak Darurat 24 Jam</h2>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--color-slate-muted); margin-top: 0.25rem;">Akses cepat panggilan darurat & pengurus</p>
                     </div>
                 </div>
 
@@ -791,16 +1287,18 @@
                 <div class="form-group">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
                         <label class="form-label" style="margin-bottom: 0;">Bukti Foto Kejadian (Kamera)</label>
-                        <span id="cameraPermissionBadge" style="font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 9999px; background: #FEF3C7; color: #92400E;">
-                            🔒 Khusus Akun Warga
+                        <span id="cameraPermissionBadge" style="font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 9999px; background: #FEF3C7; color: #92400E; display: inline-flex; align-items: center; gap: 0.3rem;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            Khusus Akun Warga
                         </span>
                     </div>
 
                     <!-- Kotak Kamera Aktif (Hanya untuk Warga Terverifikasi) -->
                     <div id="citizenCameraBox" style="display: none; border: 2px dashed #3A9696; border-radius: 0.5rem; padding: 1rem; text-align: center; background: #EBF7F7;">
                         <input type="file" id="complaintImage" accept="image/*" capture="environment" style="display: none;" onchange="handleImagePreview(event)">
-                        <button type="button" onclick="document.getElementById('complaintImage').click()" class="btn btn-teal" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;">
-                            📷 Ambil Foto Kamera / Pilih Gambar
+                        <button type="button" onclick="document.getElementById('complaintImage').click()" class="btn btn-teal" style="font-size: 0.85rem; padding: 0.45rem 0.95rem; display: inline-flex; align-items: center; gap: 0.4rem; margin: 0 auto;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            Ambil Foto Kamera / Pilih Gambar
                         </button>
                         <p style="font-size: 0.75rem; color: #475569; margin-top: 0.4rem;">Format: JPG, PNG, WEBP (Maksimal 5MB)</p>
                         
@@ -815,8 +1313,9 @@
 
                     <!-- Kotak Izin Terkunci (Tamu / Belum Login) -->
                     <div id="lockedCameraBox" style="border: 1px solid #FCD34D; border-radius: 0.5rem; padding: 0.75rem 0.85rem; background: #FFFBEB; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
-                        <div style="font-size: 0.8rem; color: #92400E;">
-                            <strong>Izin Akses Kamera Terkunci:</strong> Upload bukti foto kamera hanya diizinkan untuk akun warga RT terdaftar.
+                        <div style="font-size: 0.8rem; color: #92400E; display: flex; align-items: center; gap: 0.4rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="shrink-0;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <span><strong>Izin Akses Kamera Terkunci:</strong> Upload bukti foto kamera hanya diizinkan untuk akun warga RT terdaftar.</span>
                         </div>
                         <a href="/login" class="btn btn-primary" style="font-size: 0.75rem; padding: 0.3rem 0.6rem; shrink-0; white-space: nowrap;">Masuk Akun</a>
                     </div>
@@ -929,13 +1428,13 @@
                 lockedBox.style.display = 'none';
                 badge.style.background = '#ECFDF5';
                 badge.style.color = '#065F46';
-                badge.textContent = '✓ Izin Kamera Aktif (Warga)';
+                badge.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Izin Kamera Aktif (Warga)';
             } else {
                 citizenBox.style.display = 'none';
                 lockedBox.style.display = 'flex';
                 badge.style.background = '#FEF3C7';
                 badge.style.color = '#92400E';
-                badge.textContent = '🔒 Khusus Akun Warga';
+                badge.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Khusus Akun Warga';
             }
         }
 
@@ -1008,7 +1507,7 @@
                     alertBox.style.display = 'block';
                     alertBox.style.background = '#ECFDF5';
                     alertBox.style.color = '#065F46';
-                    alertBox.textContent = '✓ Laporan pengaduan berhasil dikirim ke pengurus RT.';
+                    alertBox.textContent = 'Laporan pengaduan berhasil dikirim ke pengurus RT.';
                     document.getElementById('complaintForm').reset();
                     clearImage();
                     setTimeout(() => {
@@ -1030,6 +1529,118 @@
                 btn.textContent = 'Kirim Laporan';
             }
         }
+
+        // Hamburger Navigation Drawer Controller
+        function toggleNavDrawer() {
+            const drawer = document.getElementById('navDrawer');
+            const backdrop = document.getElementById('navDrawerBackdrop');
+            if (!drawer || !backdrop) return;
+
+            const isOpen = drawer.classList.contains('open');
+            if (isOpen) {
+                drawer.classList.remove('open');
+                backdrop.classList.remove('open');
+                document.body.style.overflow = '';
+            } else {
+                drawer.classList.add('open');
+                backdrop.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const drawer = document.getElementById('navDrawer');
+                if (drawer && drawer.classList.contains('open')) {
+                    toggleNavDrawer();
+                }
+            }
+        });
+
+        // Interactive Community Carousel Controller
+        let currentSlideIndex = 0;
+        const totalSlides = {{ $carouselItems->count() }};
+        let carouselInterval = null;
+
+        function updateCarouselView() {
+            const track = document.getElementById('carouselTrack');
+            if (!track) return;
+
+            track.style.transform = `translate3d(-${currentSlideIndex * 100}%, 0, 0)`;
+
+            const dots = document.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, idx) => {
+                if (idx === currentSlideIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+
+            const counter = document.getElementById('currentSlideNumber');
+            if (counter) counter.textContent = (currentSlideIndex + 1);
+        }
+
+        function nextSlide() {
+            if (totalSlides <= 1) return;
+            currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+            updateCarouselView();
+        }
+
+        function prevSlide() {
+            if (totalSlides <= 1) return;
+            currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
+            updateCarouselView();
+        }
+
+        function goToSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                currentSlideIndex = index;
+                updateCarouselView();
+            }
+        }
+
+        function pauseCarousel() {
+            if (carouselInterval) {
+                clearInterval(carouselInterval);
+                carouselInterval = null;
+            }
+        }
+
+        function resumeCarousel() {
+            pauseCarousel();
+            if (totalSlides > 1) {
+                carouselInterval = setInterval(nextSlide, 5500);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            resumeCarousel();
+
+            const track = document.getElementById('carouselTrack');
+            if (track) {
+                let startX = 0;
+                let endX = 0;
+
+                track.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    pauseCarousel();
+                }, { passive: true });
+
+                track.addEventListener('touchend', (e) => {
+                    endX = e.changedTouches[0].clientX;
+                    const diff = startX - endX;
+                    if (Math.abs(diff) > 45) {
+                        if (diff > 0) {
+                            nextSlide();
+                        } else {
+                            prevSlide();
+                        }
+                    }
+                    resumeCarousel();
+                }, { passive: true });
+            }
+        });
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

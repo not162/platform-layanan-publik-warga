@@ -1,27 +1,33 @@
-# 🏛️ Platform Layanan Publik Warga (Portal Digital RT/RW)
+# Platform Layanan Publik Warga (Portal Digital RT/RW)
 
 > Sistem Informasi Manajemen Administrasi, Pelayanan Surat Terpadu, Transparansi Kas Keuangan, dan Pengaduan Warga Berbasis Web & Progressive Web App (PWA).
 
 ---
 
-## 📋 Daftar Isi
-1. [Tentang Proyek](#-tentang-proyek)
-2. [Tech Stack & Database](#-tech-stack--database)
-3. [Daftar Akun & Kredensial Pengurus](#-daftar-akun--kredensial-pengurus)
-4. [Arsitektur & Visualisasi Diagram](#-arsitektur--visualisasi-diagram)
+## Daftar Isi
+1. [Tentang Proyek](#tentang-proyek)
+2. [Tech Stack & Database](#tech-stack--database)
+3. [Daftar Akun & Kredensial Pengurus](#daftar-akun--kredensial-pengurus)
+4. [Arsitektur & Visualisasi Diagram](#arsitektur--visualisasi-diagram)
    - [Use Case Diagram](#1-use-case-diagram)
    - [Entity Relationship Diagram (ERD)](#2-entity-relationship-diagram-erd)
    - [Logical Record Structure (LRS)](#3-logical-record-structure-lrs)
    - [Activity Diagram](#4-activity-diagram)
    - [Sequence Diagram](#5-sequence-diagram)
    - [Flowchart Algoritma Sistem](#6-flowchart-algoritma-sistem)
-5. [Panduan Instalasi & Menjalankan Proyek](#-panduan-instalasi--menjalankan-proyek)
-6. [Pengujian (Automated Testing)](#-pengujian-automated-testing)
-7. [Dokumentasi Teknis & Spesifikasi API](#-dokumentasi-teknis--spesifikasi-api)
+5. [Fitur Unggulan Antarmuka & Performa Web](#fitur-unggulan-antarmuka--performa-web)
+   - [Carousel Warta & Agenda Warga](#1-carousel-warta--agenda-warga)
+   - [Navbar 3 Menu Prioritas & Hamburger Drawer](#2-navbar-3-menu-prioritas--hamburger-drawer)
+   - [Optimasi Core Web Vitals, LCP & CLS/LFS](#3-optimasi-core-web-vitals-lcp--clslfs)
+   - [Metadata SEO & Geolocation (GEO)](#4-metadata-seo--geolocation-geo)
+6. [Persiapan Integrasi Firebase Versi Gratis (Spark Plan)](#persiapan-integrasi-firebase-versi-gratis-spark-plan)
+7. [Panduan Instalasi & Menjalankan Proyek](#panduan-instalasi--menjalankan-proyek)
+8. [Pengujian (Automated Testing)](#pengujian-automated-testing)
+9. [Dokumentasi Teknis & Spesifikasi API](#dokumentasi-teknis--spesifikasi-api)
 
 ---
 
-## 📖 Tentang Proyek
+## Tentang Proyek
 
 **Platform Layanan Publik Warga** dirancang untuk mendigitalkan birokrasi di tingkat RT/RW secara terstruktur, transparan, dan aman. Platform ini memiliki fitur-fitur unggulan:
 - **Verifikasi Warga Instan**: Pencocokan NIK berbasis satu arah (*One-Way Hashing SHA-256*) yang melindungi privasi NIK warga dari kebocoran data.
@@ -32,7 +38,7 @@
 
 ---
 
-## 🛠️ Tech Stack & Database
+## Tech Stack & Database
 
 | Komponen | Teknologi | Keterangan |
 |---|---|---|
@@ -59,7 +65,7 @@ DB_PASSWORD=
 
 ---
 
-## 👥 Daftar Akun & Kredensial Pengurus
+## Daftar Akun & Kredensial Pengurus
 
 Sistem telah dilengkapi data awal pengurus RT (**Seeders**) yang siap digunakan untuk login tanpa perlu membuat akun tiruan (*dummy*):
 
@@ -74,18 +80,18 @@ Sistem telah dilengkapi data awal pengurus RT (**Seeders**) yang siap digunakan 
 
 ---
 
-## 📊 Arsitektur & Visualisasi Diagram
+## Arsitektur & Visualisasi Diagram
 
 ### 1. Use Case Diagram
 Diagram use case memetakan interaksi seluruh aktor (Warga, Sekretaris, Bendahara, Ketua RT, dan Superadmin) dengan fitur sistem.
 
 ```mermaid
 flowchart LR
-    Warga["👤 Warga"]
-    Sekretaris["📋 Sekretaris RT"]
-    Bendahara["💰 Bendahara RT"]
-    KetuaRT["👔 Ketua RT"]
-    Superadmin["👑 Superadmin"]
+    Warga["Warga"]
+    Sekretaris["Sekretaris RT"]
+    Bendahara["Bendahara RT"]
+    KetuaRT["Ketua RT"]
+    Superadmin["Superadmin"]
 
     subgraph Portal Layanan Publik Warga
         UC1["Daftar Akun & Verifikasi NIK"]
@@ -632,7 +638,53 @@ flowchart TD
 
 ---
 
-## 🚀 Panduan Instalasi & Menjalankan Proyek
+## Fitur Unggulan Antarmuka & Performa Web
+
+### 1. Carousel Warta & Agenda Warga
+- Menampilkan warta, agenda kegiatan warga, dan informasi penting lingkungan secara dinamis dan berputar otomatis.
+- Dilengkapi teks penjelasan lengkap, badge kategori, jadwal, penunjuk lokasi, dan tombol aksi terarah.
+- Didukung kontrol interaktif: tombol navigasi sebelumnya/selanjutnya, indikator titik slide, indikator jumlah informasi, swipe gesture pada layar sentuh mobile, dan jeda otomatis saat kursor mouse melintas (*pause on hover*).
+
+### 2. Navbar 3 Menu Prioritas & Hamburger Drawer
+- **Desktop Viewport:** Memprioritaskan 3 tautan menu paling krusial:
+  1. `Warta & Agenda`: Navigasi cepat ke warta dan pengumuman terbaru.
+  2. `Kas RT`: Menuju ringkasan transparansi keuangan lingkungan.
+  3. `Lapor Pengaduan`: Tombol aksi cepat untuk membuka modal pengaduan warga.
+  Ditambah tombol otentikasi `Masuk Portal` atau `Dashboard Warga`.
+- **Hamburger Drawer (Off-Canvas):** Seluruh tautan sekunder (Agenda Kegiatan, Jadwal Ronda Kamling, Kontak Darurat 24 Jam, Struktur Pengurus RT, dan Swagger OpenAPI Spec) tertata rapi di dalam drawer geser dengan latar belakang blur dan dukungan tombol keyboard `Escape`.
+
+### 3. Optimasi Core Web Vitals, LCP & CLS/LFS
+- **Priority Hints:** Logo utama dimuat dengan `<link rel="preload" as="image" fetchpriority="high">` untuk mempercepat Largest Contentful Paint (LCP).
+- **Zero Cumulative Layout Shift (CLS = 0):** Seluruh aset gambar (logo horizontal, simbol, favicon) memiliki atribut eksplisit `width` dan `height` serta `decoding="async"`.
+- **Preconnect Font:** Koneksi awal asinkron ke server tipografi Google Fonts via Bunny Fonts untuk menghilangkan FOIT (*Flash of Invisible Text*).
+- **GPU Accelerated Transitions:** Animasi slider carousel menggunakan properti CSS `transform: translate3d(...)` dan `will-change: transform` guna memastikan render 60 FPS tanpa Layout Shift Frequency (LFS).
+
+### 4. Metadata SEO & Geolocation (GEO)
+- **Search Engine Optimization:** Tag meta lengkap meliputi canonical URL, OpenGraph, Twitter Cards, dan meta robot (`index, follow, max-image-preview:large`).
+- **Geolocation Indexing:** Menetapkan metadata geografis wilayah RT/RW (`geo.region`, `geo.placename`, `geo.position`, dan `ICBM`).
+- **Structured Data (Schema.org JSON-LD):** Entitas `GovernmentOrganization` dan `WebSite` dengan koordinat lintang/bujur dan fungsionalitas pencarian pelacakan tiket surat terintegrasi.
+
+---
+
+## Persiapan Integrasi Firebase Versi Gratis (Spark Plan)
+
+Proyek ini telah dikonfigurasi agar dapat berjalan secara optimal menggunakan **Firebase Spark Plan (Paket Gratis $0/bulan)**:
+
+1. **Firebase Cloud Messaging (FCM) - 100% Gratis Tanpa Batas**:
+   - Pengiriman Web Push Notifications status persuratan dan pengumuman darurat warga tanpa batasan kuota.
+   - Didukung berkas Service Worker khusus: `public/firebase-messaging-sw.js` dan inisialisasi klien `public/js/firebase-init.js`.
+2. **Cloud Firestore (1 GB Free / 50k Reads / 20k Writes per hari)**:
+   - Sinkronisasi real-time warta dan pendaftaran token perangkat warga.
+   - Aturan keamanan terperinci pada `firestore.rules` dan indeks kueri pada `firestore.indexes.json`.
+3. **Cloud Storage (5 GB Free Storage)**:
+   - Penyimpanan berkas lampiran surat dan bukti foto aduan warga dengan pembatasan ukuran maksimal 5 MB pada `storage.rules`.
+4. **Firebase Hosting (10 GB Free Storage & CDN Global)**:
+   - Konfigurasi caching aset statis 1 tahun dan rewrite PWA pada `firebase.json`.
+5. **Panduan Lengkap**: Lihat panduan implementasi detail pada [docs/FIREBASE_FREE_TIER_SETUP.md](docs/FIREBASE_FREE_TIER_SETUP.md).
+
+---
+
+## Panduan Instalasi & Menjalankan Proyek
 
 ### 1. Kebutuhan Sistem (*Prerequisites*)
 - **PHP** versi **>= 8.2** (Disarankan PHP 8.4)
@@ -701,7 +753,7 @@ flowchart TD
 
 ---
 
-## 🧪 Pengujian (Automated Testing)
+## Pengujian (Automated Testing)
 
 Aplikasi memiliki rangkaian pengujian unit dan fitur (*Feature Tests*) dengan cakupan menyeluruh untuk menjamin keandalan sistem dan RBAC matrix:
 
@@ -725,29 +777,33 @@ PASS  Tests\Feature\PwaModuleTest
 PASS  Tests\Feature\RoleAndAuthorizationTest
 PASS  Tests\Feature\SecurityReportModuleTest
 
-Tests:    80 passed (290 assertions)
-Duration: 8.15s
+Tests:    90 passed (337 assertions)
+Duration: 8.45s
 Status:   100% OK
 ```
 
 ---
 
-## 📚 Dokumentasi Teknis & Spesifikasi API
+## Dokumentasi Teknis & Spesifikasi API
 
-Dokumentasi arsitektur, RBAC, alur kerja dokumen, dan API lengkap tersedia di direktori `docs/`:
+Dokumentasi arsitektur, RBAC, alur kerja dokumen, Core Web Vitals, Firebase, dan API lengkap tersedia di direktori `docs/`:
 
-1. **[Spesifikasi API Lengkap (`docs/API_SPEC.md`)](docs/API_SPEC.md)**
+1. **[Optimasi Web Performa, Core Web Vitals, SEO & GEO (`docs/WEB_PERFORMANCE_SEO_GEO.md`)](docs/WEB_PERFORMANCE_SEO_GEO.md)**
+   - Priority hints (`fetchpriority="high"`), eliminasi CLS/LFS via dimensi gambar eksplisit, mobile-first design, SEO meta tags, dan Schema.org JSON-LD Geolocation.
+2. **[Panduan Arsitektur & Setup Firebase Versi Gratis / Spark Plan (`docs/FIREBASE_FREE_TIER_SETUP.md`)](docs/FIREBASE_FREE_TIER_SETUP.md)**
+   - Strategi pemanfaatan Firebase Spark Plan $0/bulan untuk Web Push FCM unlimited, Cloud Storage 5GB, Cloud Firestore, Firebase Hosting, dan keamanan security rules.
+3. **[Spesifikasi API Lengkap (`docs/API_SPEC.md`)](docs/API_SPEC.md)**
    - Daftar RESTful endpoints lengkap dengan method, request payload, query params, response schema, validation rules, dan error codes.
    - Meliputi Public APIs, Authenticated Warga APIs, dan Role-Secured Administrative APIs.
-2. **[Matriks Akses & RBAC (`docs/RBAC.md`)](docs/RBAC.md)**
+4. **[Matriks Akses & RBAC (`docs/RBAC.md`)](docs/RBAC.md)**
    - Normalisasi permission menggunakan *singular resource name* (`letter.read`, `letter.create`, `letter.verify`, `letter.approve`, `security.manage`, dll.).
    - Matriks perbandingan hak akses antara `WARGA`, `ADMIN`, `SEKRETARIS`, `KETUA_RT`, `BENDAHARA`, `PETUGAS_KEAMANAN`, dan `SUPERADMIN`.
    - Prinsip *Least Privilege* dan *Superadmin Bypass*.
-3. **[Workflow & State Machine Persuratan (`docs/LETTER_WORKFLOW.md`)](docs/LETTER_WORKFLOW.md)**
+5. **[Workflow & State Machine Persuratan (`docs/LETTER_WORKFLOW.md`)](docs/LETTER_WORKFLOW.md)**
    - Diagram status eksplisit: `draft` ➔ `submitted` ➔ `verified` ➔ `approved` ➔ `completed` (dan `rejected`).
    - Penomoran surat bebas tabrakan konkurensi berbasis `document_sequences` dengan `SELECT ... FOR UPDATE`.
    - Pencegahan race condition dan konflik versi via *Optimistic Locking* (`version` check, return `409 Conflict`).
-4. **[Sistem Template Dokumen & Idempotensi (`docs/DOCUMENT_TEMPLATE.md`)](docs/DOCUMENT_TEMPLATE.md)**
+6. **[Sistem Template Dokumen & Idempotensi (`docs/DOCUMENT_TEMPLATE.md`)](docs/DOCUMENT_TEMPLATE.md)**
    - 5 Blank document templates terstandarisasi (`resources/views/documents/templates/`):
      - `surat-keterangan.blade.php` (SK-UMUM)
      - `surat-kematian.blade.php` (SK-KEMATIAN)
@@ -755,16 +811,16 @@ Dokumentasi arsitektur, RBAC, alur kerja dokumen, dan API lengkap tersedia di di
      - `surat-keterangan-tidak-mampu.blade.php` (SKTM)
      - `laporan-keamanan.blade.php` (Security Incident Report)
    - Penyimpanan privat di `storage/app/private/` dengan hash SHA-256 dan token verifikasi publik tanpa bocor data pribadi (PII).
-5. **[Arsitektur Enterprise Microservices & Client-Side Offloading (`docs/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md`)](docs/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md)**
+7. **[Arsitektur Enterprise Microservices & Client-Side Offloading (`docs/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md`)](docs/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md)**
    - Strategi enterprise: Komputasi rendering & penyimpanan file Word (`.docx`) dan PDF dialihkan ke **Client-Side (Front-End Compute)** untuk mencegah lonjakan CPU server, kehabisan memori (*OOM*), dan kemacetan rute API (*504 Gateway Timeout*).
    - Layanan frontend `CitizenDocumentExporter` (`public/js/citizen-document-exporter.js`) dengan verifikasi Anti-Tamper SHA-256 via Web Crypto API.
    - Caching dokumen di storage browser (LocalStorage / IndexedDB / PWA Cache) untuk akses offline dan unduh ulang instan tanpa beban server.
-6. **[Spesifikasi OpenAPI 3.0 & Swagger UI Interaktif (`docs/openapi.yaml`)](docs/openapi.yaml)**
+8. **[Spesifikasi OpenAPI 3.0 & Swagger UI Interaktif (`docs/openapi.yaml`)](docs/openapi.yaml)**
    - Akses antarmuka interaktif langsung via browser: **`/docs/api`** atau **`/api/documentation`**.
    - Raw OpenAPI Schema: **`/docs/openapi.yaml`**.
    - Penegakan tipe data ketat (*Strongly Typed Contract*): Enums (`UserRole`, `LetterStatus`, `SecurityReportSeverity`, `SecurityReportCategory`), Format `date-time` / `binary` file upload, regex pattern NIK 16 digit, skema respons terstruktur, dan otentikasi Sanctum Bearer token.
 
 ---
 
-## 📄 Lisensi
+## Lisensi
 Proyek ini dikembangkan di bawah lisensi [MIT License](LICENSE). Hak Cipta &copy; 2026 Pengurus Lingkungan RT & Pengembang Sistem.

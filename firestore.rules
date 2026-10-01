@@ -1,0 +1,51 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Pengumuman publik: dapat dibaca siapa saja, ditulis hanya oleh pengurus RT
+    match /announcements/{announcementId} {
+      allow read: if resource.data.is_published == true;
+      allow write: if request.auth != null && request.auth.token.role in ['SUPERADMIN', 'ADMIN_RT', 'SEKRETARIS'];
+    }
+
+    // Agenda kegiatan warga: publik dapat membaca
+    match /community_events/{eventId} {
+      allow read: if resource.data.is_published == true;
+      allow write: if request.auth != null && request.auth.token.role in ['SUPERADMIN', 'ADMIN_RT', 'SEKRETARIS'];
+    }
+
+    // Transparansi ringkasan kas: publik dapat membaca ringkasan
+    match /finance_summaries/{summaryId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.role in ['SUPERADMIN', 'BENDAHARA'];
+    }
+
+    // Permohonan surat warga: hanya pemilik akun atau pengurus RT
+    match /letter_requests/{requestId} {
+      allow read: if request.auth != null && (request.auth.uid == resource.data.user_id || request.auth.token.role in ['SUPERADMIN', 'ADMIN_RT', 'SEKRETARIS']);
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && request.auth.token.role in ['SUPERADMIN', 'ADMIN_RT', 'SEKRETARIS'];
+      allow delete: if request.auth != null && request.auth.token.role == 'SUPERADMIN';
+    }
+
+    // Pengaduan warga: laporan publik bisa dibaca ringkas, pengaduan privat hanya oleh pelapor & RT
+    match /complaints/{complaintId} {
+      allow read: if resource.data.is_anonymous == true || (request.auth != null && (request.auth.uid == resource.data.user_id || request.auth.token.role in ['SUPERADMIN', 'ADMIN_RT']));
+      allow create: if true;
+      allow update, delete: if request.auth != null && request.auth.token.role in ['SUPERADMIN', 'ADMIN_RT'];
+    }
+
+    // Token FCM untuk Web Push Notifikasi
+    match /fcm_tokens/{tokenId} {
+      allow create, update: if true;
+      allow read: if request.auth != null && request.auth.token.role in ['SUPERADMIN', 'ADMIN_RT'];
+      allow delete: if request.auth != null && (request.auth.uid == resource.data.user_id || request.auth.token.role == 'SUPERADMIN');
+    }
+
+    // Default deny untuk koleksi lainnya
+    match /{document=**} {
+      allow read, write: if request.auth != null && request.auth.token.role == 'SUPERADMIN';
+    }
+  }
+}
