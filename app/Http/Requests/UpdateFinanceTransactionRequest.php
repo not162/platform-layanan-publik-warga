@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\UserRole;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,11 +12,7 @@ class UpdateFinanceTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check() && in_array(auth()->user()->role, [
-            UserRole::Admin,
-            UserRole::Treasurer,
-            UserRole::RtHead,
-        ]);
+        return $this->user()?->hasPermission('finance.manage') ?? false;
     }
 
     /**

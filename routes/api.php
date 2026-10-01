@@ -21,7 +21,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/complaints', [ComplaintController::class, 'index']);
 
         // Admin routes
-        Route::prefix('admin')->group(function () {
+        Route::prefix('admin')->middleware('role:ADMIN,SUPERADMIN')->group(function () {
             Route::apiResource('citizens', CitizenController::class);
             Route::get('/letters', [LetterController::class, 'adminIndex']);
 

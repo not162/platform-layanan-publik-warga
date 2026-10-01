@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\UserRole;
 use App\Http\Requests\StoreLetterRequest;
 use App\Http\Requests\UpdateLetterRequest;
 use App\Http\Resources\V1\LetterResource;
@@ -16,7 +15,8 @@ class LetterController extends Controller
 
     public function index(Request $request)
     {
-        $letters = Letter::where('citizen_id', $request->user()->citizen->id ?? 0)->latest()->paginate(15);
+        $citizenId = $request->user()?->citizen?->id ?? 0;
+        $letters = Letter::query()->where('citizen_id', $citizenId)->latest()->paginate(15);
 
         return LetterResource::collection($letters);
     }
@@ -49,9 +49,9 @@ class LetterController extends Controller
     {
         $letter = Letter::findOrFail($id);
 
-        // Authorization: Must be owner or admin/secretary/rt
+        // Authorization: Must be owner or admin with letter permission or superadmin
         $user = request()->user();
-        if ($letter->citizen_id !== ($user->citizen->id ?? null) && ! in_array($user->role, [UserRole::Admin, UserRole::Secretary, UserRole::RtHead])) {
+        if ($letter->citizen_id !== ($user->citizen->id ?? null) && ! $user->hasPermission('letter.verify') && ! $user->hasPermission('letter.approve') && ! $user->isSuperadmin()) {
             abort(403);
         }
 
@@ -70,27 +70,25 @@ class LetterController extends Controller
         $newStatus = $data['status'];
         $currentStatus = $letter->status;
 
-        $userRole = $user->role instanceof UserRole ? $user->role : UserRole::tryFrom($user->role);
-
-        if ($userRole === UserRole::Citizen) {
+        if ($user->isWarga()) {
             if ($letter->citizen_id !== ($user->citizen->id ?? null)) {
                 abort(403, 'Unauthorized to update this letter');
             }
             if ($currentStatus !== 'draft' || $newStatus !== 'submitted') {
                 abort(409, 'Citizens can only submit draft letters');
             }
-        } elseif ($userRole === UserRole::Secretary) {
-            if ($currentStatus !== 'submitted' || ! in_array($newStatus, ['verified', 'rejected'])) {
-                abort(409, 'Secretary can only verify or reject submitted letters');
+        } elseif ($user->hasPermission('letter.approve') && in_array($newStatus, ['approved', 'rejected'])) {
+            if ($currentStatus !== 'verified') {
+                abort(409, 'Only verified letters can be approved or rejected by approval officer');
             }
-        } elseif ($userRole === UserRole::RtHead) {
-            if ($currentStatus !== 'verified' || ! in_array($newStatus, ['approved', 'rejected'])) {
-                abort(409, 'RT Head can only approve or reject verified letters');
+        } elseif ($user->hasPermission('letter.verify') && in_array($newStatus, ['verified', 'rejected'])) {
+            if ($currentStatus !== 'submitted') {
+                abort(409, 'Only submitted letters can be verified or rejected');
             }
-        } elseif ($userRole === UserRole::Admin) {
-            // Admin can do anything or specifically mark approved as completed
+        } elseif ($user->isSuperadmin()) {
+            // Superadmin can transition as needed
         } else {
-            abort(403);
+            abort(403, 'Unauthorized action for your role or permission scope');
         }
 
         $letter = $this->letterService->updateStatus($letter, $data['status'], $data);

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\UserRole;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,13 +12,7 @@ class UpdateComplaintRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Admin, Secretary, Security, RT Head can manage complaints
-        return auth()->check() && in_array(auth()->user()->role, [
-            UserRole::Admin,
-            UserRole::Secretary,
-            UserRole::Security,
-            UserRole::RtHead,
-        ]);
+        return $this->user()?->hasPermission('complaint.manage') ?? false;
     }
 
     /**
