@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function () {
         Route::patch('/letters/{id}/status', [LetterController::class, 'update']);
 
         Route::get('/complaints', [ComplaintController::class, 'index']);
+        Route::get('/complaints/{id}', [ComplaintController::class, 'show']);
 
         // Admin routes
         Route::prefix('admin')->middleware('role:ADMIN,SUPERADMIN')->group(function () {

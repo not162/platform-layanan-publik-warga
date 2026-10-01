@@ -13,14 +13,25 @@ return new class extends Migration
     {
         Schema::create('complaints', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete(); // Nullable for anonymous
-            $table->string('title');
+            $table->string('ticket_number', 32)->unique();
+            $table->foreignId('citizen_id')->nullable()->constrained('citizens')->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('kategori', 80)->default('umum');
+            $table->string('title', 180);
             $table->text('description');
-            $table->string('status')->default('submitted'); // submitted, in_progress, resolved, rejected
+            $table->string('lokasi', 255)->nullable();
             $table->boolean('is_anonymous')->default(false);
-            $table->string('attachment_path')->nullable();
-            $table->integer('version')->default(1);
+            $table->string('status', 30)->default('submitted'); // submitted, reviewed, processing, resolved, closed, rejected
+            $table->string('priority', 20)->default('sedang'); // rendah, sedang, tinggi, darurat
+            $table->foreignId('assigned_admin_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->text('admin_response')->nullable();
+            $table->string('attachment_path', 255)->nullable();
+            $table->unsignedInteger('version')->default(1);
             $table->timestamps();
+
+            $table->index('ticket_number');
+            $table->index(['status', 'created_at']);
+            $table->index('citizen_id');
         });
     }
 

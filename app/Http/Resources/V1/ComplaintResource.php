@@ -16,10 +16,15 @@ class ComplaintResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'ticket_number' => $this->ticket_number,
+            'kategori' => $this->kategori,
             'title' => $this->title,
             'description' => $this->description,
+            'lokasi' => $this->lokasi,
             'status' => $this->status,
-            'is_anonymous' => $this->is_anonymous,
+            'priority' => $this->priority,
+            'admin_response' => $this->admin_response,
+            'is_anonymous' => (bool) $this->is_anonymous,
             'attachment_path' => $this->attachment_path,
             'version' => $this->version,
             'user' => $this->is_anonymous ? null : new UserResource($this->whenLoaded('user')),
