@@ -6,6 +6,7 @@ use Database\Factories\CitizenFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Citizen extends Model
 {
@@ -23,7 +24,18 @@ class Citizen extends Model
         'gender',
         'religion',
         'blood_type',
+        'occupation',
+        'phone',
+        'email',
+        'status_warga',
+        'is_active',
         'version',
+    ];
+
+    protected $attributes = [
+        'status_warga' => 'tetap',
+        'is_active' => true,
+        'version' => 1,
     ];
 
     protected function casts(): array
@@ -31,6 +43,7 @@ class Citizen extends Model
         return [
             'nik' => 'encrypted',
             'date_of_birth' => 'date',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -42,5 +55,15 @@ class Citizen extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function letters(): HasMany
+    {
+        return $this->hasMany(Letter::class);
+    }
+
+    public function complaints(): HasMany
+    {
+        return $this->hasMany(Complaint::class);
     }
 }

@@ -14,14 +14,27 @@ class CitizenResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $nikMasked = null;
+        if ($this->nik) {
+            $plain = (string) $this->nik;
+            $nikMasked = strlen($plain) >= 8
+                ? substr($plain, 0, 4).str_repeat('*', strlen($plain) - 8).substr($plain, -4)
+                : '****';
+        }
+
         return [
             'id' => $this->id,
             'full_name' => $this->full_name,
+            'nik_masked' => $nikMasked,
             'place_of_birth' => $this->place_of_birth,
             'date_of_birth' => $this->date_of_birth?->format('Y-m-d'),
             'gender' => $this->gender,
             'religion' => $this->religion,
-            'blood_type' => $this->blood_type,
+            'occupation' => $this->occupation,
+            'phone' => $this->phone,
+            'email' => $this->email,
+            'status_warga' => $this->status_warga,
+            'is_active' => (bool) $this->is_active,
             'version' => $this->version,
             'family_card' => new FamilyCardResource($this->whenLoaded('familyCard')),
             'user' => new UserResource($this->whenLoaded('user')),
