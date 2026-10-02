@@ -22,6 +22,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'avatar_url',
         'warga_id',
         'last_login_at',
     ];
@@ -117,8 +118,32 @@ class User extends Authenticatable
             return true;
         }
 
-        // Default role permissions matrix based on singular resource names
+        // Default role permissions matrix based on normalized singular resource names
         $rolePermissions = match ($this->role) {
+            UserRole::BENDAHARA => [
+                // Canonical Finance Permissions
+                'finance.transaction.read',
+                'finance.transaction.create',
+                'finance.transaction.publish',
+                'finance.transaction.reverse',
+                'finance.dues.read',
+                'finance.dues.manage',
+                'finance.payment.read',
+                'finance.payment.manage',
+                'finance.purchase.read',
+                'finance.purchase.manage',
+                'finance.report.read',
+                'finance.report.generate',
+                'finance.audit.read',
+                'download.audit.read',
+                // Legacy compatibility aliases
+                'finance.read',
+                'finance.manage',
+                'finance.report',
+                'announcement.manage',
+                'announcements.manage',
+                'emergency.manage',
+            ],
             UserRole::KETUA_RT => [
                 'citizen.read',
                 'letter.read',
@@ -131,11 +156,19 @@ class User extends Authenticatable
                 'announcement.manage',
                 'announcements.manage',
                 'event.manage',
-                'finance.read',
-                'finance.report',
                 'round_schedule.manage',
                 'emergency.manage',
                 'audit.read',
+                // Finance read & report publishing only (no direct ledger mutations)
+                'finance.transaction.read',
+                'finance.dues.read',
+                'finance.payment.read',
+                'finance.purchase.read',
+                'finance.report.read',
+                'finance.report.publish',
+                'finance.read',
+                'finance.report',
+                'download.audit.read',
             ],
             UserRole::SEKRETARIS => [
                 'citizen.read',
@@ -145,6 +178,7 @@ class User extends Authenticatable
                 'letter.create',
                 'letter.verify',
                 'letter.reject',
+                'letter.complete',
                 'letter.template.manage',
                 'letters.manage',
                 'complaint.read',
@@ -154,18 +188,16 @@ class User extends Authenticatable
                 'announcement.manage',
                 'announcements.manage',
                 'event.manage',
-                'finance.read',
-                'finance.report',
                 'round_schedule.manage',
                 'emergency.manage',
-            ],
-            UserRole::BENDAHARA => [
+                // Finance read only (no mutation)
+                'finance.transaction.read',
+                'finance.dues.read',
+                'finance.purchase.read',
+                'finance.report.read',
                 'finance.read',
-                'finance.manage',
                 'finance.report',
-                'announcement.manage',
-                'announcements.manage',
-                'emergency.manage',
+                'download.audit.read',
             ],
             UserRole::PETUGAS_KEAMANAN => [
                 'security.read',
@@ -180,7 +212,19 @@ class User extends Authenticatable
             default => [],
         };
 
-        return in_array($permission, $rolePermissions, true);
+        if (in_array($permission, $rolePermissions, true)) {
+            return true;
+        }
+
+        // Backward compatibility mappings
+        if ($permission === 'finance.read' && in_array('finance.transaction.read', $rolePermissions, true)) {
+            return true;
+        }
+        if ($permission === 'finance.report' && (in_array('finance.report.read', $rolePermissions, true) || in_array('finance.report.publish', $rolePermissions, true))) {
+            return true;
+        }
+
+        return false;
     }
 
     public function givePermission(string $permission): void

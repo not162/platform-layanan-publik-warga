@@ -139,27 +139,6 @@ document.addEventListener('alpine:init', () => {
                 this.isShaking = false;
             }, 500);
 
-            // Audio haptic feedback halus (Web Audio API)
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (AudioContext) {
-                    const ctx = new AudioContext();
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(140, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.15);
-                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.15);
-                }
-            } catch (e) {
-                // Ignore audio failure
-            }
-
             // Fokuskan ke kolom input yang salah
             setTimeout(() => {
                 if (fieldToFocus === 'password' && this.$refs.passwordInput) {
@@ -189,12 +168,12 @@ document.addEventListener('alpine:init', () => {
             }
 
             try {
-                const response = await fetch('/api/v1/login', {
+                const response = await fetch('{{ route('login.post') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || ''
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '{{ csrf_token() }}'
                     },
                     body: JSON.stringify(this.form)
                 });
@@ -206,19 +185,17 @@ document.addEventListener('alpine:init', () => {
                     if (response.status === 422) {
                         this.errors = data.errors || {};
                         this.message = data.message || "Email atau kata sandi tidak cocok.";
-                    } else if (response.status === 401) {
-                        this.message = "Email atau kata sandi salah. Silakan coba lagi.";
+                    } else if (response.status === 401 || response.status === 403) {
+                        this.message = data.message || "Email atau kata sandi salah. Silakan coba lagi.";
                     } else {
                         this.message = data.message || "Terjadi kesalahan pada sistem. Silakan coba lagi.";
                     }
 
-                    // Jalankan efek getar (shake) dan highlight input
                     this.triggerErrorAnimation(this.errors.email ? 'email' : 'password');
                 } else {
                     this.isError = false;
-                    this.message = "Kredensial sesuai! Mengalihkan ke portal...";
+                    this.message = "Kredensial sesuai. Mengalihkan ke portal dashboard...";
                     
-                    // Simpan token autentikasi Sanctum dan user profile
                     if (data.access_token) {
                         localStorage.setItem('auth_token', data.access_token);
                     }
@@ -229,8 +206,8 @@ document.addEventListener('alpine:init', () => {
                     setTimeout(() => lucide.createIcons(), 10);
                     
                     setTimeout(() => {
-                        window.location.href = data.redirect_url || '/dashboard';
-                    }, 800);
+                        window.location.href = data.redirect_url || '{{ route('dashboard') }}';
+                    }, 500);
                 }
             } catch (error) {
                 this.isError = true;

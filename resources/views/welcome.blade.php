@@ -1247,7 +1247,7 @@
         <div class="modal-box">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                 <h3 style="color: var(--color-primary); font-size: 1.25rem; font-weight: 700;">Form Pengaduan Lingkungan</h3>
-                <button type="button" onclick="closeComplaintModal()" style="background: transparent; border: none; font-size: 1.25rem; cursor: pointer; color: var(--color-slate);">✕</button>
+                <button type="button" onclick="closeComplaintModal()" style="background: transparent; border: none; font-size: 1.25rem; cursor: pointer; color: var(--color-slate); display: inline-flex; align-items: center;" aria-label="Tutup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
 
             <form id="complaintForm" onsubmit="submitComplaint(event)">

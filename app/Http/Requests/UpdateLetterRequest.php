@@ -13,7 +13,7 @@ class UpdateLetterRequest extends FormRequest
     public function authorize(): bool
     {
         // For admin/secretary verification/approval
-        return auth()->check();
+        return $this->user() !== null;
     }
 
     /**

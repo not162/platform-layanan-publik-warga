@@ -12,7 +12,7 @@ class StoreFinanceTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->hasPermission('finance.manage') ?? false;
+        return $this->user()?->hasPermission('finance.transaction.create') || ($this->user()?->hasPermission('finance.manage') ?? false);
     }
 
     /**
@@ -24,10 +24,21 @@ class StoreFinanceTransactionRequest extends FormRequest
     {
         return [
             'type' => ['required', 'string', 'in:income,expense'],
+            'source' => ['nullable', 'string', 'in:dues,purchase,other'],
             'category' => ['required', 'string', 'max:255'],
-            'amount' => ['required', 'numeric', 'min:0'],
+            'amount' => ['nullable', 'numeric', 'min:0'],
+            'amount_idr' => ['nullable', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
             'transaction_date' => ['required', 'date'],
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            if (! $this->filled('amount') && ! $this->filled('amount_idr')) {
+                $validator->errors()->add('amount', 'Nominal transaksi (amount atau amount_idr) wajib diisi.');
+            }
+        });
     }
 }

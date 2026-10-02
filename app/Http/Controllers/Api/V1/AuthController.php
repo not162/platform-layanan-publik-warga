@@ -34,7 +34,7 @@ class AuthController extends Controller
 
         // Verifikasi NIK (Cari di tabel citizens berdasarkan nik_hash)
         $nikHash = hash('sha256', $validated['nik']);
-        $citizen = Citizen::where('nik_hash', $nikHash)->first();
+        $citizen = Citizen::query()->where('nik_hash', '=', $nikHash, 'and')->first();
 
         if (! $citizen) {
             throw ValidationException::withMessages([
@@ -100,12 +100,12 @@ class AuthController extends Controller
         ]);
 
         $user = User::query()
-            ->whereRaw('LOWER(email) = ?', [strtolower($loginInput)])
-            ->orWhere('name', $loginInput)
+            ->whereRaw('LOWER(email) = ?', [strtolower($loginInput)], 'and')
+            ->orWhere('name', '=', $loginInput)
             ->first();
 
         if (! $user) {
-            $citizen = Citizen::query()->where('phone', $loginInput)->first();
+            $citizen = Citizen::query()->where('phone', '=', $loginInput, 'and')->first();
             if ($citizen && $citizen->user) {
                 $user = $citizen->user;
             }
@@ -152,6 +152,13 @@ class AuthController extends Controller
         $loginInput = trim((string) ($request->input('email') ?? $request->input('login') ?? $request->input('username') ?? ''));
 
         if ($loginInput === '') {
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Alamat email atau nomor telepon wajib diisi.',
+                    'errors' => ['email' => ['Alamat email atau nomor telepon wajib diisi.']],
+                ], 422);
+            }
+
             return back()->withErrors(['email' => 'Alamat email atau nomor telepon wajib diisi.'])->withInput();
         }
 
@@ -160,44 +167,100 @@ class AuthController extends Controller
         ]);
 
         $user = User::query()
-            ->whereRaw('LOWER(email) = ?', [strtolower($loginInput)])
-            ->orWhere('name', $loginInput)
+            ->whereRaw('LOWER(email) = ?', [strtolower($loginInput)], 'and')
+            ->orWhere('name', '=', $loginInput)
             ->first();
 
         if (! $user) {
-            $citizen = Citizen::query()->where('phone', $loginInput)->first();
+            $citizen = Citizen::query()->where('phone', '=', $loginInput, 'and')->first();
             if ($citizen && $citizen->user) {
                 $user = $citizen->user;
             }
         }
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Kredensial yang diberikan tidak cocok dengan data kami.',
+                    'errors' => ['email' => ['Kredensial yang diberikan tidak cocok dengan data kami.']],
+                ], 422);
+            }
+
             return back()->withErrors(['email' => 'Kredensial yang diberikan tidak cocok dengan data kami.'])->withInput();
         }
 
         if (! $user->is_active) {
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Akun ini dinonaktifkan. Silakan hubungi admin.',
+                    'errors' => ['email' => ['Akun ini dinonaktifkan. Silakan hubungi admin.']],
+                ], 403);
+            }
+
             return back()->withErrors(['email' => 'Akun ini dinonaktifkan. Silakan hubungi admin.'])->withInput();
         }
 
         $user->update(['last_login_at' => now()]);
-        auth()->guard('web')->login($user, $request->boolean('remember'));
 
-        return redirect()->intended('/dashboard');
+        auth()->guard('web')->login($user, $request->boolean('remember'));
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'message' => 'Login berhasil.',
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'redirect_url' => route('dashboard'),
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role instanceof \BackedEnum ? $user->role->value : (string) $user->role,
+                    'is_active' => $user->is_active,
+                ],
+            ]);
+        }
+
+        return redirect()->intended(route('dashboard'));
     }
 
     public function webLogout(Request $request)
     {
+        if ($request->user() && method_exists($request->user(), 'currentAccessToken')) {
+            $token = $request->user()->currentAccessToken();
+            if ($token && method_exists($token, 'delete')) {
+                $token->delete();
+            }
+        }
+
         auth()->guard('web')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'message' => 'Anda telah berhasil keluar.',
+                'redirect_url' => route('login'),
+            ]);
+        }
 
         return redirect('/login')->with('status', 'Anda telah berhasil keluar.');
     }
 
     public function logout(Request $request)
     {
-        if ($request->user() && $request->user()->currentAccessToken()) {
-            $request->user()->currentAccessToken()->delete();
+        if ($request->user() && method_exists($request->user(), 'currentAccessToken')) {
+            $token = $request->user()->currentAccessToken();
+            if ($token && method_exists($token, 'delete')) {
+                $token->delete();
+            }
         }
 
         if ($request->hasSession()) {

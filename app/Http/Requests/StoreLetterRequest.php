@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class StoreLetterRequest extends FormRequest
 {
@@ -35,9 +36,9 @@ class StoreLetterRequest extends FormRequest
         ];
     }
 
-    public function withValidator($validator): void
+    public function withValidator(Validator $validator): void
     {
-        $validator->after(function ($validator) {
+        $validator->after(function (Validator $validator) {
             if (! $this->filled('type') && ! $this->filled('letter_type_code') && ! $this->filled('jenis_surat_id')) {
                 $validator->errors()->add('type', 'Tipe surat atau jenis_surat_id / letter_type_code wajib diisi.');
             }

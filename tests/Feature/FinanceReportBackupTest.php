@@ -6,6 +6,7 @@ use App\Models\Citizen;
 use App\Models\FinanceTransaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -17,13 +18,13 @@ class FinanceReportBackupTest extends TestCase
     {
         parent::setUp();
         Storage::fake('local');
+        Storage::fake('public');
     }
 
     public function test_bendahara_can_download_monthly_report_and_citizen_dues(): void
     {
         $bendahara = User::factory()->bendahara()->create();
 
-        // Seed sample finance transaction
         FinanceTransaction::query()->create([
             'created_by' => $bendahara->id,
             'category' => 'Iuran Warga Bulanan',
@@ -46,11 +47,39 @@ class FinanceReportBackupTest extends TestCase
         $resDues->assertStatus(200);
         $this->assertStringContainsString('REKAPITULASI PEMBAYARAN KAS', $resDues->getContent());
         $this->assertStringContainsString('Budi Santoso', $resDues->getContent());
+
+        $this->assertDatabaseHas('download_audits', [
+            'actor_user_id' => $bendahara->id,
+            'resource_type' => 'finance_monthly_report',
+        ]);
+    }
+
+    public function test_cannot_download_rekapitulasi_if_empty_content(): void
+    {
+        $bendahara = User::factory()->bendahara()->create();
+
+        // Periode kosong (tahun 2030)
+        $resEmptyMonthly = $this->actingAs($bendahara)->get('/api/v1/admin/finance/reports/monthly?year=2030&month=1&format=html');
+        $resEmptyMonthly->assertStatus(404);
+
+        $resEmptyDues = $this->actingAs($bendahara)->get('/api/v1/admin/finance/reports/citizen-dues?year=2030&month=1');
+        $resEmptyDues->assertStatus(404);
     }
 
     public function test_sekretaris_can_download_financial_reports(): void
     {
         $sekretaris = User::factory()->sekretaris()->create();
+
+        FinanceTransaction::query()->create([
+            'created_by' => $sekretaris->id,
+            'category' => 'Uang Kas Kebersihan',
+            'type' => 'income',
+            'amount' => 100000,
+            'description' => 'Iuran kebersihan lingkungan',
+            'transaction_date' => now(),
+            'status' => 'published',
+            'version' => 1,
+        ]);
 
         $resMonthly = $this->actingAs($sekretaris)->get('/api/v1/admin/finance/reports/monthly?year='.now()->year.'&month='.now()->month.'&format=csv');
         $resMonthly->assertStatus(200);
@@ -105,5 +134,41 @@ class FinanceReportBackupTest extends TestCase
 
         $resBackup = $this->actingAs($warga)->postJson('/api/v1/admin/finance/backups');
         $resBackup->assertStatus(403);
+    }
+
+    public function test_kepengurusan_can_edit_photo_with_various_image_formats(): void
+    {
+        $ketuaRt = User::factory()->ketuaRt()->create();
+
+        // 1. Format PNG
+        $filePng = UploadedFile::fake()->image('profil.png', 200, 200);
+        $resPng = $this->actingAs($ketuaRt)->post('/dashboard/profile/photo', [
+            'photo' => $filePng,
+        ]);
+        $resPng->assertRedirect();
+        $ketuaRt->refresh();
+        $this->assertNotNull($ketuaRt->avatar_url);
+
+        // 2. Format WebP
+        $fileWebp = UploadedFile::fake()->image('profil.webp', 300, 300);
+        $resWebp = $this->actingAs($ketuaRt)->post('/dashboard/profile/photo', [
+            'photo' => $fileWebp,
+        ]);
+        $resWebp->assertRedirect();
+        $ketuaRt->refresh();
+        $this->assertNotNull($ketuaRt->avatar_url);
+        $this->assertStringContainsString('.webp', $ketuaRt->avatar_url);
+    }
+
+    public function test_warga_cannot_edit_officer_photo(): void
+    {
+        $warga = User::factory()->warga()->create();
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        $response = $this->actingAs($warga)->post('/dashboard/profile/photo', [
+            'photo' => $file,
+        ]);
+
+        $response->assertStatus(403);
     }
 }

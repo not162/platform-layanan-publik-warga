@@ -762,63 +762,67 @@ Aplikasi memiliki rangkaian pengujian unit dan fitur (*Feature Tests*) dengan ca
 php artisan test
 ```
 
-### Hasil Ringkasan Pengujian:
+### Hasil Ringkasan Pengujian Otomatis:
 ```text
+PASS  Tests\Feature\ArchitectureAndRbacNormalizationTest
 PASS  Tests\Feature\CitizenModuleTest
 PASS  Tests\Feature\CitizenServiceRoleMatrixTest
+PASS  Tests\Feature\ComplaintCameraPermissionTest
 PASS  Tests\Feature\ComplaintModuleTest
 PASS  Tests\Feature\DocumentWorkflowAndGenerationTest
 PASS  Tests\Feature\ExampleTest
+PASS  Tests\Feature\FinanceLedgerSprint2Test
 PASS  Tests\Feature\FinanceModuleTest
+PASS  Tests\Feature\FinanceReportBackupTest
+PASS  Tests\Feature\KepengurusanLoginTest
 PASS  Tests\Feature\LetterModuleTest
 PASS  Tests\Feature\NotificationModuleTest
 PASS  Tests\Feature\PublicContentModuleTest
 PASS  Tests\Feature\PwaModuleTest
+PASS  Tests\Feature\ResidentDuePersonalLedgerSprint3Test
 PASS  Tests\Feature\RoleAndAuthorizationTest
 PASS  Tests\Feature\SecurityReportModuleTest
 
-Tests:    90 passed (337 assertions)
-Duration: 8.45s
+Tests:    122 passed (505 assertions)
+Duration: 9.70s
 Status:   100% OK
 ```
 
 ---
 
-## Dokumentasi Teknis & Spesifikasi API
+## Klasifikasi Dokumentasi Teknis (`docs/`)
 
-Dokumentasi arsitektur, RBAC, alur kerja dokumen, Core Web Vitals, Firebase, dan API lengkap tersedia di direktori `docs/`:
+Seluruh dokumentasi arsitektur, spesifikasi API, kebutuhan bisnis, perencanaan proyek, dan tata kelola sistem telah dikelompokkan ke dalam 5 subdirektori tematik di [docs/](docs/README.md):
 
-1. **[Optimasi Web Performa, Core Web Vitals, SEO & GEO (`docs/WEB_PERFORMANCE_SEO_GEO.md`)](docs/WEB_PERFORMANCE_SEO_GEO.md)**
-   - Priority hints (`fetchpriority="high"`), eliminasi CLS/LFS via dimensi gambar eksplisit, mobile-first design, SEO meta tags, dan Schema.org JSON-LD Geolocation.
-2. **[Panduan Arsitektur & Setup Firebase Versi Gratis / Spark Plan (`docs/FIREBASE_FREE_TIER_SETUP.md`)](docs/FIREBASE_FREE_TIER_SETUP.md)**
-   - Strategi pemanfaatan Firebase Spark Plan $0/bulan untuk Web Push FCM unlimited, Cloud Storage 5GB, Cloud Firestore, Firebase Hosting, dan keamanan security rules.
-3. **[Spesifikasi API Lengkap (`docs/API_SPEC.md`)](docs/API_SPEC.md)**
-   - Daftar RESTful endpoints lengkap dengan method, request payload, query params, response schema, validation rules, dan error codes.
-   - Meliputi Public APIs, Authenticated Warga APIs, dan Role-Secured Administrative APIs.
-4. **[Matriks Akses & RBAC (`docs/RBAC.md`)](docs/RBAC.md)**
-   - Normalisasi permission menggunakan *singular resource name* (`letter.read`, `letter.create`, `letter.verify`, `letter.approve`, `security.manage`, dll.).
-   - Matriks perbandingan hak akses antara `WARGA`, `ADMIN`, `SEKRETARIS`, `KETUA_RT`, `BENDAHARA`, `PETUGAS_KEAMANAN`, dan `SUPERADMIN`.
-   - Prinsip *Least Privilege* dan *Superadmin Bypass*.
-5. **[Workflow & State Machine Persuratan (`docs/LETTER_WORKFLOW.md`)](docs/LETTER_WORKFLOW.md)**
-   - Diagram status eksplisit: `draft` ➔ `submitted` ➔ `verified` ➔ `approved` ➔ `completed` (dan `rejected`).
-   - Penomoran surat bebas tabrakan konkurensi berbasis `document_sequences` dengan `SELECT ... FOR UPDATE`.
-   - Pencegahan race condition dan konflik versi via *Optimistic Locking* (`version` check, return `409 Conflict`).
-6. **[Sistem Template Dokumen & Idempotensi (`docs/DOCUMENT_TEMPLATE.md`)](docs/DOCUMENT_TEMPLATE.md)**
-   - 5 Blank document templates terstandarisasi (`resources/views/documents/templates/`):
-     - `surat-keterangan.blade.php` (SK-UMUM)
-     - `surat-kematian.blade.php` (SK-KEMATIAN)
-     - `surat-pindah.blade.php` (SK-PINDAH)
-     - `surat-keterangan-tidak-mampu.blade.php` (SKTM)
-     - `laporan-keamanan.blade.php` (Security Incident Report)
-   - Penyimpanan privat di `storage/app/private/` dengan hash SHA-256 dan token verifikasi publik tanpa bocor data pribadi (PII).
-7. **[Arsitektur Enterprise Microservices & Client-Side Offloading (`docs/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md`)](docs/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md)**
-   - Strategi enterprise: Komputasi rendering & penyimpanan file Word (`.docx`) dan PDF dialihkan ke **Client-Side (Front-End Compute)** untuk mencegah lonjakan CPU server, kehabisan memori (*OOM*), dan kemacetan rute API (*504 Gateway Timeout*).
-   - Layanan frontend `CitizenDocumentExporter` (`public/js/citizen-document-exporter.js`) dengan verifikasi Anti-Tamper SHA-256 via Web Crypto API.
-   - Caching dokumen di storage browser (LocalStorage / IndexedDB / PWA Cache) untuk akses offline dan unduh ulang instan tanpa beban server.
-8. **[Spesifikasi OpenAPI 3.0 & Swagger UI Interaktif (`docs/openapi.yaml`)](docs/openapi.yaml)**
-   - Akses antarmuka interaktif langsung via browser: **`/docs/api`** atau **`/api/documentation`**.
-   - Raw OpenAPI Schema: **`/docs/openapi.yaml`**.
-   - Penegakan tipe data ketat (*Strongly Typed Contract*): Enums (`UserRole`, `LetterStatus`, `SecurityReportSeverity`, `SecurityReportCategory`), Format `date-time` / `binary` file upload, regex pattern NIK 16 digit, skema respons terstruktur, dan otentikasi Sanctum Bearer token.
+### 1. Desain & Arsitektur Visual ([docs/design/](docs/design/))
+- **[Brand Guide & Identitas Visual](docs/design/BRAND_GUIDE.md)**: Standardisasi warna, tipografi, dan logo lingkungan RT.
+- **[Diagram Arsitektur Sistem](docs/design/DIAGRAMS.md)**: Relasi antarkomponen platform warga dan kepengurusan.
+- **[Entity Relationship Diagram (ERD)](docs/design/ERD.md)**: Skema database relasional kependudukan, surat, dan kas warga.
+- **[Perencanaan Antarmuka UI](docs/design/UI_PLAN.md)**: Tata letak antarmuka responsif ramah segala kalangan.
+- **[Optimasi Performa Web & SEO](docs/design/WEB_PERFORMANCE_SEO_GEO.md)**: Strategi Core Web Vitals, priority hints, dan Schema.org Geolocation.
+
+### 2. Spesifikasi API ([docs/api_spec/](docs/api_spec/))
+- **[Spesifikasi API v1 Lengkap](docs/api_spec/API_SPEC.md)**: Rincian RESTful endpoints, parameter, headers, payload, dan responses.
+- **[Kontrak API v1.1](docs/api_spec/API_V1_1_CONTRACT.md)**: Spesifikasi mutasi penagihan iuran warga dan audit transaksi.
+- **[Skema Standar OpenAPI 3.1](docs/api_spec/openapi.yaml)**: Definisi API untuk Swagger UI interaktif yang dapat diakses di rute `/docs/api`.
+
+### 3. Persyaratan Bisnis & Regulasi ([docs/business/](docs/business/))
+- **[Software Requirements Specification (SRS)](docs/business/SRS.md)**: Kebutuhan fungsional dan non-fungsional aplikasi layanan warga.
+- **[Klasifikasi & Enkripsi Data Warga](docs/business/DATA_CLASSIFICATION.md)**: Enkripsi NIK dua arah (AES-256-CBC) dan proteksi data PII.
+- **[Alur Kerja & State Machine Surat](docs/business/LETTER_WORKFLOW.md)**: Alur penerbitan surat pengantar, verifikasi pengurus, penomoran urut bebas bentrok, dan tanda tangan elektronik.
+- **[Regulasi Laporan Keuangan & Backup](docs/business/FINANCIAL_REPORTS_AND_BACKUP_STORE.md)**: Pembatasan unduh rekapitulasi khusus kepengurusan, audit jejak unduh, dan backup terenkripsi.
+- **[Standardisasi Format Dokumen](docs/business/DOCUMENT_TEMPLATE.md)**: Template cetak dokumen resmi RT dan parameter dinamis.
+- **[Analisis Performa Memori & Storage](docs/business/STORAGE_MEMORY_PERFORMANCE_ANALYSIS.md)**: Efisiensi penyimpanan berkas dan kompresi lampiran.
+
+### 4. Perencanaan Proyek ([docs/plan_project/](docs/plan_project/))
+- **[Master Project Plan](docs/plan_project/PROJECT_PLAN.md)**: Rencana strategis implementasi menyeluruh.
+- **[Sprint Plan Roadmap](docs/plan_project/SPRINT_PLAN.md)**: Rincian 10 Sprint pengembangan berkelanjutan.
+
+### 5. Tata Kelola & Infrastruktur ([docs/project_management/](docs/project_management/))
+- **[Role-Based Access Control (RBAC)](docs/project_management/RBAC.md)**: Penegakan wewenang berprinsip Least Privilege untuk setiap role.
+- **[Matriks Hak Akses Granular](docs/project_management/RBAC_MATRIX.md)**: Pemetaan permission granular per entitas modul.
+- **[Panduan Integrasi Firebase Versi Gratis](docs/project_management/FIREBASE_FREE_TIER_SETUP.md)**: Pemanfaatan Firebase Spark Plan $0/bulan untuk notifikasi FCM, Storage, dan Firestore.
+- **[Arsitektur Enterprise & Client Offloading](docs/project_management/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md)**: Penanganan rendering PDF/Word di sisi front-end guna efisiensi CPU server.
 
 ---
 

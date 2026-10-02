@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class FinanceTransaction extends Model
 {
@@ -14,14 +15,18 @@ class FinanceTransaction extends Model
     use HasFactory;
 
     protected $attributes = [
+        'source' => 'other',
         'status' => 'draft',
         'version' => 1,
     ];
 
     protected $fillable = [
+        'transaction_number',
         'type',
+        'source',
         'category',
         'amount',
+        'amount_idr',
         'description',
         'transaction_date',
         'receipt_path',
@@ -39,6 +44,8 @@ class FinanceTransaction extends Model
             'transaction_date' => 'date',
             'published_at' => 'datetime',
             'amount' => 'decimal:2',
+            'amount_idr' => 'integer',
+            'version' => 'integer',
         ];
     }
 
@@ -55,5 +62,10 @@ class FinanceTransaction extends Model
     public function reversals(): HasMany
     {
         return $this->hasMany(FinanceTransaction::class, 'original_transaction_id');
+    }
+
+    public function purchase(): HasOne
+    {
+        return $this->hasOne(Purchase::class, 'finance_transaction_id');
     }
 }

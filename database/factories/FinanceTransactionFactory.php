@@ -20,10 +20,15 @@ class FinanceTransactionFactory extends Factory
      */
     public function definition(): array
     {
+        $amount = fake()->numberBetween(50000, 2500000);
+
         return [
+            'transaction_number' => 'TXN-'.fake()->unique()->numerify('202610-######'),
             'type' => fake()->randomElement(['income', 'expense']),
+            'source' => fake()->randomElement(['dues', 'purchase', 'other']),
             'category' => fake()->randomElement(['Iuran Bulanan', 'Kerja Bakti', 'Kebersihan', 'Perbaikan Lampu Jalan']),
-            'amount' => fake()->randomFloat(2, 50000, 2500000),
+            'amount' => (float) $amount,
+            'amount_idr' => $amount,
             'description' => fake()->sentence(),
             'transaction_date' => fake()->date(),
             'status' => 'draft',
@@ -35,19 +40,21 @@ class FinanceTransactionFactory extends Factory
         ];
     }
 
-    public function income(float $amount = 100000): static
+    public function income(float|int $amount = 100000): static
     {
         return $this->state(fn () => [
             'type' => 'income',
-            'amount' => $amount,
+            'amount' => (float) $amount,
+            'amount_idr' => (int) round((float) $amount),
         ]);
     }
 
-    public function expense(float $amount = 50000): static
+    public function expense(float|int $amount = 50000): static
     {
         return $this->state(fn () => [
             'type' => 'expense',
-            'amount' => $amount,
+            'amount' => (float) $amount,
+            'amount_idr' => (int) round((float) $amount),
         ]);
     }
 

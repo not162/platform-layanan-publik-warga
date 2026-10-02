@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\AuditLog;
+use Illuminate\Support\Facades\Auth;
 
 class AuditService
 {
@@ -17,7 +18,7 @@ class AuditService
         ?array $newValues = null
     ): AuditLog {
         return AuditLog::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'action' => $action,
             'entity_type' => $entityType,
             'entity_id' => $entityId,

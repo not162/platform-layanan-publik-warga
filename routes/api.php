@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Citizen\ProfileController;
 use App\Http\Controllers\Api\V1\LetterTypeController;
 use App\Http\Controllers\Api\V1\PushSubscriptionController;
+use App\Http\Controllers\Api\V1\ResidentDueController;
 use App\Http\Controllers\Api\V1\SecurityReportController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\FinanceTransactionController;
@@ -36,6 +37,8 @@ Route::prefix('v1')->group(function () {
     // Public community and transparency information
     Route::get('/finance/summary', [FinanceTransactionController::class, 'publicSummary']);
     Route::get('/finance', [FinanceTransactionController::class, 'publicIndex']);
+    Route::get('/public/finance/summary', [FinanceTransactionController::class, 'publicSummaryV11']);
+    Route::get('/public/finance/transactions', [FinanceTransactionController::class, 'publicTransactions']);
     Route::get('/announcements', [AnnouncementController::class, 'publicIndex']);
 
     Route::get('/public/overview', [PublicContentController::class, 'portalOverview']);
@@ -81,6 +84,12 @@ Route::prefix('v1')->group(function () {
         Route::post('/security-reports', [SecurityReportController::class, 'store']);
         Route::get('/security-reports/{id}', [SecurityReportController::class, 'show']);
         Route::get('/security-reports/{id}/document', [SecurityReportController::class, 'downloadDocument']);
+
+        // Resident dues & personal financial ledger
+        Route::get('/me/dues', [ResidentDueController::class, 'meDues']);
+        Route::get('/me/dues/{id}', [ResidentDueController::class, 'meDueDetail']);
+        Route::get('/me/payments', [ResidentDueController::class, 'mePayments']);
+        Route::get('/me/finance/summary', [ResidentDueController::class, 'meFinanceSummary']);
 
         // ---------------------------------------------------------
         // Administrative Endpoints (RBAC + Permission Scopes)
@@ -144,7 +153,27 @@ Route::prefix('v1')->group(function () {
             Route::get('/finance/backups/{filename}', [FinanceTransactionController::class, 'downloadBackup'])
                 ->middleware('permission:finance.report,finance.read,finance.manage');
 
-            // Finance & Announcements
+            // Finance Canonical Transactions Management
+            Route::get('/finance/transactions', [FinanceTransactionController::class, 'index'])
+                ->middleware('permission:finance.transaction.read,finance.read,finance.manage');
+            Route::post('/finance/transactions', [FinanceTransactionController::class, 'store'])
+                ->middleware('permission:finance.transaction.create,finance.manage');
+            Route::post('/finance/transactions/{id}/publish', [FinanceTransactionController::class, 'publish'])
+                ->middleware('permission:finance.transaction.publish,finance.manage');
+            Route::post('/finance/transactions/{id}/reverse', [FinanceTransactionController::class, 'reverse'])
+                ->middleware('permission:finance.transaction.reverse,finance.manage');
+
+            // Resident dues & payment recording
+            Route::get('/finance/dues', [ResidentDueController::class, 'adminDues'])
+                ->middleware('permission:finance.dues.read,finance.read,finance.manage');
+            Route::post('/finance/dues/generate', [ResidentDueController::class, 'adminGenerateDues'])
+                ->middleware('permission:finance.dues.manage,finance.manage');
+            Route::get('/finance/payments', [ResidentDueController::class, 'adminPayments'])
+                ->middleware('permission:finance.payment.read,finance.read,finance.manage');
+            Route::post('/finance/payments', [ResidentDueController::class, 'adminRecordPayment'])
+                ->middleware('permission:finance.payment.create,finance.manage');
+
+            // Legacy Finance Resource for backward compatibility
             Route::apiResource('finance', FinanceTransactionController::class)
                 ->except(['show'])
                 ->middleware('permission:finance.manage');

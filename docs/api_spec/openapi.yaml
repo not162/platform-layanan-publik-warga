@@ -1,0 +1,1726 @@
+openapi: 3.0.3
+info:
+  title: Platform Layanan Publik Warga (Portal Digital RT-RW) API
+  description: |
+    Spesifikasi OpenAPI 3.0 resmi untuk Platform Layanan Publik Warga.
+    Menyediakan standardisasi tipe data yang ketat (Strongly Typed Schema), arsitektur Enterprise Microservices,
+    Client-Side Offloading untuk ekspor dokumen (Word & PDF), Role-Based Access Control (RBAC),
+    dan sistem verifikasi anti-pemalsuan (Anti-Tamper Cryptographic Proof).
+  version: 1.0.0
+  contact:
+    name: Tim Pengembang Sistem Layanan Publik Warga
+    email: dev@warga.local
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://127.0.0.1:8000/api/v1
+    description: Local Development Server
+  - url: https://warga.local/api/v1
+    description: Production Enterprise Server
+
+security:
+  - SanctumAuth: []
+
+tags:
+  - name: Authentication
+    description: Otentikasi pengguna, registrasi warga, dan manajemen sesi
+  - name: Citizen Profile
+    description: Manajemen profil kependudukan mandiri
+  - name: Public Catalog & Information
+    description: Layanan portal publik tanpa otentikasi (Pengumuman, Agenda, Jadwal, Kontak Darurat)
+  - name: Public Verification & Tracking
+    description: Pelacakan tiket surat dan verifikasi keabsahan dokumen via QR code token
+  - name: Letter Types & Form Schema
+    description: Katalog jenis surat dan dynamic form schema JSON untuk rendering form di Frontend
+  - name: Letter Management (Warga)
+    description: Pengajuan surat, lampiran berkas multipart, preview, export payload, dan download dokumen
+  - name: Letter Workflow (Admin)
+    description: Verifikasi berkas (Sekretaris), Persetujuan (Ketua RT), Penolakan, dan Finalisasi surat
+  - name: Security Reports
+    description: Pelaporan insiden keamanan warga, emergency dispatch notice, dan penanganan tiket investigasi
+  - name: Complaints
+    description: Pengaduan warga (aspirasi publik maupun laporan anonim)
+  - name: Finance Transactions
+    description: Transparansi kas RT dan pencatatan buku kas (Bendahara)
+  - name: Push Notifications
+    description: Registrasi langganan Web Push Notification (PWA)
+
+paths:
+  # =========================================================================
+  # AUTHENTICATION
+  # =========================================================================
+  /register:
+    post:
+      tags: [Authentication]
+      summary: Registrasi Akun Warga Baru
+      description: Mendaftarkan warga baru dengan hashing NIK satu arah (SHA-256) untuk mencegah kebocoran data pribadi.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Warga berhasil didaftarkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /login:
+    post:
+      tags: [Authentication]
+      summary: Login Pengguna
+      description: Otentikasi warga (menggunakan nomor telepon/email) atau pengurus (email) untuk memperoleh Sanctum Bearer Token.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login berhasil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /logout:
+    post:
+      tags: [Authentication]
+      summary: Logout Pengguna
+      description: Mencabut token akses aktif pengguna saat ini.
+      responses:
+        '200':
+          description: Berhasil logout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # =========================================================================
+  # CITIZEN PROFILE
+  # =========================================================================
+  /me:
+    get:
+      tags: [Citizen Profile]
+      summary: Ambil Profil Pengguna Aktif
+      description: Mengambil detail profil warga terotentikasi dengan representasi NIK yang ter-masking secara aman.
+      responses:
+        '200':
+          description: Profil berhasil dimuat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    patch:
+      tags: [Citizen Profile]
+      summary: Perbarui Profil Warga
+      description: Memperbarui data kontak (alamat, pekerjaan, dsb) tanpa mengubah nilai NIK hash kependudukan.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profil berhasil diperbarui
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  # =========================================================================
+  # PUBLIC SERVICES & INFORMATION
+  # =========================================================================
+  /public/services:
+    get:
+      tags: [Public Catalog & Information]
+      summary: Katalog Layanan Surat Publik
+      security: []
+      responses:
+        '200':
+          description: Daftar layanan surat aktif
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LetterType'
+
+  /public/announcements:
+    get:
+      tags: [Public Catalog & Information]
+      summary: Daftar Pengumuman Lingkungan RT
+      security: []
+      responses:
+        '200':
+          description: Daftar pengumuman yang telah dipublikasikan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Announcement'
+
+  /public/events:
+    get:
+      tags: [Public Catalog & Information]
+      summary: Daftar Kegiatan & Agenda Warga
+      security: []
+      responses:
+        '200':
+          description: Agenda kegiatan warga
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventItem'
+
+  /public/emergency-contacts:
+    get:
+      tags: [Public Catalog & Information]
+      summary: Daftar Nomor Kontak Darurat Resmi
+      security: []
+      responses:
+        '200':
+          description: Kontak darurat (Polisi, Damkar, Ambulans, Satpam RT)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EmergencyContact'
+
+  /public/schedules:
+    get:
+      tags: [Public Catalog & Information]
+      summary: Jadwal Ronda & Poskamling
+      security: []
+      responses:
+        '200':
+          description: Jadwal siskamling lingkungan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RoundSchedule'
+
+  # =========================================================================
+  # PUBLIC VERIFICATION & TRACKING
+  # =========================================================================
+  /public/track/{ticket}:
+    get:
+      tags: [Public Verification & Tracking]
+      summary: Pelacakan Tiket Surat Publik (Non-PII)
+      description: Melacak status pengajuan surat warga menggunakan nomor tiket unik tanpa membocorkan data pribadi (PII).
+      security: []
+      parameters:
+        - name: ticket
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "SRT-20261001-A12BC"
+      responses:
+        '200':
+          description: Informasi tiket ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicTrackingResponse'
+        '404':
+          description: Tiket tidak ditemukan
+
+  /public/letter/verify/{token}:
+    get:
+      tags: [Public Verification & Tracking]
+      summary: Verifikasi Keabsahan Dokumen via QR Token
+      description: Memeriksa validitas dokumen surat resmi yang telah disetujui tanpa mengekspos NIK atau alamat privat.
+      security: []
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "a8f5c3b9e1d2f4a6b8c0e2d4f6a8b0c2e4d6f8a0"
+      responses:
+        '200':
+          description: Hasil verifikasi dokumen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentVerificationResponse'
+        '404':
+          description: Token verifikasi tidak valid
+
+  # =========================================================================
+  # LETTER TYPES & DYNAMIC FORM SCHEMAS
+  # =========================================================================
+  /letter-types:
+    get:
+      tags: [Letter Types & Form Schema]
+      summary: Daftar Master Jenis Surat
+      responses:
+        '200':
+          description: Daftar jenis surat aktif
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LetterType'
+
+  /letter-types/{code}:
+    get:
+      tags: [Letter Types & Form Schema]
+      summary: Detail Master Jenis Surat
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "SK-UMUM"
+      responses:
+        '200':
+          description: Detail jenis surat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/LetterType'
+
+  /letter-types/{code}/form-schema:
+    get:
+      tags: [Letter Types & Form Schema]
+      summary: Dynamic Form Schema untuk Frontend
+      description: Mengembalikan spesifikasi field JSON agar frontend dapat me-render formulir dinamis secara otomatis.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "SK-PINDAH"
+      responses:
+        '200':
+          description: Dynamic schema formulir
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DynamicFormSchemaResponse'
+
+  # =========================================================================
+  # LETTER MANAGEMENT (WARGA)
+  # =========================================================================
+  /letters:
+    get:
+      tags: [Letter Management (Warga)]
+      summary: Daftar Surat Milik Warga
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/LetterStatus'
+      responses:
+        '200':
+          description: Daftar pengajuan surat milik warga yang terotentikasi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Letter'
+    post:
+      tags: [Letter Management (Warga)]
+      summary: Buat Permohonan Surat Baru (Draft)
+      description: Membuat draf permohonan surat baru dengan unggah berkas multipart (maks. 5 berkas, maks. 5MB/berkas).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateLetterRequest'
+      responses:
+        '201':
+          description: Permohonan surat berhasil dibuat dalam status draft
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Letter'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /letters/{id}:
+    get:
+      tags: [Letter Management (Warga)]
+      summary: Detail Pengajuan Surat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail surat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Letter'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+    patch:
+      tags: [Letter Management (Warga)]
+      summary: Ubah Permohonan Surat (Hanya Draf)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLetterRequest'
+      responses:
+        '200':
+          description: Draf berhasil diubah
+        '409':
+          $ref: '#/components/responses/ConflictError'
+    delete:
+      tags: [Letter Management (Warga)]
+      summary: Hapus Draf Surat
+      description: Menghapus pengajuan surat yang belum diajukan (status draf).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Draf surat berhasil dihapus
+        '409':
+          description: Tidak dapat menghapus surat yang telah diajukan
+
+  /letters/{id}/submit:
+    post:
+      tags: [Letter Management (Warga)]
+      summary: Ajukan Permohonan Surat (Draft ➔ Submitted)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version]
+              properties:
+                version:
+                  type: integer
+                  description: Optimistic locking version
+                  example: 1
+      responses:
+        '200':
+          description: Surat berhasil diajukan untuk proses verifikasi
+        '409':
+          $ref: '#/components/responses/ConflictError'
+
+  /letters/{id}/export-payload:
+    get:
+      tags: [Letter Management (Warga)]
+      summary: Ambil Payload Dokumen untuk Ekspor Client-Side (Front-End)
+      description: |
+        Menyediakan structured payload dokumen, template HTML ter-render, hash SHA-256,
+        dan tanda tangan digital. Digunakan oleh layanan frontend (`CitizenDocumentExporter`)
+        untuk memproses unduhan Word (.docx) dan PDF (.pdf) langsung di browser warga
+        tanpa membebani CPU server atau menyebabkan antrean API macet.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Payload dokumen siap diproses di sisi klien
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LetterExportPayloadResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '409':
+          description: Dokumen belum disetujui (status bukan approved/completed)
+
+  /letters/{id}/download:
+    get:
+      tags: [Letter Management (Warga)]
+      summary: Unduh Dokumen Surat Sah Multi-Format
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [html, word, docx, doc, pdf]
+            default: html
+          description: Format dokumen yang diminta
+      responses:
+        '200':
+          description: Berkas dokumen resmi
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+            text/html:
+              schema:
+                type: string
+
+  /letters/{id}/preview:
+    get:
+      tags: [Letter Management (Warga)]
+      summary: Pratinjau Tampilan Dokumen Surat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Konten HTML dokumen resmi
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /letters/{id}/attachments:
+    post:
+      tags: [Letter Management (Warga)]
+      summary: Unggah Lampiran Tambahan pada Draf Surat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [attachment]
+              properties:
+                attachment:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Berkas lampiran berhasil diunggah ke storage privat
+
+  # =========================================================================
+  # LETTER WORKFLOW (ADMIN)
+  # =========================================================================
+  /admin/letters/{id}/verify:
+    post:
+      tags: [Letter Workflow (Admin)]
+      summary: Verifikasi Kelengkapan Berkas (Sekretaris)
+      description: Mengubah status surat dari `submitted` menjadi `verified` atau `rejected`.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version]
+              properties:
+                version:
+                  type: integer
+                  example: 1
+                notes:
+                  type: string
+                  maxLength: 500
+                  example: "KTP dan KK telah diperiksa dan sesuai."
+      responses:
+        '200':
+          description: Surat berhasil diverifikasi
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+
+  /admin/letters/{id}/approve:
+    post:
+      tags: [Letter Workflow (Admin)]
+      summary: Pengesahan & Approval Surat (Ketua RT)
+      description: |
+        Menyetujui surat terverifikasi (`verified` ➔ `approved`), menghasilkan nomor surat resmi
+        secara sekuensial bebas tabrakan konkurensi (`document_sequences`), dan men-generate dokumen resmi ber-hash SHA-256.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version]
+              properties:
+                version:
+                  type: integer
+                  example: 2
+                letter_number:
+                  type: string
+                  nullable: true
+                  example: "SKTM/0001/RT01/10/2026"
+      responses:
+        '200':
+          description: Surat berhasil disahkan dan nomor resmi terbit
+        '409':
+          $ref: '#/components/responses/ConflictError'
+
+  /admin/letters/{id}/reject:
+    post:
+      tags: [Letter Workflow (Admin)]
+      summary: Tolak Permohonan Surat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version, rejection_reason]
+              properties:
+                version:
+                  type: integer
+                  example: 2
+                rejection_reason:
+                  type: string
+                  minLength: 5
+                  maxLength: 500
+                  example: "Berkas Kartu Keluarga yang dilampirkan buram dan tidak terbaca."
+      responses:
+        '200':
+          description: Surat ditolak dengan alasan penolakan
+
+  /admin/letters/{id}/complete:
+    post:
+      tags: [Letter Workflow (Admin)]
+      summary: Finalisasi Surat Menjadi Selesai
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version]
+              properties:
+                version:
+                  type: integer
+                  example: 3
+      responses:
+        '200':
+          description: Surat ditandai selesai (completed)
+
+  # =========================================================================
+  # SECURITY REPORTS
+  # =========================================================================
+  /security-reports:
+    get:
+      tags: [Security Reports]
+      summary: Daftar Laporan Keamanan Warga
+      responses:
+        '200':
+          description: Daftar laporan insiden keamanan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SecurityReport'
+    post:
+      tags: [Security Reports]
+      summary: Kirim Laporan Insiden Keamanan Baru
+      description: |
+        Mengirimkan laporan keamanan lingkungan. Jika tingkat keparahan (severity) adalah `emergency`,
+        respons menyertakan informasi kontak darurat resmi kepolisian, ambulans, dan pemadam kebakaran.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSecurityReportRequest'
+      responses:
+        '201':
+          description: Laporan insiden keamanan berhasil dicatat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SecurityReport'
+
+  /security-reports/{id}:
+    get:
+      tags: [Security Reports]
+      summary: Detail Laporan Keamanan Warga
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail laporan keamanan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SecurityReport'
+
+  /security-reports/{id}/document:
+    get:
+      tags: [Security Reports]
+      summary: Unduh Dokumen Printable Laporan Insiden
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Berkas HTML laporan insiden siap cetak
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /admin/security-reports/{id}:
+    patch:
+      tags: [Security Reports]
+      summary: Penugasan Petugas & Resolusi Tiket Keamanan (Petugas Keamanan / Admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSecurityReportRequest'
+      responses:
+        '200':
+          description: Tiket keamanan berhasil diperbarui
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  # =========================================================================
+  # COMPLAINTS
+  # =========================================================================
+  /complaints:
+    get:
+      tags: [Complaints]
+      summary: Daftar Pengaduan Warga
+      responses:
+        '200':
+          description: Daftar keluhan warga
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Complaint'
+    post:
+      tags: [Complaints]
+      summary: Kirim Pengaduan / Aspirasi Warga
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateComplaintRequest'
+      responses:
+        '201':
+          description: Pengaduan berhasil dicatat
+
+  # =========================================================================
+  # FINANCE TRANSACTIONS
+  # =========================================================================
+  /finance:
+    get:
+      tags: [Finance Transactions]
+      summary: Daftar Transaksi Kas Warga (Transparansi Publik)
+      security: []
+      responses:
+        '200':
+          description: Daftar transaksi kas publik
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FinanceTransaction'
+
+  /finance/summary:
+    get:
+      tags: [Finance Transactions]
+      summary: Ringkasan Saldo & Total Kas Masuk/Keluar
+      security: []
+      responses:
+        '200':
+          description: Ringkasan keuangan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinanceSummaryResponse'
+
+  /admin/finance:
+    post:
+      tags: [Finance Transactions]
+      summary: Catat Transaksi Kas Baru (Bendahara)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFinanceTransactionRequest'
+      responses:
+        '201':
+          description: Transaksi kas tercatat
+
+components:
+  securitySchemes:
+    SanctumAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Sanctum / JWT Token
+      description: Masukkan Sanctum Bearer token yang diperoleh dari endpoint `/login`.
+
+  responses:
+    UnauthorizedError:
+      description: Token otentikasi tidak disediakan atau tidak valid (HTTP 401).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ForbiddenError:
+      description: Hak akses ditolak berdasarkan RBAC Least Privilege (HTTP 403).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ConflictError:
+      description: Terjadi konflik status atau version mismatch Optimistic Locking (HTTP 409).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validasi payload request gagal (HTTP 422).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationErrorResponse'
+
+  schemas:
+    # -----------------------------------------------------------------------
+    # ENUMS
+    # -----------------------------------------------------------------------
+    UserRole:
+      type: string
+      enum:
+        - WARGA
+        - ADMIN
+        - SEKRETARIS
+        - KETUA_RT
+        - BENDAHARA
+        - PETUGAS_KEAMANAN
+        - SUPERADMIN
+      example: "WARGA"
+
+    LetterStatus:
+      type: string
+      enum:
+        - draft
+        - submitted
+        - verified
+        - approved
+        - completed
+        - rejected
+      example: "approved"
+
+    SecurityReportSeverity:
+      type: string
+      enum:
+        - low
+        - medium
+        - high
+        - emergency
+      example: "medium"
+
+    SecurityReportCategory:
+      type: string
+      enum:
+        - kehilangan
+        - pencurian
+        - keributan
+        - kerusakan
+        - orang_mencurigakan
+        - fasilitas_umum
+        - keamanan_lingkungan
+        - lainnya
+      example: "kehilangan"
+
+    SecurityReportStatus:
+      type: string
+      enum:
+        - submitted
+        - reviewed
+        - assigned
+        - processing
+        - resolved
+        - closed
+        - rejected
+      example: "submitted"
+
+    # -----------------------------------------------------------------------
+    # DOMAIN MODELS
+    # -----------------------------------------------------------------------
+    LetterType:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        kode_surat:
+          type: string
+          example: "SK-UMUM"
+        nama_surat:
+          type: string
+          example: "Surat Keterangan Umum"
+        deskripsi:
+          type: string
+          example: "Surat keterangan pengantar untuk berbagai keperluan administratif kependudukan."
+        template_key:
+          type: string
+          example: "surat-keterangan"
+        template_version:
+          type: integer
+          example: 1
+        syarat_dokumen:
+          type: array
+          items:
+            type: string
+          example: ["Fotokopi KTP", "Fotokopi Kartu Keluarga"]
+        form_schema:
+          type: object
+          properties:
+            fields:
+              type: array
+              items:
+                $ref: '#/components/schemas/FormFieldDefinition'
+        estimated_process_hours:
+          type: integer
+          example: 24
+        is_active:
+          type: boolean
+          example: true
+
+    FormFieldDefinition:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "purpose"
+        label:
+          type: string
+          example: "Keperluan Pengajuan"
+        type:
+          type: string
+          enum: [text, textarea, date, number, select]
+          example: "textarea"
+        required:
+          type: boolean
+          example: true
+        placeholder:
+          type: string
+          example: "Contoh: Untuk persyaratan pendaftaran beasiswa anak"
+        max_length:
+          type: integer
+          example: 500
+
+    Letter:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 14
+        ticket_number:
+          type: string
+          example: "SRT-20261001-A12BC"
+        letter_number:
+          type: string
+          nullable: true
+          example: "SK/0001/RT01/10/2026"
+        type:
+          type: string
+          example: "Surat Keterangan Umum"
+        status:
+          $ref: '#/components/schemas/LetterStatus'
+        keperluan:
+          type: string
+          example: "Pengurusan pembuatan rekening bank"
+        version:
+          type: integer
+          example: 3
+        document_hash:
+          type: string
+          nullable: true
+          example: "b2f6b4e073c6833959dfdc9f000b21a8d0f1b2c3d4e5f60718293a4b5c6d7e8f"
+        verification_token:
+          type: string
+          nullable: true
+          example: "a8f5c3b9e1d2f4a6b8c0e2d4f6a8b0c2e4d6f8a0"
+        generated_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    LetterExportPayloadResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 14
+            ticket_number:
+              type: string
+              example: "SRT-20261001-A12BC"
+            letter_number:
+              type: string
+              example: "SK/0001/RT01/10/2026"
+            letter_type:
+              type: string
+              example: "Surat Keterangan Umum"
+            status:
+              type: string
+              example: "approved"
+            citizen:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Budi Santoso"
+                nik_masked:
+                  type: string
+                  example: "3171************"
+            issued_at:
+              type: string
+              example: "01 Oktober 2026"
+            verification_token:
+              type: string
+              example: "a8f5c3b9e1d2f4a6b8c0e2d4f6a8b0c2e4d6f8a0"
+            verification_url:
+              type: string
+              format: uri
+              example: "http://127.0.0.1:8000/api/v1/public/letter/verify/a8f5c3b9e1d2f4a6b8c0e2d4f6a8b0c2e4d6f8a0"
+            document_hash:
+              type: string
+              example: "b2f6b4e073c6833959dfdc9f000b21a8d0f1b2c3d4e5f60718293a4b5c6d7e8f"
+            rendered_html:
+              type: string
+              description: Template dokumen resmi lengkap siap cetak atau ekspor Word
+            export_capabilities:
+              type: object
+              properties:
+                formats:
+                  type: array
+                  items:
+                    type: string
+                  example: ["pdf", "word"]
+                client_side_processing:
+                  type: boolean
+                  example: true
+                cacheable_offline:
+                  type: boolean
+                  example: true
+            security_check:
+              type: object
+              properties:
+                hash_algorithm:
+                  type: string
+                  example: "SHA-256"
+                hash_match:
+                  type: boolean
+                  example: true
+                anti_tamper_verified:
+                  type: boolean
+                  example: true
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+        message:
+          type: string
+          example: "Payload dokumen berhasil disiapkan untuk pemrosesan di sisi klien (Front-End)."
+
+    SecurityReport:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        ticket_number:
+          type: string
+          example: "SEC-20261001-Z78KL"
+        category:
+          $ref: '#/components/schemas/SecurityReportCategory'
+        severity:
+          $ref: '#/components/schemas/SecurityReportSeverity'
+        title:
+          type: string
+          example: "Lampu Penerangan Jalan Gang 2 Padam"
+        description:
+          type: string
+          example: "Kondisi jalanan gelap gulita berpotensi rawan pencurian."
+        location:
+          type: string
+          example: "Depan Pos Ronda RT 01"
+        incident_at:
+          type: string
+          format: date-time
+        is_anonymous:
+          type: boolean
+          example: false
+        status:
+          $ref: '#/components/schemas/SecurityReportStatus'
+        version:
+          type: integer
+          example: 1
+        resolution:
+          type: string
+          nullable: true
+        emergency_notice:
+          type: object
+          nullable: true
+          properties:
+            disclaimer:
+              type: string
+            contacts:
+              type: array
+              items:
+                $ref: '#/components/schemas/EmergencyContact'
+
+    Complaint:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 8
+        ticket_number:
+          type: string
+          example: "CMP-20261001-X99AA"
+        title:
+          type: string
+          example: "Sampah Menumpuk di Sudut Lapangan"
+        description:
+          type: string
+          example: "Truk pengangkut sampah belum datang 3 hari."
+        status:
+          type: string
+          enum: [submitted, in_progress, resolved, rejected]
+          example: "submitted"
+        is_anonymous:
+          type: boolean
+          example: false
+
+    FinanceTransaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12
+        tanggal:
+          type: string
+          format: date
+          example: "2026-10-01"
+        kategori:
+          type: string
+          example: "Iuran Keamanan & Kebersihan"
+        tipe:
+          type: string
+          enum: [income, expense]
+          example: "income"
+        jumlah:
+          type: number
+          format: double
+          example: 5000000.00
+        keterangan:
+          type: string
+          example: "Pemasukan iuran warga bulan Oktober 2026"
+        status:
+          type: string
+          enum: [draft, published, reversed]
+          example: "published"
+
+    Announcement:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3
+        judul:
+          type: string
+          example: "Kerja Bakti Bersama Menyambut Musim Hujan"
+        konten:
+          type: string
+          example: "Seluruh warga diharapkan hadir pada hari Minggu pukul 07.00 WIB."
+        kategori:
+          type: string
+          example: "Kegiatan"
+        published_at:
+          type: string
+          format: date-time
+
+    EventItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        nama_kegiatan:
+          type: string
+          example: "Senam Pagi Bersama"
+        waktu_mulai:
+          type: string
+          format: date-time
+        lokasi:
+          type: string
+          example: "Balai Warga RT 01"
+
+    EmergencyContact:
+      type: object
+      properties:
+        instansi:
+          type: string
+          example: "Polsek Setempat"
+        nomor:
+          type: string
+          example: "110 / (021) 555-1234"
+        keterangan:
+          type: string
+          example: "Layanan kepolisian 24 jam"
+
+    RoundSchedule:
+      type: object
+      properties:
+        hari:
+          type: string
+          example: "Sabtu"
+        regu:
+          type: string
+          example: "Regu Elang"
+        anggota:
+          type: array
+          items:
+            type: string
+          example: ["Pak RT", "Bpk. Bambang", "Bpk. Hendra"]
+
+    # -----------------------------------------------------------------------
+    # REQUEST PAYLOADS
+    # -----------------------------------------------------------------------
+    RegisterRequest:
+      type: object
+      required: [name, phone_number, nik, password, password_confirmation]
+      properties:
+        name:
+          type: string
+          example: "Budi Santoso"
+        email:
+          type: string
+          format: email
+          nullable: true
+          example: "budi@warga.local"
+        phone_number:
+          type: string
+          pattern: '^[0-9]{10,15}$'
+          example: "081234567890"
+        nik:
+          type: string
+          pattern: '^[0-9]{16}$'
+          description: NIK 16 digit yang akan di-hash secara one-way SHA-256
+          example: "3171012345670001"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: "password123"
+        password_confirmation:
+          type: string
+          format: password
+          example: "password123"
+
+    LoginRequest:
+      type: object
+      required: [login, password]
+      properties:
+        login:
+          type: string
+          description: Email atau nomor telepon warga
+          example: "081234567890"
+        password:
+          type: string
+          format: password
+          example: "password123"
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Budi Santoso, S.Kom."
+        email:
+          type: string
+          format: email
+          example: "budi.santoso@warga.local"
+        phone_number:
+          type: string
+          example: "081298765432"
+        address:
+          type: string
+          example: "Jl. Mawar No. 12 RT 01 / RW 05"
+        occupation:
+          type: string
+          example: "Karyawan Swasta"
+
+    CreateLetterRequest:
+      type: object
+      required: [letter_type_code, purpose]
+      properties:
+        letter_type_code:
+          type: string
+          example: "SK-UMUM"
+        purpose:
+          type: string
+          maxLength: 500
+          example: "Untuk keperluan administrasi pengajuan beasiswa kuliah."
+        data_tambahan:
+          type: object
+          description: Data dinamis sesuai kebutuhan template surat
+          example:
+            description: "Membutuhkan legalisir domisili untuk berkas akademik"
+        attachments:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: Berkas lampiran persyaratan (PDF, JPG, PNG maks. 5MB)
+
+    UpdateLetterRequest:
+      type: object
+      required: [version]
+      properties:
+        version:
+          type: integer
+          example: 1
+        purpose:
+          type: string
+          example: "Pembaruan keperluan pengajuan surat"
+        data_tambahan:
+          type: object
+
+    CreateSecurityReportRequest:
+      type: object
+      required: [category, severity, title, description, location, incident_at]
+      properties:
+        category:
+          $ref: '#/components/schemas/SecurityReportCategory'
+        severity:
+          $ref: '#/components/schemas/SecurityReportSeverity'
+        title:
+          type: string
+          maxLength: 180
+          example: "Kehilangan Sepeda Lipat Merah"
+        description:
+          type: string
+          example: "Sepeda terparkir di teras rumah dan hilang sekitar pukul 21:00."
+        location:
+          type: string
+          maxLength: 255
+          example: "Jl. Melati No. 4"
+        incident_at:
+          type: string
+          format: date-time
+          example: "2026-10-01 21:00:00"
+        is_anonymous:
+          type: boolean
+          default: false
+
+    UpdateSecurityReportRequest:
+      type: object
+      required: [version]
+      properties:
+        version:
+          type: integer
+          example: 1
+        status:
+          $ref: '#/components/schemas/SecurityReportStatus'
+        assigned_to:
+          type: integer
+          nullable: true
+          description: User ID petugas keamanan yang ditugaskan
+          example: 4
+        resolution:
+          type: string
+          nullable: true
+          example: "Patroli telah dilakukan, pelaku diamankan bersama barang bukti."
+
+    CreateComplaintRequest:
+      type: object
+      required: [title, description]
+      properties:
+        title:
+          type: string
+          maxLength: 150
+          example: "Saluran Drainase Tersumbat"
+        description:
+          type: string
+          example: "Saluran air di Gang 3 tertutup sampah dan bau menyengat."
+        is_anonymous:
+          type: boolean
+          default: false
+
+    CreateFinanceTransactionRequest:
+      type: object
+      required: [tanggal, kategori, tipe, jumlah, keterangan]
+      properties:
+        tanggal:
+          type: string
+          format: date
+          example: "2026-10-01"
+        kategori:
+          type: string
+          example: "Iuran Warga"
+        tipe:
+          type: string
+          enum: [income, expense]
+          example: "income"
+        jumlah:
+          type: number
+          format: double
+          example: 1500000.00
+        keterangan:
+          type: string
+          example: "Penerimaan iuran RT 01 bulan Oktober"
+
+    # -----------------------------------------------------------------------
+    # RESPONSES & METADATA
+    # -----------------------------------------------------------------------
+    ResponseMeta:
+      type: object
+      properties:
+        request_id:
+          type: string
+          format: uuid
+        api_version:
+          type: string
+          example: "v1"
+        timestamp:
+          type: string
+          format: date-time
+
+    AuthResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                email:
+                  type: string
+                role:
+                  $ref: '#/components/schemas/UserRole'
+            token:
+              type: string
+              example: "1|QWERTYUIOPASDFGHJKLZXCVBNM"
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+        message:
+          type: string
+          example: "Otentikasi berhasil"
+
+    UserProfileResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            email:
+              type: string
+            role:
+              $ref: '#/components/schemas/UserRole'
+            citizen:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                nik_masked:
+                  type: string
+                  example: "3171************"
+                phone_number:
+                  type: string
+                address:
+                  type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+
+    PublicTrackingResponse:
+      type: object
+      properties:
+        found:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            ticket_number:
+              type: string
+              example: "SRT-20261001-A12BC"
+            type:
+              type: string
+              example: "Surat Keterangan Umum"
+            status:
+              $ref: '#/components/schemas/LetterStatus'
+            created_at:
+              type: string
+              format: date-time
+            verified_at:
+              type: string
+              format: date-time
+              nullable: true
+            approved_at:
+              type: string
+              format: date-time
+              nullable: true
+        message:
+          type: string
+          example: "Informasi pelacakan surat berhasil dimuat."
+
+    DocumentVerificationResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            letter_number:
+              type: string
+              example: "SK/0001/RT01/10/2026"
+            letter_type:
+              type: string
+              example: "Surat Keterangan Umum"
+            status:
+              type: string
+              example: "approved"
+            recipient_name:
+              type: string
+              example: "Budi Santoso"
+            approved_at:
+              type: string
+              format: date-time
+            issuer:
+              type: string
+              example: "Pengurus RT 01 / RW 05"
+        message:
+          type: string
+          example: "Dokumen sah dan terverifikasi secara resmi."
+
+    DynamicFormSchemaResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            letter_type_code:
+              type: string
+              example: "SK-UMUM"
+            letter_type_name:
+              type: string
+              example: "Surat Keterangan Umum"
+            form_schema:
+              type: object
+              properties:
+                fields:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/FormFieldDefinition'
+            requirements:
+              type: array
+              items:
+                type: string
+
+    FinanceSummaryResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            total_income:
+              type: number
+              example: 12500000.00
+            total_expense:
+              type: number
+              example: 4200000.00
+            current_balance:
+              type: number
+              example: 8300000.00
+            period:
+              type: string
+              example: "Oktober 2026"
+
+    SuccessMessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Operasi berhasil dijalankan."
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Aksi tidak diizinkan."
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Data yang dikirimkan tidak valid."
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string

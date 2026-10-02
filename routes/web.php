@@ -17,6 +17,10 @@ Route::get('/register', function () {
 })->name('register');
 
 Route::get('/login', function () {
+    if (auth()->guard('web')->check()) {
+        return redirect()->route('dashboard');
+    }
+
     return view('auth.login');
 })->name('login');
 Route::post('/login', [AuthController::class, 'webLogin'])->name('login.post');
@@ -24,6 +28,15 @@ Route::post('/logout', [AuthController::class, 'webLogout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/profile', [DashboardController::class, 'profile'])->name('profile');
+    Route::post('/dashboard/profile/photo', [DashboardController::class, 'updatePhoto'])->name('profile.photo.update');
+
+    // Dashboard Quick Actions (Letters & Reports)
+    Route::post('/dashboard/letters/{id}/verify', [DashboardController::class, 'verifyLetter'])->name('dashboard.letters.verify');
+    Route::post('/dashboard/letters/{id}/approve', [DashboardController::class, 'approveLetter'])->name('dashboard.letters.approve');
+    Route::post('/dashboard/letters/{id}/reject', [DashboardController::class, 'rejectLetter'])->name('dashboard.letters.reject');
+    Route::post('/dashboard/finance/reports/{id}/approve', [DashboardController::class, 'approveFinancialReport'])->name('dashboard.finance.reports.approve');
+
     Route::get('/dashboard/finance/reports/monthly', [FinanceTransactionController::class, 'downloadMonthlyReport'])->name('finance.report.monthly');
     Route::get('/dashboard/finance/reports/citizen-dues', [FinanceTransactionController::class, 'downloadCitizenDuesReport'])->name('finance.report.citizen-dues');
     Route::post('/dashboard/finance/backups', [FinanceTransactionController::class, 'createBackupStore'])->name('finance.backup.create');
@@ -35,7 +48,10 @@ Route::middleware('auth')->group(function () {
 // OpenAPI 3.1 & Interactive Swagger UI Documentation
 // -----------------------------------------------------------------
 Route::get('/docs/openapi.yaml', function () {
-    $path = base_path('docs/openapi.yaml');
+    $path = file_exists(base_path('docs/api_spec/openapi.yaml'))
+        ? base_path('docs/api_spec/openapi.yaml')
+        : base_path('docs/openapi.yaml');
+
     if (! file_exists($path)) {
         abort(404, 'Spesifikasi OpenAPI tidak ditemukan.');
     }

@@ -66,4 +66,9 @@ class Citizen extends Model
     {
         return $this->hasMany(Complaint::class);
     }
+
+    public function dues(): HasMany
+    {
+        return $this->hasMany(ResidentDue::class, 'citizen_id');
+    }
 }

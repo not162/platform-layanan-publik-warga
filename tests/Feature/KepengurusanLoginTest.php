@@ -27,8 +27,89 @@ class KepengurusanLoginTest extends TestCase
 
         $dashboardResponse = $this->actingAs($ketuaRt)->get('/dashboard');
         $dashboardResponse->assertStatus(200);
-        $dashboardResponse->assertSee('Portal Pengurus RT 01');
-        $dashboardResponse->assertSee('Katalog Master Dokumen', false);
+        $dashboardResponse->assertSee('Portal Resmi Ketua RT 01 / RW 05');
+        $dashboardResponse->assertSee('Antrean Pengesahan Surat Pengantar Warga', false);
+    }
+
+    public function test_web_login_supports_json_request_with_session_cookies(): void
+    {
+        $ketuaRt = User::factory()->ketuaRt()->create([
+            'email' => 'ketua_rt@warga.local',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $response = $this->postJson('/login', [
+            'email' => 'ketua_rt@warga.local',
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'message',
+            'access_token',
+            'token_type',
+            'redirect_url',
+            'user' => ['id', 'name', 'email', 'role', 'is_active'],
+        ]);
+        $this->assertAuthenticatedAs($ketuaRt);
+    }
+
+    public function test_sekretaris_accesses_dedicated_sekretaris_dashboard(): void
+    {
+        $sekretaris = User::factory()->sekretaris()->create([
+            'email' => 'sekretaris@warga.local',
+            'password' => bcrypt('secret123'),
+        ]);
+
+        $response = $this->actingAs($sekretaris)->get('/dashboard');
+        $response->assertStatus(200);
+        $response->assertSee('Portal Resmi Sekretaris RT 01 / RW 05');
+        $response->assertSee('Meja Verifikasi Berkas Surat Pengantar Warga');
+    }
+
+    public function test_bendahara_accesses_dedicated_bendahara_dashboard(): void
+    {
+        $bendahara = User::factory()->bendahara()->create([
+            'email' => 'bendahara@warga.local',
+            'password' => bcrypt('secret123'),
+        ]);
+
+        $response = $this->actingAs($bendahara)->get('/dashboard');
+        $response->assertStatus(200);
+        $response->assertSee('Portal Resmi Bendahara RT 01 / RW 05');
+        $response->assertSee('Saldo Kas RT Saat Ini');
+    }
+
+    public function test_keamanan_accesses_dedicated_keamanan_dashboard(): void
+    {
+        $keamanan = User::factory()->petugasKeamanan()->create([
+            'email' => 'keamanan@warga.local',
+            'password' => bcrypt('secret123'),
+        ]);
+
+        $response = $this->actingAs($keamanan)->get('/dashboard');
+        $response->assertStatus(200);
+        $response->assertSee('Portal Resmi Petugas Keamanan RT 01');
+        $response->assertSee('Tiket Laporan Insiden Keamanan');
+    }
+
+    public function test_authenticated_user_accesses_profile_page(): void
+    {
+        $user = User::factory()->ketuaRt()->create();
+
+        $response = $this->actingAs($user)->get('/dashboard/profile');
+        $response->assertStatus(200);
+        $response->assertSee('Profil Akun', false);
+        $response->assertSee($user->email);
+        $response->assertSee('Informasi Identitas', false);
+    }
+
+    public function test_authenticated_user_redirected_from_login_page(): void
+    {
+        $user = User::factory()->ketuaRt()->create();
+
+        $response = $this->actingAs($user)->get('/login');
+        $response->assertRedirect('/dashboard');
     }
 
     public function test_bendahara_and_sekretaris_can_login_via_api(): void

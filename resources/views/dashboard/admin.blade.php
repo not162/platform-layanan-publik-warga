@@ -53,11 +53,13 @@
     <header class="topbar">
         <a href="/">
             <x-brand-logo variant="symbol" class="h-7 w-7" />
-            <span>Portal Pengurus RT 01</span>
-            <span class="badge badge-role">{{ $user->role }}</span>
+            <span>Portal Administrator & Pengurus RT 01</span>
+            <span class="badge badge-role">{{ $user->role->value ?? (string) $user->role }}</span>
         </a>
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <span style="font-size: 0.85rem; color: #CBD5E1;">{{ $user->name }} ({{ $user->email }})</span>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <a href="{{ route('profile') }}" class="btn btn-outline" style="background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.25); font-size: 0.8rem; padding: 0.35rem 0.75rem;">
+                <i data-lucide="user" style="width: 14px; height: 14px;"></i> Profil Saya
+            </a>
             <a href="/docs/api" class="btn btn-teal" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" target="_blank">
                 <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Swagger API Docs
             </a>
@@ -263,16 +265,16 @@
                 if (res.ok) {
                     alertBox.style.background = '#ECFDF5';
                     alertBox.style.color = '#065F46';
-                    alertBox.textContent = `✓ Sukses: Backup store tersimpan di ${json.data?.backup_file} (Checksum: ${json.data?.checksum_sha256?.substring(0, 16)}...)`;
+                    alertBox.textContent = `Berhasil: Cadangan data tersimpan di ${json.data?.backup_file} (Kode verifikasi: ${json.data?.checksum_sha256?.substring(0, 16)}...)`;
                 } else {
                     alertBox.style.background = '#FEF2F2';
                     alertBox.style.color = '#991B1B';
-                    alertBox.textContent = json.message || 'Gagal membuat backup store.';
+                    alertBox.textContent = json.message || 'Gagal membuat cadangan data.';
                 }
             } catch (err) {
                 alertBox.style.background = '#FEF2F2';
                 alertBox.style.color = '#991B1B';
-                alertBox.textContent = 'Gagal menghubungi server backup.';
+                alertBox.textContent = 'Gagal menghubungi server penyimpanan cadangan.';
             }
         }
     </script>

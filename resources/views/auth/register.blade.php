@@ -140,7 +140,7 @@
                 <template x-if="form.password_confirmation.length > 0">
                     <span class="text-xs font-medium"
                           :class="form.password === form.password_confirmation ? 'text-green-600' : 'text-amber-600'"
-                          x-text="form.password === form.password_confirmation ? '✓ Cocok' : 'Belum cocok'"></span>
+                          x-text="form.password === form.password_confirmation ? 'Kata sandi cocok' : 'Belum sesuai'"></span>
                 </template>
             </div>
             <div class="relative">
