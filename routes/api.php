@@ -4,7 +4,9 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Api\V1\Admin\CitizenController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Citizen\ProfileController;
+use App\Http\Controllers\Api\V1\FinancialReportController;
 use App\Http\Controllers\Api\V1\LetterTypeController;
+use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PushSubscriptionController;
 use App\Http\Controllers\Api\V1\ResidentDueController;
 use App\Http\Controllers\Api\V1\SecurityReportController;
@@ -39,6 +41,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/finance', [FinanceTransactionController::class, 'publicIndex']);
     Route::get('/public/finance/summary', [FinanceTransactionController::class, 'publicSummaryV11']);
     Route::get('/public/finance/transactions', [FinanceTransactionController::class, 'publicTransactions']);
+    Route::get('/public/finance/reports/quarterly', [FinancialReportController::class, 'publicReports']);
     Route::get('/announcements', [AnnouncementController::class, 'publicIndex']);
 
     Route::get('/public/overview', [PublicContentController::class, 'portalOverview']);
@@ -172,6 +175,22 @@ Route::prefix('v1')->group(function () {
                 ->middleware('permission:finance.payment.read,finance.read,finance.manage');
             Route::post('/finance/payments', [ResidentDueController::class, 'adminRecordPayment'])
                 ->middleware('permission:finance.payment.create,finance.manage');
+
+            // Purchases & itemized expenditure
+            Route::get('/finance/purchases', [PurchaseController::class, 'index'])
+                ->middleware('permission:finance.purchase.read,finance.read,finance.manage');
+            Route::post('/finance/purchases', [PurchaseController::class, 'store'])
+                ->middleware('permission:finance.purchase.create,finance.manage');
+            Route::get('/finance/purchases/{id}', [PurchaseController::class, 'show'])
+                ->middleware('permission:finance.purchase.read,finance.read,finance.manage');
+
+            // Quarterly financial reports & integrity sealing
+            Route::get('/finance/reports/quarterly', [FinancialReportController::class, 'adminIndex'])
+                ->middleware('permission:finance.report,finance.read,finance.manage');
+            Route::post('/finance/reports/quarterly/generate', [FinancialReportController::class, 'generate'])
+                ->middleware('permission:finance.report,finance.manage');
+            Route::post('/finance/reports/quarterly/{id}/publish', [FinancialReportController::class, 'publish'])
+                ->middleware('permission:finance.report,finance.manage');
 
             // Legacy Finance Resource for backward compatibility
             Route::apiResource('finance', FinanceTransactionController::class)

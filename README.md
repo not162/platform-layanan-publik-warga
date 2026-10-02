@@ -778,13 +778,14 @@ PASS  Tests\Feature\KepengurusanLoginTest
 PASS  Tests\Feature\LetterModuleTest
 PASS  Tests\Feature\NotificationModuleTest
 PASS  Tests\Feature\PublicContentModuleTest
+PASS  Tests\Feature\PurchaseAndQuarterlyReportSprint4Test
 PASS  Tests\Feature\PwaModuleTest
 PASS  Tests\Feature\ResidentDuePersonalLedgerSprint3Test
 PASS  Tests\Feature\RoleAndAuthorizationTest
 PASS  Tests\Feature\SecurityReportModuleTest
 
-Tests:    122 passed (505 assertions)
-Duration: 9.70s
+Tests:    128 passed (545 assertions)
+Duration: 10.20s
 Status:   100% OK
 ```
 
