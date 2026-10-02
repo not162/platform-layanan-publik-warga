@@ -11,14 +11,14 @@
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-// Konfigurasi default (akan ditimpa melalui self.firebaseConfig jika tersedia)
 const firebaseConfig = {
-    apiKey: "FIREBASE_API_KEY",
+    apiKey: "AIzaSyD9PUPdSdZRAKd6QXORru8kyYcGveC1yns",
     authDomain: "layanan-publik-warga.firebaseapp.com",
     projectId: "layanan-publik-warga",
-    storageBucket: "layanan-publik-warga.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:abcdef"
+    storageBucket: "layanan-publik-warga.firebasestorage.app",
+    messagingSenderId: "544336210267",
+    appId: "1:544336210267:web:052c69600e6c0d74a9d27e",
+    measurementId: "G-LFB3EPECT5"
 };
 
 try {

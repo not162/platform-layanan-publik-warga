@@ -7,8 +7,20 @@
 window.LayananPublikFirebase = (function () {
     let messaging = null;
 
+    const defaultFirebaseConfig = {
+        apiKey: "AIzaSyD9PUPdSdZRAKd6QXORru8kyYcGveC1yns",
+        authDomain: "layanan-publik-warga.firebaseapp.com",
+        projectId: "layanan-publik-warga",
+        storageBucket: "layanan-publik-warga.firebasestorage.app",
+        messagingSenderId: "544336210267",
+        appId: "1:544336210267:web:052c69600e6c0d74a9d27e",
+        measurementId: "G-LFB3EPECT5"
+    };
+
     async function initFirebase(config, vapidKey) {
-        if (!config || !config.apiKey) {
+        const finalConfig = config || window.firebaseConfig || defaultFirebaseConfig;
+
+        if (!finalConfig || !finalConfig.apiKey) {
             console.info('[Firebase] Config belum dikonfigurasi, FCM client dilewati.');
             return null;
         }
@@ -20,7 +32,7 @@ window.LayananPublikFirebase = (function () {
 
         try {
             if (!firebase.apps.length) {
-                firebase.initializeApp(config);
+                firebase.initializeApp(finalConfig);
             }
             if ('Notification' in window && firebase.messaging.isSupported()) {
                 messaging = firebase.messaging();
