@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Citizen;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -102,6 +103,40 @@ class KepengurusanLoginTest extends TestCase
         $response->assertSee('Profil Akun', false);
         $response->assertSee($user->email);
         $response->assertSee('Informasi Identitas', false);
+    }
+
+    public function test_warga_can_update_contact_details_from_profile_page(): void
+    {
+        $user = User::factory()->warga()->create([
+            'email' => 'before@example.com',
+            'email_verified_at' => now(),
+        ]);
+        $citizen = Citizen::factory()->create([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'phone' => '081234567890',
+        ]);
+
+        $response = $this->actingAs($user)->patch('/dashboard/profile', [
+            'email' => 'warga@gmail.com',
+            'phone' => '+6281234567890',
+            'occupation' => 'Wiraswasta',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('status');
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'email' => 'warga@gmail.com',
+            'email_verified_at' => null,
+        ]);
+        $this->assertDatabaseHas('citizens', [
+            'id' => $citizen->id,
+            'email' => 'warga@gmail.com',
+            'phone' => '+6281234567890',
+            'phone_verified_at' => null,
+            'occupation' => 'Wiraswasta',
+        ]);
     }
 
     public function test_authenticated_user_redirected_from_login_page(): void

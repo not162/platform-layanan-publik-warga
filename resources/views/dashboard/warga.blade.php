@@ -53,6 +53,9 @@
             <a href="{{ route('profile') }}" class="btn btn-outline" style="background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.25); font-size: 0.8rem; padding: 0.35rem 0.75rem;">
                 <i data-lucide="user" style="width: 14px; height: 14px;"></i> Profil Saya
             </a>
+            <a href="{{ url('/api/v1/me/export') }}" class="btn btn-outline" style="background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.25); font-size: 0.8rem; padding: 0.35rem 0.75rem;">
+                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Unduh data saya
+            </a>
             <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                 @csrf
                 <button type="submit" class="btn btn-outline" style="background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2); font-size: 0.8rem; padding: 0.35rem 0.75rem;">

@@ -40,6 +40,13 @@
         .detail-row { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
         .detail-label { color: var(--text-muted); font-weight: 500; }
         .detail-val { color: var(--text-dark); font-weight: 600; text-align: right; }
+        .profile-action { transition: transform 140ms ease, background-color 140ms ease; }
+        .profile-action:active { transform: translateY(1px); }
+        .profile-field { display: grid; gap: 0.4rem; color: var(--text-dark); font-size: 0.85rem; font-weight: 600; }
+        .profile-field input { width: 100%; min-height: 2.7rem; padding: 0.65rem 0.75rem; border: 1px solid var(--border); border-radius: 0.4rem; color: var(--text-dark); font: inherit; font-weight: 400; }
+        .profile-field input:focus { border-color: var(--teal); outline: 3px solid rgba(58, 150, 150, 0.16); }
+        .verification-status { color: var(--text-muted); font-size: 0.8rem; font-weight: 500; }
+        @media (prefers-reduced-motion: reduce) { .profile-action { transition: none; } }
     </style>
 </head>
 <body>
@@ -61,7 +68,7 @@
 
     <main class="container">
         @if(session('status'))
-            <div style="background: #ECFDF5; border-left: 4px solid var(--emerald); color: #065F46; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem;">
+            <div role="status" style="background: #ECFDF5; border-left: 4px solid var(--emerald); color: #065F46; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem;">
                 {{ session('status') }}
             </div>
         @endif
@@ -110,6 +117,55 @@
                 @error('photo')
                     <p style="color: var(--rose); font-size: 0.8rem; margin-top: 0.4rem;">{{ $message }}</p>
                 @enderror
+            </div>
+            @endif
+
+            @if($user->isWarga() && $user->citizen)
+            <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border);">
+                <h3 style="font-size: 1rem; font-weight: 600; color: var(--primary); margin-bottom: 0.35rem;">Kontak warga</h3>
+                <p class="verification-status" style="margin-bottom: 1rem;">
+                    Email:
+                    {{ $user->email_verified_at ? 'terverifikasi' : 'belum terverifikasi' }}
+                    <span aria-hidden="true">·</span>
+                    Telepon:
+                    {{ $user->citizen->phone_verified_at ? 'terverifikasi' : 'belum terverifikasi' }}
+                    @if(!$user->citizen->phone_verified_at)
+                        (verifikasi SMS belum tersedia)
+                    @endif
+                </p>
+                <form method="POST" action="{{ route('profile.update') }}" style="display: grid; gap: 0.9rem; max-width: 34rem;">
+                    @csrf
+                    @method('PATCH')
+                    <label class="profile-field" for="profile_email">
+                        Email
+                        <input id="profile_email" name="email" type="email" value="{{ old('email', $user->email) }}" autocomplete="email" required>
+                    </label>
+                    @error('email')<p role="alert" style="color: var(--rose); font-size: 0.8rem;">{{ $message }}</p>@enderror
+                    <label class="profile-field" for="profile_phone">
+                        Nomor telepon
+                        <input id="profile_phone" name="phone" type="tel" value="{{ old('phone', $user->citizen->phone) }}" autocomplete="tel" inputmode="tel">
+                    </label>
+                    @error('phone')<p role="alert" style="color: var(--rose); font-size: 0.8rem;">{{ $message }}</p>@enderror
+                    <label class="profile-field" for="profile_occupation">
+                        Pekerjaan
+                        <input id="profile_occupation" name="occupation" type="text" value="{{ old('occupation', $user->citizen->occupation) }}" autocomplete="organization-title">
+                    </label>
+                    @error('occupation')<p role="alert" style="color: var(--rose); font-size: 0.8rem;">{{ $message }}</p>@enderror
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.65rem;">
+                        <button type="submit" class="btn btn-primary profile-action">
+                            <i data-lucide="save" style="width: 15px; height: 15px;"></i> Simpan kontak
+                        </button>
+                        <a class="btn btn-outline profile-action" href="{{ url('/api/v1/me/export') }}">
+                            <i data-lucide="download" style="width: 15px; height: 15px;"></i> Unduh data saya
+                        </a>
+                    </div>
+                </form>
+            </div>
+            @elseif($user->isWarga())
+            <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border);">
+                <a class="btn btn-outline profile-action" href="{{ url('/api/v1/me/export') }}">
+                    <i data-lucide="download" style="width: 15px; height: 15px;"></i> Unduh data akun saya
+                </a>
             </div>
             @endif
 

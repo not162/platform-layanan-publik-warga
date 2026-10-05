@@ -32,6 +32,8 @@ class CitizenResource extends JsonResource
             'religion' => $this->religion,
             'occupation' => $this->occupation,
             'phone' => $this->phone,
+            'phone_verified' => $this->phone_verified_at !== null,
+            'phone_verified_at' => $this->phone_verified_at?->toIso8601String(),
             'email' => $this->email,
             'status_warga' => $this->status_warga,
             'is_active' => (bool) $this->is_active,

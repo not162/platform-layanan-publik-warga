@@ -26,6 +26,7 @@ class Citizen extends Model
         'blood_type',
         'occupation',
         'phone',
+        'phone_verified_at',
         'email',
         'status_warga',
         'is_active',
@@ -43,6 +44,7 @@ class Citizen extends Model
         return [
             'nik' => 'encrypted',
             'date_of_birth' => 'date',
+            'phone_verified_at' => 'datetime',
             'is_active' => 'boolean',
         ];
     }

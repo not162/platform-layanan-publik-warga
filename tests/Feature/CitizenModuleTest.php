@@ -136,6 +136,87 @@ class CitizenModuleTest extends TestCase
         ]);
     }
 
+    public function test_warga_profile_update_syncs_email_and_resets_verification_status(): void
+    {
+        $user = User::factory()->warga()->create([
+            'email' => 'old@example.com',
+            'email_verified_at' => now(),
+        ]);
+        $citizen = Citizen::factory()->create([
+            'user_id' => $user->id,
+            'email' => 'old@example.com',
+            'phone' => '081234567890',
+            'phone_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user)->patchJson('/api/v1/me', [
+            'email' => 'warga@gmail.com',
+            'phone' => '+6281234567890',
+            'occupation' => 'Wiraswasta',
+        ]);
+
+        $response->assertOk()
+            ->assertJsonPath('data.user.email', 'warga@gmail.com')
+            ->assertJsonPath('data.citizen.email', 'warga@gmail.com')
+            ->assertJsonPath('data.citizen.phone', '+6281234567890')
+            ->assertJsonPath('data.citizen.phone_verified', false);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'email' => 'warga@gmail.com',
+            'email_verified_at' => null,
+        ]);
+        $this->assertDatabaseHas('citizens', [
+            'id' => $citizen->id,
+            'email' => 'warga@gmail.com',
+            'phone' => '+6281234567890',
+            'phone_verified_at' => null,
+        ]);
+    }
+
+    public function test_warga_cannot_change_profile_to_another_users_email(): void
+    {
+        $user = User::factory()->warga()->create();
+        $otherUser = User::factory()->create(['email' => 'used@example.com']);
+        $citizen = Citizen::factory()->create([
+            'user_id' => $user->id,
+            'email' => $user->email,
+        ]);
+
+        $response = $this->actingAs($user)->patchJson('/api/v1/me', [
+            'email' => $otherUser->email,
+        ]);
+
+        $response->assertUnprocessable()->assertJsonValidationErrors('email');
+        $this->assertDatabaseHas('users', ['id' => $user->id, 'email' => $user->email]);
+        $this->assertDatabaseHas('citizens', ['id' => $citizen->id, 'email' => $user->email]);
+    }
+
+    public function test_warga_can_export_only_their_own_personal_data(): void
+    {
+        $user = User::factory()->warga()->create();
+        $otherUser = User::factory()->warga()->create();
+        $ownCitizen = Citizen::factory()->create([
+            'user_id' => $user->id,
+            'full_name' => 'Warga Pemilik Export',
+            'nik' => '3174012345678901',
+            'nik_hash' => hash('sha256', '3174012345678901'),
+        ]);
+        Citizen::factory()->create([
+            'user_id' => $otherUser->id,
+            'full_name' => 'Warga Lain',
+        ]);
+
+        $response = $this->actingAs($user)->getJson('/api/v1/me/export');
+
+        $response->assertOk()
+            ->assertHeader('content-disposition', 'attachment; filename="data-warga.json"')
+            ->assertJsonPath('data.citizen.id', $ownCitizen->id)
+            ->assertJsonPath('data.citizen.full_name', 'Warga Pemilik Export')
+            ->assertJsonMissing(['full_name' => 'Warga Lain']);
+        $this->assertStringNotContainsString('3174012345678901', $response->getContent());
+    }
+
     public function test_optimistic_locking_prevents_stale_citizen_updates(): void
     {
         $admin = User::factory()->admin(['citizen.manage'])->create();

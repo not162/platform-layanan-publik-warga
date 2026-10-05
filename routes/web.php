@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\Citizen\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceTransactionController;
 use App\Http\Controllers\HomeController;
@@ -29,6 +30,7 @@ Route::post('/logout', [AuthController::class, 'webLogout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/profile', [DashboardController::class, 'profile'])->name('profile');
+    Route::patch('/dashboard/profile', [ProfileController::class, 'updateWeb'])->name('profile.update');
     Route::post('/dashboard/profile/photo', [DashboardController::class, 'updatePhoto'])->name('profile.photo.update');
 
     // Dashboard Quick Actions (Letters & Reports)

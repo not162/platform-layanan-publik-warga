@@ -15,7 +15,7 @@ FROM dunglas/frankenphp:1-php8.4-bookworm
 RUN apt-get update \
     && apt-get install -y --no-install-recommends unzip \
     && rm -rf /var/lib/apt/lists/* \
-    && install-php-extensions pdo_mysql
+    && install-php-extensions pdo_mysql redis
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
