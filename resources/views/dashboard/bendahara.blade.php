@@ -36,6 +36,8 @@
         .badge-role { background: rgba(255,255,255,0.18); color: #FFF; border: 1px solid rgba(255,255,255,0.3); }
         .badge-in { background: #ECFDF5; color: #065F46; }
         .badge-out { background: #FEF2F2; color: #991B1B; }
+        .amount-income { font-weight: 600; color: var(--emerald); }
+        .amount-expense { font-weight: 600; color: var(--rose); }
         .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; border-radius: 0.5rem; font-size: 0.825rem; font-weight: 500; cursor: pointer; text-decoration: none; border: none; transition: all 0.15s; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-light); }
@@ -146,7 +148,7 @@
                     <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i> Buat Cadangan Buku Kas (SHA-256)
                 </button>
             </div>
-            <div id="backupAlert" style="display: none; margin-top: 1rem; padding: 0.75rem; border-radius: 0.375rem; font-size: 0.85rem;"></div>
+            <div id="backupAlert" data-url="{{ route('finance.backup.create') }}" data-csrf="{{ csrf_token() }}" style="display: none; margin-top: 1rem; padding: 0.75rem; border-radius: 0.375rem; font-size: 0.85rem;"></div>
         </div>
 
         <!-- Daftar Mutasi Buku Kas Terbaru -->
@@ -180,7 +182,7 @@
                                     <span class="badge badge-out">Pengeluaran</span>
                                 @endif
                             </td>
-                            <td style="font-weight: 600; color: {{ $tx->type === 'income' ? 'var(--emerald)' : 'var(--rose)' }};">
+                            <td class="{{ $tx->type === 'income' ? 'amount-income' : 'amount-expense' }}">
                                 {{ $tx->type === 'income' ? '+' : '-' }}Rp {{ number_format($tx->amount_idr ?? $tx->amount, 0, ',', '.') }}
                             </td>
                             <td>{{ $tx->description }}</td>
@@ -213,11 +215,11 @@
                 const headers = { 
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': alertBox.dataset.csrf
                 };
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
-                const res = await fetch('{{ route('finance.backup.create') }}', {
+                const res = await fetch(alertBox.dataset.url, {
                     method: 'POST',
                     headers: headers
                 });

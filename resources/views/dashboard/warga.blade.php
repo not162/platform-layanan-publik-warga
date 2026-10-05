@@ -32,6 +32,8 @@
         .card-stat h3 { font-size: 0.825rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 0.5rem; }
         .card-stat .value { font-size: 1.75rem; font-weight: 700; color: var(--text-dark); }
         .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .badge-approved { background: #ECFDF5; color: #065F46; }
+        .badge-pending { background: #EFF6FF; color: #1E40AF; }
         .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; border: none; transition: all 0.15s; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-teal { background: var(--teal); color: white; }
@@ -121,10 +123,7 @@
                             <td>{{ $letter->letterType?->nama_surat ?? $letter->type }}</td>
                             <td>{{ $letter->keperluan }}</td>
                             <td>
-                                <span class="badge" style="
-                                    background: {{ in_array($letter->status, ['approved', 'completed']) ? '#ECFDF5' : '#EFF6FF' }};
-                                    color: {{ in_array($letter->status, ['approved', 'completed']) ? '#065F46' : '#1E40AF' }};
-                                ">
+                                <span class="badge {{ in_array($letter->status, ['approved', 'completed']) ? 'badge-approved' : 'badge-pending' }}">
                                     {{ strtoupper($letter->status) }}
                                 </span>
                             </td>
@@ -132,10 +131,10 @@
                             <td>
                                 @if(in_array($letter->status, ['approved', 'completed']))
                                 <div style="display: flex; gap: 0.4rem;">
-                                    <button type="button" onclick="exportWord({{ $letter->id }})" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-color: #2563EB; color: #2563EB;">
+                                    <button type="button" data-letter-id="{{ $letter->id }}" onclick="exportWord(this.dataset.letterId)" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-color: #2563EB; color: #2563EB;">
                                         <i data-lucide="file-edit" style="width: 12px; height: 12px;"></i> Word (.docx)
                                     </button>
-                                    <button type="button" onclick="exportPdf({{ $letter->id }})" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-color: #DC2626; color: #DC2626;">
+                                    <button type="button" data-letter-id="{{ $letter->id }}" onclick="exportPdf(this.dataset.letterId)" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-color: #DC2626; color: #DC2626;">
                                         <i data-lucide="printer" style="width: 12px; height: 12px;"></i> PDF
                                     </button>
                                 </div>

@@ -34,6 +34,9 @@
         .card-stat .value { font-size: 1.75rem; font-weight: 700; color: var(--text-dark); }
         .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
         .badge-role { background: rgba(255,255,255,0.15); color: #FFF; border: 1px solid rgba(255,255,255,0.3); }
+        .badge-approved { background: #ECFDF5; color: #065F46; }
+        .badge-submitted { background: #FEF3C7; color: #92400E; }
+        .badge-other { background: #EFF6FF; color: #1E40AF; }
         .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; border: none; transition: all 0.15s; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-light); }
@@ -129,7 +132,7 @@
                     <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i> Jalankan Backup Store Data Kas (SHA-256)
                 </button>
             </div>
-            <div id="backupAlert" style="display: none; margin-top: 1rem; padding: 0.75rem; border-radius: 0.375rem; font-size: 0.85rem;"></div>
+            <div id="backupAlert" data-url="{{ route('finance.backup.create') }}" data-csrf="{{ csrf_token() }}" style="display: none; margin-top: 1rem; padding: 0.75rem; border-radius: 0.375rem; font-size: 0.85rem;"></div>
         </div>
         @endif
 
@@ -211,10 +214,7 @@
                             <td>{{ $letter->citizen?->full_name ?? '—' }}</td>
                             <td>{{ $letter->letterType?->nama_surat ?? $letter->type }}</td>
                             <td>
-                                <span class="badge" style="
-                                    background: {{ $letter->status === 'approved' ? '#ECFDF5' : ($letter->status === 'submitted' ? '#FEF3C7' : '#EFF6FF') }};
-                                    color: {{ $letter->status === 'approved' ? '#065F46' : ($letter->status === 'submitted' ? '#92400E' : '#1E40AF') }};
-                                ">
+                                <span class="badge {{ $letter->status === 'approved' ? 'badge-approved' : ($letter->status === 'submitted' ? 'badge-submitted' : 'badge-other') }}">
                                     {{ strtoupper($letter->status) }}
                                 </span>
                             </td>
@@ -253,11 +253,11 @@
                 const headers = { 
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': alertBox.dataset.csrf
                 };
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
-                const res = await fetch('{{ route('finance.backup.create') }}', {
+                const res = await fetch(alertBox.dataset.url, {
                     method: 'POST',
                     headers: headers
                 });
