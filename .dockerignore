@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.git
+node_modules
+vendor
+public/build
+public/hot
+public/storage
+storage
+database/*.sqlite
+bootstrap/cache/*
