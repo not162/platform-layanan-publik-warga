@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    @vite(['resources/css/dashboard.css'])
     <style>
         :root {
             --primary: #1B365D;
@@ -46,7 +47,7 @@
         th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; }
         .doc-card { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; border: 1px solid var(--border); border-radius: 0.5rem; background: #FFFFFF; text-decoration: none; color: inherit; transition: border-color 0.2s; }
         .doc-card:hover { border-color: var(--teal); }
-        .icon-box { width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; shrink-0; }
+        .icon-box { width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex: 0 0 2.5rem; }
     </style>
 </head>
 <body>

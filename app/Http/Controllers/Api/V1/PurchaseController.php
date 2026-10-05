@@ -92,9 +92,6 @@ class PurchaseController extends Controller
 
         if (
             $user->isSuperadmin() ||
-            $user->isBendahara() ||
-            $user->isKetuaRt() ||
-            $user->isAdmin() ||
             $user->hasPermission($permission) ||
             $user->hasPermission('finance.manage')
         ) {

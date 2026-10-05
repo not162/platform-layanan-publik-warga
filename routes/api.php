@@ -186,11 +186,11 @@ Route::prefix('v1')->group(function () {
 
             // Quarterly financial reports & integrity sealing
             Route::get('/finance/reports/quarterly', [FinancialReportController::class, 'adminIndex'])
-                ->middleware('permission:finance.report,finance.read,finance.manage');
+                ->middleware('permission:finance.report.read,finance.manage');
             Route::post('/finance/reports/quarterly/generate', [FinancialReportController::class, 'generate'])
-                ->middleware('permission:finance.report,finance.manage');
+                ->middleware('permission:finance.report.generate');
             Route::post('/finance/reports/quarterly/{id}/publish', [FinancialReportController::class, 'publish'])
-                ->middleware('permission:finance.report,finance.manage');
+                ->middleware('permission:finance.report.publish');
 
             // Legacy Finance Resource for backward compatibility
             Route::apiResource('finance', FinanceTransactionController::class)

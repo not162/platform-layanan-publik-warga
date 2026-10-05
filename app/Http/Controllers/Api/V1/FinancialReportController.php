@@ -99,12 +99,8 @@ class FinancialReportController extends Controller
 
         if (
             $user->isSuperadmin() ||
-            $user->isBendahara() ||
-            $user->isKetuaRt() ||
-            $user->isAdmin() ||
             $user->hasPermission($permission) ||
-            $user->hasPermission('finance.report') ||
-            $user->hasPermission('finance.manage')
+            ($permission === 'finance.report.read' && $user->hasPermission('finance.manage'))
         ) {
             return;
         }

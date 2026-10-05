@@ -1,0 +1,106 @@
+.topbar {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.topbar > a:first-child {
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.topbar > div {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    min-width: 0;
+}
+
+.topbar a {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.container {
+    width: calc(100% - 3rem);
+}
+
+.grid-stats {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.75rem), 1fr));
+}
+
+.card-stat .value {
+    overflow-wrap: anywhere;
+}
+
+.profile-banner {
+    gap: 1rem;
+}
+
+.profile-banner > div:first-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.btn:focus-visible,
+.topbar a:focus-visible {
+    outline: 3px solid #FBBF24;
+    outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+    .topbar {
+        align-items: flex-start;
+        padding: 0.75rem 1rem;
+    }
+
+    .topbar > a:first-child {
+        flex-basis: 100%;
+    }
+
+    .topbar > div {
+        width: 100%;
+        justify-content: flex-start !important;
+        gap: 0.5rem !important;
+    }
+
+    .container {
+        width: calc(100% - 2rem);
+        margin: 1rem auto;
+    }
+
+    .grid-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    .card-stat .value {
+        font-size: 1.45rem;
+    }
+
+    .profile-banner {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .profile-banner > div:last-child {
+        text-align: left !important;
+    }
+
+    .section-title {
+        align-items: flex-start;
+    }
+
+    .btn {
+        min-height: 2.5rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .grid-stats {
+        grid-template-columns: 1fr;
+    }
+}

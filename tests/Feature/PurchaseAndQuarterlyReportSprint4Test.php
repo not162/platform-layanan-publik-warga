@@ -188,6 +188,75 @@ class PurchaseAndQuarterlyReportSprint4Test extends TestCase
         $this->assertNotEmpty($response->json('data.checksum_sha256'));
     }
 
+    public function test_ketua_rt_cannot_generate_quarterly_report(): void
+    {
+        $ketuaRt = User::factory()->ketuaRt()->create();
+
+        $response = $this->actingAs($ketuaRt)->postJson('/api/v1/admin/finance/reports/quarterly/generate', [
+            'year' => 2026,
+            'quarter' => 4,
+        ]);
+
+        $response->assertForbidden();
+        $this->assertDatabaseMissing('financial_reports', ['year' => 2026, 'quarter' => 4]);
+    }
+
+    public function test_bendahara_cannot_publish_quarterly_report(): void
+    {
+        $bendahara = User::factory()->bendahara()->create();
+        $report = FinancialReport::factory()->create([
+            'status' => 'draft',
+        ]);
+
+        $response = $this->actingAs($bendahara)->postJson("/api/v1/admin/finance/reports/quarterly/{$report->id}/publish");
+
+        $response->assertForbidden();
+        $this->assertDatabaseHas('financial_reports', [
+            'id' => $report->id,
+            'status' => 'draft',
+            'published_by' => null,
+        ]);
+    }
+
+    public function test_sekretaris_cannot_generate_or_publish_quarterly_report(): void
+    {
+        $sekretaris = User::factory()->sekretaris()->create();
+        $report = FinancialReport::factory()->create([
+            'status' => 'draft',
+        ]);
+
+        $generateResponse = $this->actingAs($sekretaris)->postJson('/api/v1/admin/finance/reports/quarterly/generate', [
+            'year' => 2026,
+            'quarter' => 4,
+        ]);
+        $publishResponse = $this->actingAs($sekretaris)->postJson("/api/v1/admin/finance/reports/quarterly/{$report->id}/publish");
+
+        $generateResponse->assertForbidden();
+        $publishResponse->assertForbidden();
+        $this->assertDatabaseHas('financial_reports', [
+            'id' => $report->id,
+            'status' => 'draft',
+            'published_by' => null,
+        ]);
+        $this->assertDatabaseMissing('financial_reports', ['year' => 2026, 'quarter' => 4]);
+    }
+
+    public function test_finance_manager_can_read_but_not_mutate_reports_without_specific_permissions(): void
+    {
+        $admin = User::factory()->admin(['finance.manage'])->create();
+        FinancialReport::factory()->create(['status' => 'draft']);
+
+        $readResponse = $this->actingAs($admin)->getJson('/api/v1/admin/finance/reports/quarterly');
+        $generateResponse = $this->actingAs($admin)->postJson('/api/v1/admin/finance/reports/quarterly/generate', [
+            'year' => 2026,
+            'quarter' => 4,
+        ]);
+
+        $readResponse->assertOk()->assertJsonCount(1, 'data');
+        $generateResponse->assertForbidden();
+        $this->assertDatabaseMissing('financial_reports', ['year' => 2026, 'quarter' => 4]);
+    }
+
     public function test_ketua_rt_can_publish_quarterly_report_with_anti_tamper_checksum(): void
     {
         $ketuaRt = User::factory()->ketuaRt()->create();
