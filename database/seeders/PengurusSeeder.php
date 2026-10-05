@@ -15,7 +15,21 @@ class PengurusSeeder extends Seeder
      */
     public function run(): void
     {
+        if (! app()->environment(['local', 'testing'])) {
+            return;
+        }
+
         $password = Hash::make('password');
+
+        User::updateOrCreate(
+            ['email' => 'superadmin@warga.local'],
+            [
+                'name' => 'Super Administrator',
+                'password' => $password,
+                'role' => UserRole::SUPERADMIN,
+                'is_active' => true,
+            ]
+        );
 
         User::updateOrCreate(
             ['email' => 'ketua_rt@warga.local'],
