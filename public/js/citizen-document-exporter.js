@@ -118,118 +118,98 @@ class CitizenDocumentExporter {
     }
 
     /**
-     * Mengunduh dokumen ke format Microsoft Word (.docx / .doc) langsung di FE
-     * @param {Object} documentData 
-     * @param {string} customFilename 
+     * Mengunduh dokumen secara langsung dari API (mendukung GET dan POST)
+     * Mengembalikan Promise<{ success: true, filename: string, message: string }>
+     * atau melempar Error dengan properti `reason` jika gagal.
+     * @param {string|number} letterId 
+     * @param {string} format ('pdf' | 'docx' | 'word')
+     * @param {string} method ('POST' | 'GET')
      */
-    downloadAsWord(documentData, customFilename = null) {
-        const safeNumber = (documentData.letter_number || documentData.ticket_number || 'surat')
-            .replace(/[/\\?%*:|"<>]/g, '_');
-        const filename = customFilename || `Surat_${safeNumber}.doc`;
+    async downloadDirect(letterId, format = 'pdf', method = 'POST') {
+        const normalizedFormat = (format === 'word' || format === 'doc') ? 'docx' : format;
+        const headers = {
+            'Accept': 'application/json, application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document, */*'
+        };
 
-        // Bungkus template HTML ke dalam struktur Office Open XML compliant
-        const wordDocument = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-<head>
-<meta charset='utf-8'>
-<title>${documentData.letter_type || 'Surat Keterangan'}</title>
-<!--[if gte mso 9]>
-<xml>
-  <w:WordDocument>
-    <w:View>Print</w:View>
-    <w:Zoom>100</w:Zoom>
-    <w:DoNotOptimizeForBrowser/>
-  </w:WordDocument>
-</xml>
-<![endif]-->
-<style>
-  @page Section1 {
-    size: 595.3pt 841.9pt; /* Ukuran A4 */
-    margin: 1.0in 1.0in 1.0in 1.0in;
-    mso-header-margin: .5in;
-    mso-footer-margin: .5in;
-    mso-paper-source: 0;
-  }
-  div.Section1 { page: Section1; }
-  body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #000000; }
-  table { width: 100%; border-collapse: collapse; }
-  td { vertical-align: top; padding: 4px 6px; }
-  .text-center { text-align: center; }
-  .font-bold { font-weight: bold; }
-  .border-b-2 { border-bottom: 2px solid #000; }
-  .italic { font-style: italic; }
-</style>
-</head>
-<body>
-  <div class="Section1">
-    ${documentData.rendered_html}
-  </div>
-</body>
-</html>`;
+        const authToken = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+        if (authToken) {
+            headers['Authorization'] = `Bearer ${authToken}`;
+        }
 
-        // Buat file Blob di memory browser client
-        const blob = new Blob([wordDocument], {
-            type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document;charset=utf-8'
-        });
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (csrfToken) {
+            headers['X-CSRF-TOKEN'] = csrfToken;
+        }
 
-        // Trigger unduh langsung tanpa request baru ke server
+        let url = `${this.apiBaseUrl}/letters/${letterId}/download`;
+        const options = {
+            method: method.toUpperCase(),
+            headers: headers
+        };
+
+        if (options.method === 'POST') {
+            headers['Content-Type'] = 'application/json';
+            options.body = JSON.stringify({ format: normalizedFormat });
+        } else {
+            url += `?format=${encodeURIComponent(normalizedFormat)}`;
+        }
+
+        const response = await fetch(url, options);
+
+        if (!response.ok) {
+            let errorJson = {};
+            try {
+                errorJson = await response.json();
+            } catch (e) {
+                // Non-JSON response
+            }
+
+            const error = new Error(errorJson.message || `Gagal mengunduh dokumen surat (Status: ${response.status})`);
+            error.reason = errorJson.reason || 'Dokumen belum dapat diunduh atau dibuka karena masih berstatus proses dan belum disahkan oleh Ketua RT.';
+            error.status = errorJson.status || 'pending';
+            error.httpStatus = response.status;
+            throw error;
+        }
+
+        const blob = await response.blob();
+        let filename = `Surat_${letterId}.${normalizedFormat}`;
+
+        const disposition = response.headers.get('content-disposition');
+        if (disposition && disposition.includes('filename=')) {
+            const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+            if (matches != null && matches[1]) {
+                filename = matches[1].replace(/['"]/g, '');
+            }
+        }
+
         this.triggerBrowserDownload(blob, filename);
+
+        return {
+            success: true,
+            filename: filename,
+            format: normalizedFormat.toUpperCase(),
+            message: `Dokumen surat berhasil diunduh dalam format .${normalizedFormat}.`
+        };
     }
 
     /**
-     * Mengunduh atau mencetak dokumen ke format PDF (.pdf) langsung di FE
-     * Menggunakan engine print native browser ber-resolusi vektor tinggi tanpa beban server
-     * @param {Object} documentData 
+     * Mengunduh dokumen ke format Microsoft Word (.docx)
      */
-    downloadAsPdf(documentData) {
-        // Buat hidden iframe sementara untuk rendering cetak PDF yang terisolasi
-        let iframe = document.getElementById('letter_pdf_print_frame');
-        if (!iframe) {
-            iframe = document.createElement('iframe');
-            iframe.id = 'letter_pdf_print_frame';
-            iframe.style.position = 'fixed';
-            iframe.style.right = '0';
-            iframe.style.bottom = '0';
-            iframe.style.width = '0';
-            iframe.style.height = '0';
-            iframe.style.border = '0';
-            document.body.appendChild(iframe);
+    async downloadAsWord(letterIdOrDoc) {
+        if (typeof letterIdOrDoc === 'object' && letterIdOrDoc !== null) {
+            return this.downloadDirect(letterIdOrDoc.id, 'docx', 'POST');
         }
-
-        const doc = iframe.contentWindow.document;
-        doc.open();
-        doc.write(`<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Cetak Surat - ${documentData.letter_number || documentData.ticket_number}</title>
-<style>
-  @page {
-    size: A4 portrait;
-    margin: 15mm;
-  }
-  @media print {
-    body {
-      margin: 0;
-      padding: 0;
-      background: #FFFFFF !important;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
+        return this.downloadDirect(letterIdOrDoc, 'docx', 'POST');
     }
-    .no-print { display: none !important; }
-  }
-</style>
-</head>
-<body>
-  ${documentData.rendered_html}
-</body>
-</html>`);
-        doc.close();
 
-        // Panggil browser native print dialog (Save as PDF)
-        setTimeout(() => {
-            iframe.contentWindow.focus();
-            iframe.contentWindow.print();
-        }, 300);
+    /**
+     * Mengunduh dokumen ke format PDF (.pdf)
+     */
+    async downloadAsPdf(letterIdOrDoc) {
+        if (typeof letterIdOrDoc === 'object' && letterIdOrDoc !== null) {
+            return this.downloadDirect(letterIdOrDoc.id, 'pdf', 'POST');
+        }
+        return this.downloadDirect(letterIdOrDoc, 'pdf', 'POST');
     }
 
     /**
@@ -251,3 +231,4 @@ class CitizenDocumentExporter {
 
 // Inisialisasi global untuk Blade & Alpine.js
 window.CitizenDocumentExporter = CitizenDocumentExporter;
+

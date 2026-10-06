@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateLetterRequest;
 use App\Http\Resources\V1\LetterResource;
 use App\Models\Letter;
 use App\Models\LetterType;
+use App\Services\DocumentExportService;
 use App\Services\DocumentGeneratorService;
 use App\Services\LetterService;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,8 @@ class LetterController extends Controller
 {
     public function __construct(
         protected LetterService $letterService,
-        protected DocumentGeneratorService $documentGeneratorService
+        protected DocumentGeneratorService $documentGeneratorService,
+        protected DocumentExportService $documentExportService
     ) {}
 
     public function index(Request $request): AnonymousResourceCollection
@@ -296,7 +298,20 @@ class LetterController extends Controller
 
         // Security requirement: warga only exports approved or completed letters
         if ($user?->isWarga() && ! in_array($letter->status, ['approved', 'completed'], true)) {
-            abort(Response::HTTP_CONFLICT, 'Dokumen resmi hanya dapat diekspor setelah disetujui (status: approved atau completed).');
+            $reason = match ($letter->status) {
+                'draft' => 'Permohonan surat masih berstatus DRAF (belum diajukan). Harap lengkapi dan ajukan permohonan terlebih dahulu.',
+                'submitted' => 'Permohonan surat sedang menunggu proses verifikasi berkas oleh Sekretaris RT sebelum diajukan ke Ketua RT.',
+                'verified' => 'Surat sudah diverifikasi oleh Sekretaris RT dan saat ini sedang menunggu pengesahan serta tanda tangan digital oleh Ketua RT.',
+                'rejected' => 'Permohonan surat telah DITOLAK oleh pengurus RT. Alasan penolakan: "'.($letter->rejection_reason ?: 'Berkas atau persyaratan belum memenuhi ketentuan').'". Dokumen tidak dapat diterbitkan.',
+                default => 'Surat belum disahkan oleh Ketua RT (status saat ini: '.strtoupper($letter->status).').',
+            };
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Dokumen resmi hanya dapat diekspor setelah disetujui (status: approved atau completed).',
+                'reason' => $reason,
+                'status' => $letter->status,
+            ], Response::HTTP_CONFLICT);
         }
 
         if (! $letter->file_path || ! Storage::disk('local')->exists($letter->file_path)) {
@@ -325,7 +340,7 @@ class LetterController extends Controller
                 'document_hash' => $letter->document_hash,
                 'rendered_html' => $content,
                 'export_capabilities' => [
-                    'formats' => ['pdf', 'word'],
+                    'formats' => ['pdf', 'docx', 'word'],
                     'client_side_processing' => true,
                     'cacheable_offline' => true,
                 ],
@@ -338,16 +353,17 @@ class LetterController extends Controller
             ],
             'meta' => [
                 'architecture' => 'Enterprise Microservices / Client-Side Offloading',
-                'benefits' => 'Zero server CPU load, eliminates route bottlenecks and API timeout',
+                'benefits' => 'Direct PDF and DOCX binary export, zero server CPU bottleneck',
                 'timestamp' => now()->toIso8601String(),
             ],
-            'message' => 'Payload dokumen berhasil disiapkan untuk pemrosesan dan penyimpanan di sisi klien (Front-End).',
+            'message' => 'Payload dokumen berhasil disiapkan untuk pemrosesan dan penyimpanan di sisi klien.',
         ]);
     }
 
     /**
      * Authorized download of official letter document.
-     * Supports formats: word (.docx / .doc), pdf (.html print-ready), or html.
+     * Supports formats: word / docx (.docx), pdf (.pdf), or html.
+     * Works for both GET and POST requests.
      */
     public function download(Request $request, string $id)
     {
@@ -358,7 +374,33 @@ class LetterController extends Controller
         $hasStaffAccess = $user?->hasPermission('letter.read') || $user?->hasPermission('letter.verify') || $user?->hasPermission('letter.approve') || $user?->isSuperadmin();
 
         if (! $isOwner && ! $hasStaffAccess) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akses unduh surat ditolak.',
+                    'reason' => 'Anda tidak memiliki hak otorisasi untuk mengakses atau membuka berkas surat pemohon lain.',
+                ], Response::HTTP_FORBIDDEN);
+            }
             abort(Response::HTTP_FORBIDDEN, 'Akses unduh surat ditolak.');
+        }
+
+        $format = strtolower((string) ($request->input('format') ?? $request->query('format') ?? ''));
+
+        if ($user?->isWarga() && ! in_array($letter->status, ['approved', 'completed'], true) && ($format !== '' || $request->expectsJson())) {
+            $reason = match ($letter->status) {
+                'draft' => 'Permohonan surat masih berstatus DRAF (belum diajukan). Harap lengkapi dan ajukan permohonan terlebih dahulu.',
+                'submitted' => 'Permohonan surat sedang menunggu proses verifikasi berkas oleh Sekretaris RT sebelum diajukan ke Ketua RT.',
+                'verified' => 'Surat sudah diverifikasi oleh Sekretaris RT dan saat ini sedang menunggu pengesahan serta tanda tangan digital oleh Ketua RT.',
+                'rejected' => 'Permohonan surat telah DITOLAK oleh pengurus RT. Alasan penolakan: "'.($letter->rejection_reason ?: 'Berkas atau persyaratan belum memenuhi ketentuan').'". Dokumen resmi tidak dapat diterbitkan.',
+                default => 'Surat belum disahkan oleh Ketua RT (status saat ini: '.strtoupper($letter->status).').',
+            };
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Dokumen resmi hanya dapat diunduh setelah disetujui (status: approved atau completed).',
+                'reason' => $reason,
+                'status' => $letter->status,
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         if (! $letter->file_path || ! Storage::disk('local')->exists($letter->file_path)) {
@@ -368,36 +410,24 @@ class LetterController extends Controller
 
         $content = Storage::disk('local')->get($letter->file_path);
         $safeNumber = str_replace(['/', '\\'], '_', $letter->letter_number ?: $letter->ticket_number);
-        $format = strtolower((string) $request->query('format', 'html'));
 
-        if ($format === 'word' || $format === 'docx' || $format === 'doc') {
-            // Package into Office Open XML / Word-compatible document
-            $wordDocument = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-<head><meta charset='utf-8'><title>Surat Resmi - {$safeNumber}</title>
-<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
-<style>
-@page Section1 { size:595.3pt 841.9pt; margin:1.0in 1.0in 1.0in 1.0in; mso-header-margin:.5in; mso-footer-margin:.5in; mso-paper-source:0; }
-div.Section1 { page:Section1; }
-body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #000; }
-table { width: 100%; border-collapse: collapse; }
-td { vertical-align: top; padding: 4px 6px; }
-.text-center { text-align: center; }
-.font-bold { font-weight: bold; }
-</style>
-</head>
-<body><div class='Section1'>{$content}</div></body></html>";
+        if (in_array($format, ['word', 'docx', 'doc'], true)) {
+            $docxContent = $this->documentExportService->generateDocx($letter, $content);
 
-            return response($wordDocument, 200, [
+            return response($docxContent, 200, [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'Content-Disposition' => 'attachment; filename="Surat_'.$safeNumber.'.doc"',
+                'Content-Disposition' => 'attachment; filename="Surat_'.$safeNumber.'.docx"',
+                'X-Document-Type' => 'DOCX',
             ]);
         }
 
         if ($format === 'pdf') {
-            return response($content, 200, [
-                'Content-Type' => 'text/html; charset=UTF-8',
-                'Content-Disposition' => 'inline; filename="Surat_'.$safeNumber.'.pdf.html"',
-                'X-Document-Printable' => 'true',
+            $pdfContent = $this->documentExportService->generatePdf($letter, $content);
+
+            return response($pdfContent, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="Surat_'.$safeNumber.'.pdf"',
+                'X-Document-Type' => 'PDF',
             ]);
         }
 

@@ -71,8 +71,8 @@ Route::prefix('v1')->group(function () {
         // Letter actions & attachments
         Route::post('/letters/{id}/submit', [LetterController::class, 'submit']);
         Route::get('/letters/{id}/preview', [LetterController::class, 'preview']);
-        Route::get('/letters/{id}/export-payload', [LetterController::class, 'exportPayload']);
-        Route::get('/letters/{id}/download', [LetterController::class, 'download']);
+        Route::match(['GET', 'POST'], '/letters/{id}/export-payload', [LetterController::class, 'exportPayload']);
+        Route::match(['GET', 'POST'], '/letters/{id}/download', [LetterController::class, 'download']);
         Route::post('/letters/{id}/attachments', [LetterController::class, 'addAttachment']);
         Route::delete('/letters/{id}/attachments/{attachment}', [LetterController::class, 'deleteAttachment']);
 

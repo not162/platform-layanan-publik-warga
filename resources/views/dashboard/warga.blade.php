@@ -43,6 +43,17 @@
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
         th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
         th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; }
+        @keyframes actionPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        @keyframes actionShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .animate-action-pulse { animation: actionPulse 1.8s infinite ease-in-out; }
+        .animate-action-shake { animation: actionShake 0.6s ease-in-out; }
     </style>
 </head>
 <body>
@@ -78,7 +89,7 @@
             <div class="card card-stat">
                 <h3>Surat Sah Siap Unduh</h3>
                 <div class="value" style="color: var(--emerald);">{{ $myCompletedLettersCount }}</div>
-                <small style="color: var(--text-muted);">Format Word (.docx) & PDF</small>
+                <small style="color: var(--text-muted);">Format Word (.docx) & PDF (.pdf)</small>
             </div>
             <div class="card card-stat">
                 <h3>Pengaduan Saya</h3>
@@ -89,6 +100,32 @@
                 <h3>Laporan Keamanan</h3>
                 <div class="value" style="color: #E11D48;">{{ $mySecurityReportsCount }}</div>
                 <small style="color: var(--text-muted);">Insiden lingkungan</small>
+            </div>
+        </div>
+
+        <!-- Action Notification Banner (Berhasil / Tidak Berhasil + Animasi & Alasan) -->
+        <div id="actionNotificationCard" style="display: none; margin-bottom: 1.5rem; border-width: 1.5px;" class="card">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem; width: 100%;">
+                    <!-- Animasi Action Icon -->
+                    <div id="actionIconContainer" style="padding: 0.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; shrink: 0;">
+                        <i id="actionIcon" data-lucide="check-circle-2" style="width: 26px; height: 26px;"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <h4 id="actionTitle" style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;"></h4>
+                        <p id="actionMessage" style="font-size: 0.875rem; color: #475569; margin-bottom: 0.5rem;"></p>
+                        <!-- Kalimat di bawah animasi action yang menampilkan alasan tidak bisa di-download / dibuka -->
+                        <div id="actionReasonBox" style="display: none; background: #FFF1F2; border-left: 4px solid #E11D48; padding: 0.85rem 1rem; border-radius: 0.5rem; margin-top: 0.5rem;">
+                            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #9F1239; margin-bottom: 0.25rem;">
+                                ⚠️ Alasan Tidak Bisa Di-download atau Dibuka:
+                            </div>
+                            <p id="actionReasonText" style="font-size: 0.85rem; color: #881337; line-height: 1.5; font-weight: 500;"></p>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="closeNotification()" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                    <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                </button>
             </div>
         </div>
 
@@ -131,15 +168,17 @@
                             <td>
                                 @if(in_array($letter->status, ['approved', 'completed']))
                                 <div style="display: flex; gap: 0.4rem;">
-                                    <button type="button" data-letter-id="{{ $letter->id }}" onclick="exportWord(this.dataset.letterId)" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-color: #2563EB; color: #2563EB;">
-                                        <i data-lucide="file-edit" style="width: 12px; height: 12px;"></i> Word (.docx)
+                                    <button type="button" onclick="downloadLetter('{{ $letter->id }}', 'docx')" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-color: #2563EB; color: #2563EB;" title="Unduh format Microsoft Word">
+                                        <i data-lucide="file-text" style="width: 12px; height: 12px;"></i> Word (.docx)
                                     </button>
-                                    <button type="button" data-letter-id="{{ $letter->id }}" onclick="exportPdf(this.dataset.letterId)" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-color: #DC2626; color: #DC2626;">
-                                        <i data-lucide="printer" style="width: 12px; height: 12px;"></i> PDF
+                                    <button type="button" onclick="downloadLetter('{{ $letter->id }}', 'pdf')" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-color: #DC2626; color: #DC2626;" title="Unduh format PDF resmi">
+                                        <i data-lucide="file-check" style="width: 12px; height: 12px;"></i> PDF (.pdf)
                                     </button>
                                 </div>
                                 @else
-                                <span style="font-size: 0.8rem; color: var(--text-muted);">Menunggu Approval</span>
+                                <button type="button" onclick="showLockedReason('{{ $letter->status }}', '{{ addslashes($letter->rejection_reason ?? '') }}')" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-color: #CBD5E1; color: #64748B;">
+                                    <i data-lucide="lock" style="width: 12px; height: 12px;"></i> Belum Siap Unduh
+                                </button>
                                 @endif
                             </td>
                         </tr>
@@ -160,22 +199,94 @@
         lucide.createIcons();
         const exporter = new CitizenDocumentExporter();
 
-        async function exportWord(letterId) {
+        function showNotification(isSuccess, title, message, reason = null) {
+            const card = document.getElementById('actionNotificationCard');
+            const iconContainer = document.getElementById('actionIconContainer');
+            const icon = document.getElementById('actionIcon');
+            const titleEl = document.getElementById('actionTitle');
+            const messageEl = document.getElementById('actionMessage');
+            const reasonBox = document.getElementById('actionReasonBox');
+            const reasonText = document.getElementById('actionReasonText');
+
+            card.style.display = 'block';
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            if (isSuccess) {
+                card.style.borderColor = '#10B981';
+                iconContainer.style.background = '#ECFDF5';
+                iconContainer.style.color = '#059669';
+                iconContainer.className = '';
+                icon.setAttribute('data-lucide', 'check-circle-2');
+                reasonBox.style.display = 'none';
+            } else {
+                card.style.borderColor = '#F43F5E';
+                iconContainer.style.background = '#FFF1F2';
+                iconContainer.style.color = '#E11D48';
+                iconContainer.className = 'animate-action-shake animate-action-pulse';
+                icon.setAttribute('data-lucide', 'alert-triangle');
+
+                if (reason) {
+                    reasonBox.style.display = 'block';
+                    reasonText.textContent = reason;
+                } else {
+                    reasonBox.style.display = 'none';
+                }
+            }
+
+            lucide.createIcons();
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function closeNotification() {
+            document.getElementById('actionNotificationCard').style.display = 'none';
+        }
+
+        async function downloadLetter(letterId, format) {
             try {
-                const doc = await exporter.fetchDocumentPayload(letterId);
-                exporter.downloadAsWord(doc);
-            } catch (e) {
-                alert('Gagal mengunduh berkas Word: ' + e.message);
+                const res = await exporter.downloadDirect(letterId, format, 'POST');
+                showNotification(
+                    true,
+                    'Dokumen Berhasil Diunduh!',
+                    `Berkas surat resmi berhasil diunduh dalam format ${res.format} (${res.filename}).`
+                );
+            } catch (err) {
+                showNotification(
+                    false,
+                    'Pengunduhan Dokumen Tidak Berhasil',
+                    err.message || 'Gagal memproses pengunduhan berkas surat.',
+                    err.reason || 'Dokumen belum dapat diunduh atau dibuka karena masih menunggu persetujuan resmi dari Ketua RT.'
+                );
             }
         }
 
-        async function exportPdf(letterId) {
-            try {
-                const doc = await exporter.fetchDocumentPayload(letterId);
-                exporter.downloadAsPdf(doc);
-            } catch (e) {
-                alert('Gagal menyiapkan cetak PDF: ' + e.message);
+        function showLockedReason(status, rejectionReason) {
+            const statusUpper = (status || '').toUpperCase();
+            let reasonText = '';
+
+            switch (status) {
+                case 'draft':
+                    reasonText = 'Permohonan surat masih berstatus DRAF (belum diajukan). Harap periksa isian keperluan dan tekan tombol ajukan surat terlebih dahulu.';
+                    break;
+                case 'submitted':
+                    reasonText = 'Permohonan surat sedang dalam antrean verifikasi berkas oleh Sekretaris RT sebelum diteruskan ke Ketua RT.';
+                    break;
+                case 'verified':
+                    reasonText = 'Berkas surat telah diverifikasi oleh Sekretaris RT dan saat ini sedang menunggu pengesahan & tanda tangan digital Ketua RT.';
+                    break;
+                case 'rejected':
+                    reasonText = 'Permohonan surat DITOLAK oleh pengurus RT. Alasan: ' + (rejectionReason || 'Syarat atau data belum memenuhi ketentuan.') + '. Dokumen resmi tidak dapat diterbitkan.';
+                    break;
+                default:
+                    reasonText = 'Surat belum disahkan oleh Ketua RT (Status: ' + statusUpper + '). Berkas resmi hanya dapat diunduh setelah disetujui.';
             }
+
+            showNotification(
+                false,
+                'Dokumen Belum Dapat Diunduh',
+                `Surat ini belum siap untuk diunduh karena masih dalam status ${statusUpper}.`,
+                reasonText
+            );
         }
     </script>
 </body>

@@ -7,6 +7,7 @@ use App\Models\Letter;
 use App\Models\LetterType;
 use App\Models\User;
 use Database\Seeders\LetterSeeder;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -343,7 +344,7 @@ class DocumentWorkflowAndGenerationTest extends TestCase
         $this->assertNotEmpty($response->json('data.document_hash'));
     }
 
-    public function test_letter_download_supports_word_and_pdf_formats(): void
+    public function test_letter_download_supports_word_and_pdf_formats_via_get_and_post(): void
     {
         $wargaUser = User::factory()->warga()->create();
         $citizen = Citizen::factory()->create(['user_id' => $wargaUser->id]);
@@ -356,17 +357,72 @@ class DocumentWorkflowAndGenerationTest extends TestCase
             'version' => 3,
         ]);
 
-        // Word format (.doc / .docx)
-        $wordResponse = $this->actingAs($wargaUser)->get("/api/v1/letters/{$letter->id}/download?format=word");
-        $wordResponse->assertStatus(200);
-        $wordResponse->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-        $this->assertStringContainsString('filename="Surat_SK_0001_RT01_10_2026.doc"', (string) $wordResponse->headers->get('Content-Disposition'));
-        $this->assertStringContainsString('urn:schemas-microsoft-com:office:word', $wordResponse->getContent());
+        // 1. Word format (.docx) via GET
+        $wordGetResponse = $this->actingAs($wargaUser)->get("/api/v1/letters/{$letter->id}/download?format=docx");
+        $wordGetResponse->assertStatus(200);
+        $wordGetResponse->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        $this->assertStringContainsString('filename="Surat_SK_0001_RT01_10_2026.docx"', (string) $wordGetResponse->headers->get('Content-Disposition'));
+        // Genuine Zip/DOCX PK header
+        $this->assertStringStartsWith('PK', (string) $wordGetResponse->getContent());
 
-        // PDF print-ready format
-        $pdfResponse = $this->actingAs($wargaUser)->get("/api/v1/letters/{$letter->id}/download?format=pdf");
-        $pdfResponse->assertStatus(200);
-        $pdfResponse->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $pdfResponse->assertHeader('X-Document-Printable', 'true');
+        // 2. Word format (.docx) via POST
+        $wordPostResponse = $this->actingAs($wargaUser)->postJson("/api/v1/letters/{$letter->id}/download", [
+            'format' => 'docx',
+        ]);
+        $wordPostResponse->assertStatus(200);
+        $wordPostResponse->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        $this->assertStringContainsString('filename="Surat_SK_0001_RT01_10_2026.docx"', (string) $wordPostResponse->headers->get('Content-Disposition'));
+
+        // 3. Genuine PDF format (.pdf) via GET
+        $pdfGetResponse = $this->actingAs($wargaUser)->get("/api/v1/letters/{$letter->id}/download?format=pdf");
+        $pdfGetResponse->assertStatus(200);
+        $pdfGetResponse->assertHeader('Content-Type', 'application/pdf');
+        $this->assertStringContainsString('filename="Surat_SK_0001_RT01_10_2026.pdf"', (string) $pdfGetResponse->headers->get('Content-Disposition'));
+        $this->assertStringStartsWith('%PDF-1.4', (string) $pdfGetResponse->getContent());
+
+        // 4. Genuine PDF format (.pdf) via POST
+        $pdfPostResponse = $this->actingAs($wargaUser)->postJson("/api/v1/letters/{$letter->id}/download", [
+            'format' => 'pdf',
+        ]);
+        $pdfPostResponse->assertStatus(200);
+        $pdfPostResponse->assertHeader('Content-Type', 'application/pdf');
+        $this->assertStringContainsString('filename="Surat_SK_0001_RT01_10_2026.pdf"', (string) $pdfPostResponse->headers->get('Content-Disposition'));
+        $this->assertStringStartsWith('%PDF-1.4', (string) $pdfPostResponse->getContent());
+    }
+
+    public function test_unapproved_letter_download_returns_clear_failure_reason(): void
+    {
+        $wargaUser = User::factory()->warga()->create();
+        $citizen = Citizen::factory()->create(['user_id' => $wargaUser->id]);
+        $draftLetter = Letter::create([
+            'citizen_id' => $citizen->id,
+            'type' => 'Surat Keterangan Usaha',
+            'ticket_number' => 'SRT-DRAFT-99',
+            'status' => 'draft',
+            'version' => 1,
+        ]);
+
+        $response = $this->actingAs($wargaUser)->getJson("/api/v1/letters/{$draftLetter->id}/download?format=pdf");
+        $response->assertStatus(422);
+        $response->assertJsonPath('success', false);
+        $response->assertJsonPath('status', 'draft');
+        $this->assertStringContainsString('DRAF', $response->json('reason'));
+
+        // Also test POST method
+        $postResponse = $this->actingAs($wargaUser)->postJson("/api/v1/letters/{$draftLetter->id}/download", [
+            'format' => 'pdf',
+        ]);
+        $postResponse->assertStatus(422);
+        $postResponse->assertJsonPath('success', false);
+        $this->assertNotEmpty($postResponse->json('reason'));
+    }
+
+    public function test_citizen_user_relation_has_unique_constraint(): void
+    {
+        $user = User::factory()->create();
+        $citizen1 = Citizen::factory()->create(['user_id' => $user->id]);
+
+        $this->expectException(QueryException::class);
+        Citizen::factory()->create(['user_id' => $user->id]);
     }
 }
