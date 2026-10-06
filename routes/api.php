@@ -21,6 +21,7 @@ Route::prefix('v1')->group(function () {
     // Public Endpoints (No Authentication Required)
     // -------------------------------------------------------------
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/auth/check-citizen', [AuthController::class, 'checkCitizen']);
     Route::post('/login', [AuthController::class, 'login']);
 
     // Public letter tracking and verification
@@ -100,6 +101,10 @@ Route::prefix('v1')->group(function () {
             // Citizens management
             Route::apiResource('citizens', CitizenController::class)
                 ->middleware('permission:citizen.read,citizen.manage');
+            Route::post('/citizens/{id}/verify', [CitizenController::class, 'verifyCitizen'])
+                ->middleware('permission:citizen.manage');
+            Route::post('/citizens/{id}/reject', [CitizenController::class, 'rejectCitizen'])
+                ->middleware('permission:citizen.manage');
 
             // Letters admin actions
             Route::get('/letters', [LetterController::class, 'adminIndex'])

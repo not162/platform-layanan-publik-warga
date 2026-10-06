@@ -7,6 +7,7 @@ use App\Events\CitizenRegistered;
 use App\Http\Controllers\Controller;
 use App\Models\Citizen;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -14,6 +15,87 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    /**
+     * Real-time NIK & Citizen pre-validation endpoint.
+     * Detects existing records, registered accounts, and similar names in the RT system.
+     */
+    public function checkCitizen(Request $request): JsonResponse
+    {
+        $nik = trim((string) $request->input('nik', ''));
+        $name = trim((string) $request->input('name', ''));
+
+        $data = [
+            'exists' => false,
+            'has_account' => false,
+            'status' => 'EMPTY',
+            'message' => 'Silakan masukkan 16 digit NIK.',
+            'allow_new_application' => false,
+            'registered_name' => null,
+            'registered_status' => null,
+            'similar_citizens' => [],
+        ];
+
+        // 1. Cek NIK jika formatnya 16 digit
+        if (strlen($nik) === 16 && ctype_digit($nik)) {
+            $nikHash = hash('sha256', $nik);
+            $citizen = Citizen::query()->where('nik_hash', $nikHash)->first();
+
+            if ($citizen) {
+                $data['exists'] = true;
+                $data['registered_name'] = $citizen->full_name;
+                $data['registered_status'] = $citizen->status_warga;
+
+                if ($citizen->user_id !== null) {
+                    $data['has_account'] = true;
+                    $data['status'] = 'ALREADY_REGISTERED';
+                    $data['allow_new_application'] = false; // NIK sudah terdaftar & tervalidasi: TIDAK MUNCUL button "Ajukan Warga Baru"
+                    $data['message'] = "Data NIK ini SUDAH TERDAFTAR dan memiliki akun aktif di sistem RT atas nama {$citizen->full_name}. Silakan langsung masuk (login).";
+                } elseif ($citizen->status_warga === 'pending_verification') {
+                    $data['has_account'] = false;
+                    $data['status'] = 'PENDING_VERIFICATION';
+                    $data['allow_new_application'] = false; // TIDAK MUNCUL button "Ajukan Warga Baru"
+                    $data['message'] = 'Pengajuan warga baru untuk NIK ini sudah diajukan sebelumnya dan saat ini sedang dalam proses verifikasi pengurus RT.';
+                } else {
+                    $data['has_account'] = false;
+                    $data['status'] = 'PRE_REGISTERED_RT';
+                    $data['allow_new_application'] = false; // NIK sudah ada di master data RT: TIDAK MUNCUL button "Ajukan Warga Baru", melainkan aktivasi akun biasa
+                    $data['message'] = "NIK terdata resmi dalam master kependudukan RT 01 atas nama {$citizen->full_name}. Anda dapat langsung melakukan Aktivasi Akun.";
+                }
+            } else {
+                $data['exists'] = false;
+                $data['has_account'] = false;
+                $data['status'] = 'NOT_FOUND';
+                $data['allow_new_application'] = true; // NIK belum ada di sistem: MUNCUL button "Ajukan Warga Baru"
+                $data['message'] = 'Nomor NIK belum tercatat dalam data kependudukan RT 01. Anda dapat mengajukan pendaftaran sebagai warga baru (menunggu verifikasi pengurus RT).';
+            }
+        }
+
+        // 2. Cek data yang sama atau mirip di database kependudukan RT
+        if (strlen($name) >= 3) {
+            $similarCitizens = Citizen::query()
+                ->where('full_name', 'LIKE', '%'.$name.'%')
+                ->limit(3)
+                ->get();
+
+            foreach ($similarCitizens as $sim) {
+                if ($data['exists'] && isset($nikHash) && $sim->nik_hash === $nikHash) {
+                    continue;
+                }
+                $rawNik = (string) ($sim->nik ?? '');
+                $maskedNik = strlen($rawNik) >= 8 ? substr($rawNik, 0, 4).'********'.substr($rawNik, -4) : 'Data Terenkripsi';
+
+                $data['similar_citizens'][] = [
+                    'name' => $sim->full_name,
+                    'masked_nik' => $maskedNik,
+                    'has_account' => $sim->user_id !== null,
+                    'status_warga' => $sim->status_warga,
+                ];
+            }
+        }
+
+        return response()->json($data);
+    }
+
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -21,6 +103,8 @@ class AuthController extends Controller
             'name' => 'required|string|max:150',
             'email' => 'required|string|email|max:190|unique:users',
             'password' => ['required', 'confirmed', Password::defaults()],
+            'ktp_file' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'notes' => 'nullable|string|max:500',
         ], [
             'nik.required' => 'NIK wajib diisi untuk verifikasi data warga.',
             'nik.size' => 'NIK harus berjumlah tepat 16 digit.',
@@ -30,15 +114,23 @@ class AuthController extends Controller
             'email.unique' => 'Email ini sudah terdaftar.',
             'password.required' => 'Password wajib diisi.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'ktp_file.mimes' => 'Format berkas KTP harus berupa JPG, PNG, atau PDF.',
+            'ktp_file.max' => 'Ukuran berkas KTP maksimal 5MB.',
         ]);
 
-        // Verifikasi NIK (Cari di tabel citizens berdasarkan nik_hash)
         $nikHash = hash('sha256', $validated['nik']);
         $citizen = Citizen::query()->where('nik_hash', '=', $nikHash)->first();
 
-        // Pendaftaran Mandiri (Self-Registration):
-        // Jika data warga belum ada di master data RT, otomatis buat profil warga baru
+        $ktpPath = null;
+        if ($request->hasFile('ktp_file')) {
+            $ktpPath = $request->file('ktp_file')->store('citizens/ktp', 'local');
+        }
+
+        $isNewApplicant = false;
+
+        // Pendaftaran Pengajuan Warga Baru (Pending Verification):
         if (! $citizen) {
+            $isNewApplicant = true;
             $dayRaw = (int) substr($validated['nik'], 6, 2);
             $gender = ($dayRaw > 40) ? 'Perempuan' : 'Laki-laki';
             $birthDay = ($dayRaw > 40) ? ($dayRaw - 40) : $dayRaw;
@@ -60,7 +152,9 @@ class AuthController extends Controller
                 'gender' => $gender,
                 'place_of_birth' => 'Jakarta',
                 'date_of_birth' => $dob,
-                'status_warga' => 'tetap',
+                'ktp_file_path' => $ktpPath,
+                'verification_notes' => $validated['notes'] ?? 'Pengajuan mandiri warga baru (menunggu verifikasi berkas oleh RT).',
+                'status_warga' => 'pending_verification',
                 'is_active' => true,
                 'version' => 1,
             ]);
@@ -87,6 +181,7 @@ class AuthController extends Controller
             'user_id' => $user->id,
             'full_name' => $citizen->full_name ?: $validated['name'],
             'email' => $citizen->email ?: $validated['email'],
+            'ktp_file_path' => $ktpPath ?: $citizen->ktp_file_path,
         ]);
 
         // Broadcast Notifikasi Warga Baru ke Pusher
@@ -99,8 +194,13 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        $successMessage = $isNewApplicant
+            ? 'Pengajuan pendaftaran warga baru berhasil dikirim dan sedang menunggu verifikasi berkas oleh pengurus RT.'
+            : 'Registrasi dan Verifikasi Warga Berhasil. Akun Anda telah aktif.';
+
         return response()->json([
-            'message' => 'Registrasi dan Verifikasi Warga Berhasil.',
+            'message' => $successMessage,
+            'is_pending_verification' => $isNewApplicant,
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => [

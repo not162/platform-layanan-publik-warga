@@ -82,4 +82,43 @@ class CitizenController extends Controller
 
         return response()->noContent();
     }
+
+    /**
+     * Approve and verify a pending new citizen application.
+     */
+    public function verifyCitizen(Request $request, string $id): JsonResponse
+    {
+        abort_if(! $request->user()?->hasPermission('citizen.manage') && ! $request->user()?->isSuperadmin() && ! $request->user()?->isSekretaris() && ! $request->user()?->isKetuaRt(), Response::HTTP_FORBIDDEN, 'Akses verifikasi warga ditolak.');
+
+        $citizen = Citizen::findOrFail($id);
+        $citizen->update([
+            'status_warga' => 'tetap',
+            'verification_notes' => 'Telah diverifikasi dan disahkan oleh pengurus RT: '.($request->user()?->name ?? 'Admin RT'),
+        ]);
+
+        return response()->json([
+            'message' => "Data warga {$citizen->full_name} berhasil diverifikasi dan disahkan.",
+            'data' => new CitizenResource($citizen),
+        ]);
+    }
+
+    /**
+     * Reject a pending citizen application.
+     */
+    public function rejectCitizen(Request $request, string $id): JsonResponse
+    {
+        abort_if(! $request->user()?->hasPermission('citizen.manage') && ! $request->user()?->isSuperadmin() && ! $request->user()?->isSekretaris() && ! $request->user()?->isKetuaRt(), Response::HTTP_FORBIDDEN, 'Akses penolakan warga ditolak.');
+
+        $citizen = Citizen::findOrFail($id);
+        $reason = $request->input('reason', 'Berkas identitas tidak valid atau bukan merupakan warga lingkungan RT 01.');
+        $citizen->update([
+            'status_warga' => 'ditolak',
+            'verification_notes' => 'Ditolak: '.$reason,
+        ]);
+
+        return response()->json([
+            'message' => "Pengajuan warga {$citizen->full_name} telah ditolak.",
+            'data' => new CitizenResource($citizen),
+        ]);
+    }
 }

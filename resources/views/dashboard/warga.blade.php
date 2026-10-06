@@ -79,6 +79,20 @@
     </header>
 
     <main class="container">
+        @if($user->citizen?->status_warga === 'pending_verification')
+        <div style="background: #FEF3C7; border: 1px solid #FCD34D; color: #92400E; padding: 1rem 1.25rem; border-radius: 0.75rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="background: #FDE68A; padding: 0.35rem; border-radius: 0.5rem; margin-top: 2px;">
+                <i data-lucide="clock" style="width: 20px; height: 20px; color: #B45309;"></i>
+            </div>
+            <div>
+                <strong style="display: block; font-size: 0.95rem; margin-bottom: 0.25rem;">Pengajuan Akun Warga Baru Sedang Menunggu Verifikasi Pengurus RT</strong>
+                <p style="font-size: 0.85rem; line-height: 1.5; opacity: 0.95;">
+                    Data kependudukan NIK <strong>{{ $user->citizen?->nik }}</strong> Anda telah berhasil diajukan dan sedang dalam antrean verifikasi berkas oleh Sekretaris dan Ketua RT 01. Anda tetap dapat menjelajahi layanan portal sementara pengurus memverifikasi identitas Anda.
+                </p>
+            </div>
+        </div>
+        @endif
+
         <!-- Stat Warga -->
         <div class="grid-stats">
             <div class="card card-stat">

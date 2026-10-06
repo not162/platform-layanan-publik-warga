@@ -28,6 +28,8 @@ class Citizen extends Model
         'phone',
         'phone_verified_at',
         'email',
+        'ktp_file_path',
+        'verification_notes',
         'status_warga',
         'is_active',
         'version',
