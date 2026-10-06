@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\Citizen;
 use App\Models\Complaint;
 use App\Models\User;
@@ -48,7 +49,7 @@ class ComplaintCameraPermissionTest extends TestCase
         $this->assertNotNull($createdComplaint->attachment_path);
     }
 
-    public function test_guest_cannot_upload_camera_image_for_complaint(): void
+    public function test_guest_cannot_submit_complaint(): void
     {
         $image = UploadedFile::fake()->image('unauthorized_photo.jpg', 400, 400);
 
@@ -57,33 +58,26 @@ class ComplaintCameraPermissionTest extends TestCase
             'category' => 'lingkungan',
             'street_name' => 'Jl. Mawar',
             'location_detail' => 'Sebelah gapura',
-            'description' => 'Mencoba mengunggah foto tanpa login akun warga.',
+            'description' => 'Mencoba mengunggah laporan tanpa login akun warga.',
             'image' => $image,
         ]);
 
-        $response->assertStatus(403);
-        $response->assertJson([
-            'message' => 'Akses upload gambar/kamera hanya diizinkan untuk akun warga yang terverifikasi.',
-        ]);
+        $response->assertStatus(401);
     }
 
-    public function test_guest_can_still_submit_text_only_complaint(): void
+    public function test_non_warga_cannot_submit_complaint(): void
     {
-        $response = $this->postJson('/api/v1/complaints', [
-            'title' => 'Laporan Teks Anonim',
+        /** @var User $nonWarga */
+        $nonWarga = User::factory()->create(['role' => UserRole::PETUGAS_KEAMANAN]);
+
+        $response = $this->actingAs($nonWarga)->postJson('/api/v1/complaints', [
+            'title' => 'Laporan Non Warga',
             'category' => 'ketertiban',
             'street_name' => 'Jl. Flamboyan',
             'location_detail' => 'Dekat taman bermain',
             'description' => 'Ada sampah menumpuk di pinggir jalan.',
-            'is_anonymous' => true,
         ]);
 
-        $response->assertStatus(201);
-        $this->assertDatabaseHas('complaints', [
-            'title' => 'Laporan Teks Anonim',
-            'is_anonymous' => true,
-            'user_id' => null,
-            'attachment_path' => null,
-        ]);
+        $response->assertStatus(403);
     }
 }

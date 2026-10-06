@@ -33,9 +33,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/letter-types/{code}', [LetterTypeController::class, 'show']);
     Route::get('/letter-types/{code}/form-schema', [LetterTypeController::class, 'formSchema']);
 
-    // Anonymous / public complaint submission
-    Route::post('/complaints', [ComplaintController::class, 'store']);
-
     // Public community and transparency information
     Route::get('/finance/summary', [FinanceTransactionController::class, 'publicSummary']);
     Route::get('/finance', [FinanceTransactionController::class, 'publicIndex']);
@@ -81,6 +78,7 @@ Route::prefix('v1')->group(function () {
 
         // Complaints (authenticated citizen scope)
         Route::get('/complaints', [ComplaintController::class, 'index']);
+        Route::post('/complaints', [ComplaintController::class, 'store']);
         Route::get('/complaints/{id}', [ComplaintController::class, 'show']);
 
         // Security reports (warga creation & tracking)

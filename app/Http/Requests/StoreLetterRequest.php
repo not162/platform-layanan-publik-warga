@@ -31,7 +31,7 @@ class StoreLetterRequest extends FormRequest
             'keperluan' => ['nullable', 'string', 'max:500'],
             'data_tambahan' => ['nullable', 'array'],
             'attachments' => ['nullable', 'array', 'max:5'],
-            'attachments.*' => ['file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'attachments.*' => ['file', 'mimes:pdf,jpg,jpeg,png', 'max:1024'],
             'attachment_path' => ['nullable', 'string', 'max:255'],
         ];
     }

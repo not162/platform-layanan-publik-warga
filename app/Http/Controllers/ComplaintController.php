@@ -67,15 +67,12 @@ class ComplaintController extends Controller
     public function store(StoreComplaintRequest $request): JsonResponse
     {
         $user = $request->user();
-        $hasImage = $request->hasFile('image') || $request->hasFile('attachment');
 
-        // Security check: Only verified citizens (or superadmin) can upload camera/image proof
-        if ($hasImage) {
-            if (! $user || (! $user->isWarga() && ! $user->isSuperadmin())) {
-                abort(Response::HTTP_FORBIDDEN, 'Akses upload gambar/kamera hanya diizinkan untuk akun warga yang terverifikasi.');
-            }
+        if (! $user || (! $user->isWarga() && ! $user->isSuperadmin())) {
+            abort(Response::HTTP_FORBIDDEN, 'Akses pelaporan keluhan hanya diizinkan untuk akun warga yang terverifikasi.');
         }
 
+        $hasImage = $request->hasFile('image') || $request->hasFile('attachment');
         $data = $request->validated();
 
         // Format detailed street and location info

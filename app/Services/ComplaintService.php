@@ -19,11 +19,8 @@ class ComplaintService
             $data['priority'] = $data['priority'] ?? 'sedang';
             $data['version'] = 1;
 
-            if (! empty($data['is_anonymous'])) {
-                $data['is_anonymous'] = true;
-                $data['user_id'] = null;
-                $data['citizen_id'] = null;
-            } elseif ($user) {
+            $data['is_anonymous'] = ! empty($data['is_anonymous']);
+            if ($user) {
                 $data['user_id'] = $user->id;
                 $data['citizen_id'] = $user->citizen?->id;
             }

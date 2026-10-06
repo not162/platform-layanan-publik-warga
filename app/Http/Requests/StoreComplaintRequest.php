@@ -12,8 +12,9 @@ class StoreComplaintRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Public/citizens can submit (including anonymously)
-        return true;
+        $user = $this->user();
+
+        return $user !== null && ($user->isWarga() || $user->isSuperadmin());
     }
 
     /**
@@ -33,8 +34,8 @@ class StoreComplaintRequest extends FormRequest
             'location_detail' => ['nullable', 'string', 'max:150'],
             'priority' => ['nullable', 'string', 'in:rendah,sedang,tinggi,darurat'],
             'is_anonymous' => ['nullable', 'boolean'],
-            'image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'attachment' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:1024'],
+            'attachment' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:1024'],
             'attachment_path' => ['nullable', 'string', 'max:255'],
         ];
     }

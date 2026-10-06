@@ -45,9 +45,11 @@ class ComplaintModuleTest extends TestCase
         ]);
     }
 
-    public function test_guest_can_submit_anonymous_complaint(): void
+    public function test_verified_warga_can_submit_anonymous_complaint(): void
     {
-        $response = $this->postJson('/api/v1/complaints', [
+        $warga = User::factory()->warga()->create();
+
+        $response = $this->actingAs($warga)->postJson('/api/v1/complaints', [
             'title' => 'Saluran Air Mampet',
             'description' => 'Tumpukan sampah menyumbat selokan di gang buntu.',
             'is_anonymous' => true,
@@ -61,9 +63,19 @@ class ComplaintModuleTest extends TestCase
 
         $this->assertDatabaseHas('complaints', [
             'ticket_number' => $ticket,
-            'user_id' => null,
+            'user_id' => $warga->id,
             'is_anonymous' => 1,
         ]);
+    }
+
+    public function test_guest_cannot_submit_complaint(): void
+    {
+        $response = $this->postJson('/api/v1/complaints', [
+            'title' => 'Laporan Orang Luar',
+            'description' => 'Pengaduan dari pengguna tanpa otentikasi NIK warga.',
+        ]);
+
+        $response->assertStatus(401);
     }
 
     public function test_admin_with_scope_can_review_and_resolve_complaint(): void

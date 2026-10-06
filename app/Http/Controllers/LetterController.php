@@ -424,7 +424,7 @@ td { vertical-align: top; padding: 4px 6px; }
         }
 
         $request->validate([
-            'attachment' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'attachment' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:1024'],
         ]);
 
         $file = $request->file('attachment');
