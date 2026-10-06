@@ -5,7 +5,7 @@
 @section('content')
 <div x-data="registerForm()" :class="{ 'animate-shake': isShaking }">
     <h2 class="text-xl font-bold text-slate-800 mb-1">Pendaftaran Warga</h2>
-    <p class="text-sm text-slate-500 mb-6">Verifikasi NIK Anda untuk mengakses layanan portal.</p>
+    <p class="text-sm text-slate-500 mb-6">Masukkan NIK dan data diri Anda untuk pendaftaran mandiri layanan portal RT.</p>
 
     <!-- Animated Error/Success Notification Alert -->
     <template x-if="message">
@@ -285,7 +285,7 @@ document.addEventListener('alpine:init', () => {
                     this.triggerErrorAnimation(targetField);
                 } else {
                     this.isError = false;
-                    this.message = "Verifikasi NIK Berhasil! Akun warga Anda telah aktif.";
+                    this.message = "Pendaftaran Berhasil! Akun warga Anda telah aktif.";
                     
                     // Simpan token ke local storage
                     localStorage.setItem('auth_token', data.access_token);

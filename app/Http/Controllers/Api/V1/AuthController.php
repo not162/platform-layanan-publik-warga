@@ -34,11 +34,35 @@ class AuthController extends Controller
 
         // Verifikasi NIK (Cari di tabel citizens berdasarkan nik_hash)
         $nikHash = hash('sha256', $validated['nik']);
-        $citizen = Citizen::query()->where('nik_hash', '=', $nikHash, 'and')->first();
+        $citizen = Citizen::query()->where('nik_hash', '=', $nikHash)->first();
 
+        // Pendaftaran Mandiri (Self-Registration):
+        // Jika data warga belum ada di master data RT, otomatis buat profil warga baru
         if (! $citizen) {
-            throw ValidationException::withMessages([
-                'nik' => ['NIK tidak terdaftar dalam data RT. Hubungi pengurus.'],
+            $dayRaw = (int) substr($validated['nik'], 6, 2);
+            $gender = ($dayRaw > 40) ? 'Perempuan' : 'Laki-laki';
+            $birthDay = ($dayRaw > 40) ? ($dayRaw - 40) : $dayRaw;
+            $birthMonth = (int) substr($validated['nik'], 8, 2);
+            $birthYear2Digit = (int) substr($validated['nik'], 10, 2);
+            $currentYear2Digit = (int) date('y');
+            $fullYear = ($birthYear2Digit > $currentYear2Digit) ? (1900 + $birthYear2Digit) : (2000 + $birthYear2Digit);
+
+            $dob = null;
+            if ($birthMonth >= 1 && $birthMonth <= 12 && $birthDay >= 1 && $birthDay <= 31 && checkdate($birthMonth, $birthDay, $fullYear)) {
+                $dob = sprintf('%04d-%02d-%02d', $fullYear, $birthMonth, $birthDay);
+            }
+
+            $citizen = Citizen::create([
+                'nik' => $validated['nik'],
+                'nik_hash' => $nikHash,
+                'full_name' => $validated['name'],
+                'email' => $validated['email'],
+                'gender' => $gender,
+                'place_of_birth' => 'Jakarta',
+                'date_of_birth' => $dob,
+                'status_warga' => 'tetap',
+                'is_active' => true,
+                'version' => 1,
             ]);
         }
 
@@ -59,10 +83,19 @@ class AuthController extends Controller
         ]);
 
         // Hubungkan Citizen dengan User ini
-        $citizen->update(['user_id' => $user->id]);
+        $citizen->update([
+            'user_id' => $user->id,
+            'full_name' => $citizen->full_name ?: $validated['name'],
+            'email' => $citizen->email ?: $validated['email'],
+        ]);
 
         // Broadcast Notifikasi Warga Baru ke Pusher
         CitizenRegistered::dispatch($user);
+
+        // Jika dipanggil dari web browser dengan session, aktifkan login web session
+        if ($request->hasSession() || auth()->guard('web')->check()) {
+            auth()->guard('web')->login($user);
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
