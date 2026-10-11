@@ -4,9 +4,9 @@
 
 @section('content')
 <div x-data="registerForm()" :class="{ 'animate-shake': isShaking }">
-    <div class="mb-5">
-        <h2 class="text-xl font-bold text-slate-800 mb-1">Pendaftaran Warga</h2>
-        <p class="text-sm text-slate-500">Verifikasi NIK dan validasi data kependudukan RT 01.</p>
+    <div class="mb-5 text-center">
+        <h2 class="text-xl font-bold text-slate-800 tracking-tight">Pendaftaran Mandiri Warga</h2>
+        <p class="text-xs text-slate-500 mt-1">Verifikasi NIK dan validasi data kependudukan RT 04 Kemayoran</p>
     </div>
 
     <!-- Animated Error/Success Notification Alert -->
@@ -18,15 +18,15 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
-             :class="isError ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'" 
-             class="p-3.5 mb-5 rounded-xl text-sm border flex items-start justify-between gap-3 shadow-sm animate-slide-down">
+             :class="isError ? 'bg-rose-50 text-rose-800 border-rose-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'" 
+             class="p-3 mb-5 rounded-xl text-xs border flex items-start justify-between gap-3 shadow-sm animate-slide-down">
             <div class="flex items-start gap-2.5">
-                <div :class="isError ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'" class="p-1 rounded-lg shrink-0 mt-0.5">
+                <div :class="isError ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'" class="p-1 rounded-lg shrink-0 mt-0.5">
                     <i :data-lucide="isError ? 'shield-alert' : 'check-circle-2'" class="w-4 h-4"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-xs uppercase tracking-wider mb-0.5" x-text="isError ? 'Verifikasi Gagal' : 'Pendaftaran Berhasil'"></h4>
-                    <p x-text="message" class="text-xs leading-relaxed opacity-90"></p>
+                    <h4 class="font-bold uppercase tracking-wider text-[11px]" x-text="isError ? 'Verifikasi Gagal' : 'Pendaftaran Berhasil'"></h4>
+                    <p x-text="message" class="text-xs leading-relaxed opacity-90 mt-0.5"></p>
                 </div>
             </div>
             <button type="button" @click="message = null" class="text-slate-400 hover:text-slate-600 transition-colors shrink-0 p-1">
@@ -44,14 +44,14 @@
                     <i data-lucide="alert-octagon" class="w-4 h-4"></i>
                 </div>
                 <div>
-                    <strong class="font-semibold uppercase tracking-wide block mb-0.5">Data NIK Sudah Memiliki Akun</strong>
-                    <span x-text="citizenCheck.message"></span>
+                    <strong class="font-bold uppercase tracking-wide block mb-0.5 text-[11px]">Data NIK Sudah Memiliki Akun Aktif</strong>
+                    <span x-text="citizenCheck.message" class="leading-relaxed"></span>
                 </div>
             </div>
             <div class="mt-1 flex items-center justify-end">
-                <a href="/login" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 text-white font-medium text-xs hover:bg-rose-700 transition-colors shadow-sm">
+                <a href="{{ route('login') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 text-white font-medium text-xs hover:bg-rose-700 transition-colors shadow-sm">
                     <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
-                    Masuk ke Akun Anda
+                    <span>Masuk ke Akun Anda</span>
                 </a>
             </div>
         </div>
@@ -64,8 +64,8 @@
                 <i data-lucide="check-check" class="w-4 h-4"></i>
             </div>
             <div>
-                <strong class="font-semibold uppercase tracking-wide block mb-0.5">NIK Terverifikasi di Master Data RT</strong>
-                <span x-text="citizenCheck.message"></span>
+                <strong class="font-bold uppercase tracking-wide block mb-0.5 text-[11px]">NIK Terverifikasi di Master Sensus RT 04</strong>
+                <span x-text="citizenCheck.message" class="leading-relaxed"></span>
             </div>
         </div>
     </template>
@@ -77,167 +77,177 @@
                 <i data-lucide="clock" class="w-4 h-4"></i>
             </div>
             <div>
-                <strong class="font-semibold uppercase tracking-wide block mb-0.5">Pengajuan Sedang Diverifikasi</strong>
-                <span x-text="citizenCheck.message"></span>
+                <strong class="font-bold uppercase tracking-wide block mb-0.5 text-[11px]">Pengajuan Sedang Diverifikasi Pengurus</strong>
+                <span x-text="citizenCheck.message" class="leading-relaxed"></span>
             </div>
         </div>
     </template>
 
-    <!-- Alert 4: NIK Belum Terdaftar (HANYA KONDISI INI MUNCUL OPSI AJUKAN WARGA BARU) -->
+    <!-- Alert 4: NIK Belum Ada di Master RT (MUNCUL JALUR AJUKAN WARGA BARU) -->
     <template x-if="citizenCheck.status === 'NOT_FOUND'">
-        <div class="p-3.5 mb-4 rounded-xl border border-sky-200 bg-sky-50 text-sky-800 text-xs shadow-sm flex items-start gap-2.5 animate-slide-down">
-            <div class="p-1 bg-sky-100 text-sky-700 rounded-lg shrink-0 mt-0.5">
+        <div class="p-3.5 mb-4 rounded-xl border border-blue-200 bg-blue-50/80 text-blue-900 text-xs shadow-sm flex items-start gap-2.5 animate-slide-down">
+            <div class="p-1 bg-blue-100 text-blue-700 rounded-lg shrink-0 mt-0.5">
                 <i data-lucide="info" class="w-4 h-4"></i>
             </div>
             <div>
-                <strong class="font-semibold uppercase tracking-wide block mb-0.5">NIK Belum Ada di Master RT</strong>
-                <span>Nomor NIK belum tercatat di data warga RT 01. Anda dapat mengajukan pendaftaran sebagai <strong>Warga Baru</strong> untuk diverifikasi oleh pengurus RT.</span>
+                <strong class="font-bold uppercase tracking-wide block mb-0.5 text-[11px]">Jalur Pengajuan Warga Baru Terbuka</strong>
+                <span x-text="citizenCheck.message" class="leading-relaxed"></span>
             </div>
         </div>
     </template>
 
-    <!-- Alert 5: Peringatan Data Kemiripan Nama di Database RT -->
+    <!-- Alert 5: Peringatan Nama Serupa di Sistem Database RT -->
     <template x-if="citizenCheck.similar_citizens && citizenCheck.similar_citizens.length > 0">
-        <div class="p-3.5 mb-4 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 text-xs shadow-sm animate-slide-down">
-            <div class="flex items-center gap-2 mb-1.5 font-semibold text-amber-800">
-                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>
-                <span>Perhatian: Ditemukan Data Warga Mirip di Database RT</span>
+        <div class="p-3.5 mb-4 rounded-xl border border-purple-200 bg-purple-50 text-purple-900 text-xs shadow-sm space-y-2 animate-slide-down">
+            <div class="flex items-center gap-2">
+                <i data-lucide="users" class="w-4 h-4 text-purple-600"></i>
+                <span class="font-bold text-[11px] uppercase tracking-wider">Perhatian: Ditemukan Nama Warga Serupa di RT 04</span>
             </div>
-            <p class="mb-2 text-slate-600">Nama yang Anda masukkan memiliki kemiripan dengan warga terdata berikut. Pastikan Anda tidak salah memasukkan identitas:</p>
-            <ul class="space-y-1 pl-1">
-                <template x-for="sim in citizenCheck.similar_citizens" :key="sim.name + sim.masked_nik">
-                    <li class="flex items-center justify-between py-1 px-2 rounded bg-white/70 border border-amber-200 text-slate-800">
-                        <span class="font-medium" x-text="sim.name"></span>
-                        <span class="font-mono text-slate-500 text-[11px]" x-text="'NIK: ' + sim.masked_nik"></span>
-                    </li>
+            <p class="text-purple-700 leading-relaxed text-[11px]">
+                Pastikan Anda tidak mendaftar ganda jika sudah pernah tercatat pada data berikut:
+            </p>
+            <div class="space-y-1 mt-1">
+                <template x-for="sim in citizenCheck.similar_citizens" :key="sim.name">
+                    <div class="flex items-center justify-between bg-white/80 p-2 rounded-lg border border-purple-100">
+                        <div>
+                            <span class="font-semibold text-slate-800" x-text="sim.name"></span>
+                            <span class="text-slate-500 text-[10px] block" x-text="'NIK: ' + sim.masked_nik"></span>
+                        </div>
+                        <span class="px-2 py-0.5 text-[10px] font-medium rounded-full" 
+                              :class="sim.has_account ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'"
+                              x-text="sim.has_account ? 'Sudah Ada Akun' : 'Warga Sensus'"></span>
+                    </div>
                 </template>
-            </ul>
+            </div>
         </div>
     </template>
 
-    <form @submit.prevent="submit" class="space-y-4">
-        <!-- NIK -->
+    <form method="POST" action="/api/v1/register" @submit.prevent="submit" class="space-y-4">
+        @csrf
+
+        <!-- NIK Input -->
         <div>
-            <div class="flex items-center justify-between mb-1">
-                <label class="block text-sm font-medium text-slate-700">Nomor Induk Kependudukan (NIK)</label>
-                <div class="flex items-center gap-2">
-                    <template x-if="citizenCheck.isChecking">
-                        <span class="text-xs text-blue-600 inline-flex items-center gap-1">
-                            <i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Cek data...
-                        </span>
-                    </template>
-                    <span class="text-xs font-mono font-medium transition-colors"
-                          :class="form.nik.length === 16 ? 'text-green-600 font-semibold' : 'text-slate-400'"
-                          x-text="form.nik.length + ' / 16'"></span>
-                </div>
+            <div class="flex items-center justify-between mb-1.5">
+                <label for="nik" class="block text-xs font-semibold text-slate-700">Nomor Induk Kependudukan (NIK)</label>
+                <span class="text-[11px] text-slate-400 font-mono" x-text="form.nik.length + '/16 digit'"></span>
             </div>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="credit-card" :class="errors.nik ? 'text-red-500' : (form.nik.length === 16 ? 'text-green-600' : 'text-slate-400')" class="h-4 w-4 transition-colors"></i>
+                    <i data-lucide="credit-card" :class="errors.nik ? 'text-rose-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
                 </div>
                 <input type="text" 
+                       id="nik"
+                       name="nik"
                        x-ref="nikInput"
                        x-model="form.nik" 
-                       @input="handleNikInput" 
+                       @input="handleNikInput"
                        @blur="checkCitizenData"
-                       :class="errors.nik ? 'border-red-400 focus:border-red-500 focus:ring-red-200 ring-2 ring-red-50 animate-pulse-error' : (form.nik.length === 16 ? 'border-green-400 focus:border-green-500 focus:ring-green-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500')"
-                       class="block w-full pl-10 pr-10 py-2.5 border rounded-lg focus:ring-2 sm:text-sm text-slate-900 transition-all placeholder:text-slate-400" 
-                       placeholder="16 digit NIK tertera di KTP/KK" 
+                       maxlength="16"
+                       :class="errors.nik ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-200 ring-2 ring-rose-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
+                       class="block w-full pl-10 pr-10 py-2.5 border rounded-xl focus:ring-2 sm:text-xs text-slate-900 transition-all font-mono placeholder:text-slate-400 tracking-wider" 
+                       placeholder="16 digit angka NIK KTP" 
                        required>
                 
                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <template x-if="errors.nik">
-                        <i data-lucide="alert-circle" class="h-4 w-4 text-red-500"></i>
+                    <template x-if="citizenCheck.isChecking">
+                        <i data-lucide="loader-2" class="h-4 w-4 text-blue-600 animate-spin"></i>
                     </template>
-                    <template x-if="!errors.nik && form.nik.length === 16">
-                        <i data-lucide="check-circle-2" class="h-4 w-4 text-green-500"></i>
+                    <template x-if="!citizenCheck.isChecking && errors.nik">
+                        <i data-lucide="alert-circle" class="h-4 w-4 text-rose-500"></i>
+                    </template>
+                    <template x-if="!citizenCheck.isChecking && !errors.nik && form.nik.length === 16">
+                        <i data-lucide="check-circle-2" class="h-4 w-4 text-emerald-500"></i>
                     </template>
                 </div>
             </div>
-            <p class="mt-1 text-xs text-red-600 font-medium" x-show="errors.nik" x-text="errors.nik ? errors.nik[0] : ''"></p>
+            <p class="mt-1 text-xs text-rose-600 font-medium" x-show="errors.nik" x-text="errors.nik ? errors.nik[0] : ''"></p>
         </div>
 
         <!-- Nama Lengkap -->
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Nama Lengkap</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="user" :class="errors.name ? 'text-red-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
+                    <i data-lucide="user" :class="errors.name ? 'text-rose-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
                 </div>
                 <input type="text" 
                        x-ref="nameInput"
                        x-model="form.name" 
                        @input="handleNameInput"
                        @blur="checkCitizenData"
-                       :class="errors.name ? 'border-red-400 focus:border-red-500 focus:ring-red-200 ring-2 ring-red-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
-                       class="block w-full pl-10 pr-3 py-2.5 border rounded-lg focus:ring-2 sm:text-sm text-slate-900 transition-all placeholder:text-slate-400" 
-                       placeholder="Nama sesuai KTP" 
+                       :readonly="citizenCheck.status === 'PRE_REGISTERED_RT'"
+                       :class="errors.name ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-200 ring-2 ring-rose-50 animate-pulse-error' : (citizenCheck.status === 'PRE_REGISTERED_RT' ? 'bg-slate-100 border-slate-200 text-slate-600 cursor-not-allowed' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500')"
+                       class="block w-full pl-10 pr-3 py-2.5 border rounded-xl focus:ring-2 sm:text-xs text-slate-900 transition-all placeholder:text-slate-400" 
+                       placeholder="Nama lengkap sesuai KTP" 
                        required>
             </div>
-            <p class="mt-1 text-xs text-red-600 font-medium" x-show="errors.name" x-text="errors.name ? errors.name[0] : ''"></p>
+            <template x-if="citizenCheck.status === 'PRE_REGISTERED_RT'">
+                <p class="mt-1 text-[11px] text-emerald-600 font-medium">Nama terkunci sesuai data resmi sensus RT 04.</p>
+            </template>
+            <p class="mt-1 text-xs text-rose-600 font-medium" x-show="errors.name" x-text="errors.name ? errors.name[0] : ''"></p>
         </div>
 
         <!-- Email -->
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Alamat Email</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Alamat Email Aktif</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="mail" :class="errors.email ? 'text-red-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
+                    <i data-lucide="mail" :class="errors.email ? 'text-rose-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
                 </div>
                 <input type="email" 
                        x-ref="emailInput"
                        x-model="form.email" 
-                       :class="errors.email ? 'border-red-400 focus:border-red-500 focus:ring-red-200 ring-2 ring-red-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
-                       class="block w-full pl-10 pr-10 py-2.5 border rounded-lg focus:ring-2 sm:text-sm text-slate-900 transition-all placeholder:text-slate-400" 
-                       placeholder="email@contoh.com" 
+                       :class="errors.email ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-200 ring-2 ring-rose-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
+                       class="block w-full pl-10 pr-10 py-2.5 border rounded-xl focus:ring-2 sm:text-xs text-slate-900 transition-all placeholder:text-slate-400" 
+                       placeholder="nama@email.com" 
                        required>
                 
                 <template x-if="errors.email">
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-red-500">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-rose-500">
                         <i data-lucide="alert-circle" class="h-4 w-4"></i>
                     </div>
                 </template>
             </div>
-            <p class="mt-1 text-xs text-red-600 font-medium" x-show="errors.email" x-text="errors.email ? errors.email[0] : ''"></p>
+            <p class="mt-1 text-xs text-rose-600 font-medium" x-show="errors.email" x-text="errors.email ? errors.email[0] : ''"></p>
         </div>
 
-        <!-- Berkas Pendukung KTP / KK (HANYA DITAMPILKAN PADA ALUR WARGA BARU / NIK NOT_FOUND) -->
+        <!-- Berkas Pendukung KTP / KK (HANYA PADA JALUR WARGA BARU / NIK NOT_FOUND) -->
         <template x-if="citizenCheck.allow_new_application">
-            <div class="p-3.5 rounded-xl border border-blue-200 bg-blue-50/70 space-y-3 animate-slide-down">
+            <div class="p-3.5 rounded-xl border border-blue-200 bg-blue-50/70 space-y-2.5 animate-slide-down">
                 <div class="flex items-center justify-between">
-                    <label class="block text-xs font-semibold text-blue-900 uppercase tracking-wider">
-                        Upload Foto KTP / KK (Opsional / Disarankan)
+                    <label class="block text-[11px] font-bold text-blue-950 uppercase tracking-wider">
+                        Unggah Bukti KTP / KK (Disarankan)
                     </label>
-                    <span class="text-[11px] text-blue-600">Format: JPG, PNG, PDF (Maks 5MB)</span>
+                    <span class="text-[10px] text-blue-600">JPG, PNG, PDF (Maks 5MB)</span>
                 </div>
                 <div>
                     <input type="file" 
                            @change="handleFileUpload" 
                            accept=".jpg,.jpeg,.png,.pdf"
-                           class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer border border-slate-200 bg-white rounded-lg p-1">
+                           class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer border border-slate-200 bg-white rounded-lg p-1">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">Catatan Domisili / No. Rumah (Opsional)</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Catatan Domisili / Alamat Rumah</label>
                     <input type="text" 
                            x-model="form.notes"
-                           class="block w-full py-1.5 px-3 border border-slate-300 rounded-lg text-xs placeholder:text-slate-400"
-                           placeholder="Contoh: Warga baru pindahan, RT 01 / No. 12B">
+                           class="block w-full py-1.5 px-3 border border-slate-300 rounded-lg text-xs placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500"
+                           placeholder="Contoh: Warga baru Gg. Bugis No. 95A, RT 04">
                 </div>
             </div>
         </template>
 
         <!-- Kata Sandi -->
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Kata Sandi</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Kata Sandi Baru</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="lock" :class="errors.password ? 'text-red-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
+                    <i data-lucide="lock" :class="errors.password ? 'text-rose-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
                 </div>
                 <input :type="showPassword ? 'text' : 'password'" 
                        x-ref="passwordInput"
                        x-model="form.password" 
-                       :class="errors.password ? 'border-red-400 focus:border-red-500 focus:ring-red-200 ring-2 ring-red-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
-                       class="block w-full pl-10 pr-10 py-2.5 border rounded-lg focus:ring-2 sm:text-sm text-slate-900 transition-all placeholder:text-slate-400" 
+                       :class="errors.password ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-200 ring-2 ring-rose-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
+                       class="block w-full pl-10 pr-10 py-2.5 border rounded-xl focus:ring-2 sm:text-xs text-slate-900 transition-all placeholder:text-slate-400" 
                        placeholder="Minimal 8 karakter" 
                        required>
                 
@@ -247,30 +257,30 @@
                     <i :data-lucide="showPassword ? 'eye-off' : 'eye'" class="h-4 w-4"></i>
                 </button>
             </div>
-            <p class="mt-1 text-xs text-red-600 font-medium" x-show="errors.password" x-text="errors.password ? errors.password[0] : ''"></p>
+            <p class="mt-1 text-xs text-rose-600 font-medium" x-show="errors.password" x-text="errors.password ? errors.password[0] : ''"></p>
         </div>
 
-        <!-- Konfirmasi Password -->
+        <!-- Konfirmasi Kata Sandi -->
         <div>
-            <div class="flex items-center justify-between mb-1">
-                <label class="block text-sm font-medium text-slate-700">Ulangi Kata Sandi</label>
+            <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-xs font-semibold text-slate-700">Ulangi Kata Sandi</label>
                 <template x-if="form.password_confirmation.length > 0">
-                    <span class="text-xs font-medium"
-                          :class="form.password === form.password_confirmation ? 'text-green-600' : 'text-amber-600'"
+                    <span class="text-[11px] font-semibold"
+                          :class="form.password === form.password_confirmation ? 'text-emerald-600' : 'text-amber-600'"
                           x-text="form.password === form.password_confirmation ? 'Kata sandi cocok' : 'Belum sesuai'"></span>
                 </template>
             </div>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <i data-lucide="shield-check" 
-                       :class="form.password_confirmation.length > 0 && form.password === form.password_confirmation ? 'text-green-600' : 'text-slate-400'" 
+                       :class="form.password_confirmation.length > 0 && form.password === form.password_confirmation ? 'text-emerald-600' : 'text-slate-400'" 
                        class="h-4 w-4 transition-colors"></i>
                 </div>
                 <input :type="showPasswordConfirmation ? 'text' : 'password'" 
                        x-ref="confirmPasswordInput"
                        x-model="form.password_confirmation" 
                        :class="form.password_confirmation.length > 0 && form.password !== form.password_confirmation ? 'border-amber-400 focus:border-amber-500 focus:ring-amber-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
-                       class="block w-full pl-10 pr-10 py-2.5 border rounded-lg focus:ring-2 sm:text-sm text-slate-900 transition-all placeholder:text-slate-400" 
+                       class="block w-full pl-10 pr-10 py-2.5 border rounded-xl focus:ring-2 sm:text-xs text-slate-900 transition-all placeholder:text-slate-400" 
                        placeholder="Ulangi kata sandi" 
                        required>
 
@@ -282,26 +292,26 @@
             </div>
         </div>
 
-        <!-- LOGIKA TOMBOL SUBMIT SESUAI PERSYARATAN:
-             1. Jika NIK sudah valid & terdaftar di database (ALREADY_REGISTERED): Button "Ajukan Warga Baru" TIDAK MUNCUL.
-             2. Jika NIK valid di master RT (PRE_REGISTERED_RT): Button adalah "Aktivasi Akun Warga". Button "Ajukan Warga Baru" TIDAK MUNCUL.
-             3. Jika NIK belum ada (NOT_FOUND): Button berubah menjadi "Ajukan Pendaftaran Warga Baru".
+        <!-- LOGIKA TOMBOL SUBMIT DINAMIS:
+             1. Jika NIK sudah terdaftar & punya akun (ALREADY_REGISTERED): Button "Ajukan Warga Baru" TIDAK MUNCUL, muncul link login.
+             2. Jika NIK ada di master sensus RT (PRE_REGISTERED_RT): Button "Aktivasi Akun Warga Terdata".
+             3. Jika NIK belum ada (NOT_FOUND): Button "Ajukan Pendaftaran Warga Baru".
         -->
         <div class="pt-2">
-            <!-- Kasus: NIK Sudah Terdaftar & Sudah Punya Akun (Button Ajukan Warga Baru TIDAK MUNCUL) -->
+            <!-- Kasus: NIK Sudah Terdaftar (Button Ajukan Warga Baru TIDAK MUNCUL) -->
             <template x-if="citizenCheck.status === 'ALREADY_REGISTERED'">
-                <a href="/login" 
-                   class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2.5 px-4 rounded-lg transition-all shadow-sm flex justify-center items-center gap-2">
+                <a href="{{ route('login') }}" 
+                   class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 px-4 rounded-xl transition-all shadow-sm flex justify-center items-center gap-2 text-xs">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
                     <span>NIK Sudah Terdaftar — Masuk ke Portal</span>
                 </a>
             </template>
 
-            <!-- Kasus: NIK Belum Ada di Database (MUNCUL BUTTON "AJUKAN PENDAFTARAN WARGA BARU") -->
+            <!-- Kasus: NIK Belum Ada di Master RT (MUNCUL BUTTON "AJUKAN PENDAFTARAN WARGA BARU") -->
             <template x-if="citizenCheck.allow_new_application">
                 <button type="submit" 
                         :disabled="isLoading || form.nik.length !== 16 || (form.password && form.password_confirmation && form.password !== form.password_confirmation)" 
-                        class="w-full bg-amber-600 hover:bg-amber-700 active:scale-[0.99] disabled:bg-amber-300 disabled:cursor-not-allowed text-white font-medium py-2.5 px-4 rounded-lg transition-all shadow-sm flex justify-center items-center gap-2">
+                        class="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 active:scale-[0.99] disabled:from-amber-300 disabled:to-amber-300 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition-all shadow-md shadow-amber-600/20 flex justify-center items-center gap-2 text-xs">
                     <template x-if="isLoading">
                         <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
                     </template>
@@ -316,7 +326,7 @@
             <template x-if="!citizenCheck.allow_new_application && citizenCheck.status !== 'ALREADY_REGISTERED'">
                 <button type="submit" 
                         :disabled="isLoading || form.nik.length !== 16 || (form.password && form.password_confirmation && form.password !== form.password_confirmation)" 
-                        class="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.99] disabled:bg-blue-300 disabled:cursor-not-allowed text-white font-medium py-2.5 px-4 rounded-lg transition-all shadow-sm flex justify-center items-center gap-2">
+                        class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.99] disabled:from-blue-300 disabled:to-indigo-300 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition-all shadow-md shadow-blue-500/20 flex justify-center items-center gap-2 text-xs">
                     <template x-if="isLoading">
                         <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
                     </template>
@@ -329,8 +339,12 @@
         </div>
     </form>
     
-    <div class="mt-6 text-center text-sm text-slate-600">
-        Sudah memiliki akun? <a href="/login" class="font-semibold text-blue-600 hover:text-blue-800 transition-colors">Masuk di sini</a>
+    <div class="mt-6 pt-5 border-t border-slate-100 text-center text-xs text-slate-600">
+        Sudah memiliki akun warga? 
+        <a href="{{ route('login') }}" class="font-bold text-blue-600 hover:text-blue-800 transition-colors inline-flex items-center gap-1">
+            <span>Masuk di sini</span>
+            <i data-lucide="arrow-right" class="w-3 h-3"></i>
+        </a>
     </div>
 </div>
 
@@ -419,7 +433,6 @@ document.addEventListener('alpine:init', () => {
                     this.citizenCheck.registered_name = data.registered_name;
                     this.citizenCheck.similar_citizens = data.similar_citizens || [];
 
-                    // Jika NIK terdaftar di master RT dan form name masih kosong, otomatis isi
                     if (data.status === 'PRE_REGISTERED_RT' && data.registered_name && !this.form.name) {
                         this.form.name = data.registered_name;
                     }
@@ -428,7 +441,9 @@ document.addEventListener('alpine:init', () => {
                 console.error("Gagal melakukan verifikasi real-time data warga:", e);
             } finally {
                 this.citizenCheck.isChecking = false;
-                setTimeout(() => lucide.createIcons(), 20);
+                setTimeout(() => {
+                    if (window.lucide) lucide.createIcons();
+                }, 20);
             }
         },
 
@@ -448,7 +463,7 @@ document.addEventListener('alpine:init', () => {
                 } else if (fieldToFocus === 'password' && this.$refs.passwordInput) {
                     this.$refs.passwordInput.focus();
                 }
-                lucide.createIcons();
+                if (window.lucide) lucide.createIcons();
             }, 50);
         },
 
@@ -508,7 +523,9 @@ document.addEventListener('alpine:init', () => {
                         localStorage.setItem('auth_token', data.access_token);
                     }
                     
-                    setTimeout(() => lucide.createIcons(), 10);
+                    setTimeout(() => {
+                        if (window.lucide) lucide.createIcons();
+                    }, 10);
                     
                     setTimeout(() => {
                         window.location.href = '/dashboard';
@@ -520,14 +537,20 @@ document.addEventListener('alpine:init', () => {
                 this.triggerErrorAnimation('nik');
             } finally {
                 this.isLoading = false;
-                setTimeout(() => lucide.createIcons(), 20);
+                setTimeout(() => {
+                    if (window.lucide) lucide.createIcons();
+                }, 20);
             }
         },
         
         init() {
-            setTimeout(() => lucide.createIcons(), 50);
+            setTimeout(() => {
+                if (window.lucide) lucide.createIcons();
+            }, 50);
             this.$watch('form.nik', () => {
-                setTimeout(() => lucide.createIcons(), 10);
+                setTimeout(() => {
+                    if (window.lucide) lucide.createIcons();
+                }, 10);
             });
         }
     }))

@@ -8,13 +8,13 @@ window.LayananPublikFirebase = (function () {
     let messaging = null;
 
     const defaultFirebaseConfig = {
-        apiKey: "AIzaSyD9PUPdSdZRAKd6QXORru8kyYcGveC1yns",
-        authDomain: "layanan-publik-warga.firebaseapp.com",
-        projectId: "layanan-publik-warga",
-        storageBucket: "layanan-publik-warga.firebasestorage.app",
-        messagingSenderId: "544336210267",
-        appId: "1:544336210267:web:052c69600e6c0d74a9d27e",
-        measurementId: "G-LFB3EPECT5"
+        apiKey: "",
+        authDomain: "",
+        projectId: "",
+        storageBucket: "",
+        messagingSenderId: "",
+        appId: "",
+        measurementId: ""
     };
 
     async function initFirebase(config, vapidKey) {

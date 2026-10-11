@@ -1,11 +1,51 @@
 @extends('layouts.auth')
 
-@section('title', 'Masuk')
+@section('title', 'Masuk Portal')
 
 @section('content')
 <div x-data="loginForm()" :class="{ 'animate-shake': isShaking }">
-    <h2 class="text-xl font-bold text-slate-800 mb-1">Selamat Datang Kembali</h2>
-    <p class="text-sm text-slate-500 mb-6">Masuk ke akun Anda untuk melanjutkan.</p>
+    <div class="mb-5 text-center">
+        <h2 class="text-xl font-bold text-slate-800 tracking-tight">Selamat Datang Kembali</h2>
+        <p class="text-xs text-slate-500 mt-1">Masuk ke portal layanan publik PRISMA RT 04</p>
+    </div>
+
+    <!-- Quick Demo Accounts Toggle for Evaluators & Testers -->
+    <div class="mb-5 bg-blue-50/70 border border-blue-200/80 rounded-xl p-3 text-xs" x-data="{ showDemo: false }">
+        <div class="flex items-center justify-between cursor-pointer" @click="showDemo = !showDemo">
+            <div class="flex items-center gap-2 text-blue-700 font-semibold">
+                <i data-lucide="key" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span>Kredensial Akun Demo (Pengujian)</span>
+            </div>
+            <button type="button" class="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
+                <span x-text="showDemo ? 'Tutup' : 'Lihat Akun'"></span>
+                <i :data-lucide="showDemo ? 'chevron-up' : 'chevron-down'" class="w-3.5 h-3.5"></i>
+            </button>
+        </div>
+        <div x-show="showDemo" x-cloak class="mt-2.5 pt-2.5 border-t border-blue-200/60 space-y-1.5 text-[11px] text-slate-600">
+            <p class="text-slate-500 mb-1">Klik salah satu role untuk mengisi formulir otomatis:</p>
+            <div class="grid grid-cols-2 gap-1.5">
+                <button type="button" @click="fillDemo('ketua_rt@warga.local', 'password')" class="text-left px-2 py-1.5 rounded bg-white hover:bg-blue-100/60 border border-blue-100 transition-colors">
+                    <span class="font-bold text-slate-800 block">Ketua RT</span>
+                    <span class="text-slate-500 truncate block">ketua_rt@warga.local</span>
+                </button>
+                <button type="button" @click="fillDemo('sekretaris@warga.local', 'password')" class="text-left px-2 py-1.5 rounded bg-white hover:bg-blue-100/60 border border-blue-100 transition-colors">
+                    <span class="font-bold text-slate-800 block">Sekretaris</span>
+                    <span class="text-slate-500 truncate block">sekretaris@warga.local</span>
+                </button>
+                <button type="button" @click="fillDemo('bendahara@warga.local', 'password')" class="text-left px-2 py-1.5 rounded bg-white hover:bg-blue-100/60 border border-blue-100 transition-colors">
+                    <span class="font-bold text-slate-800 block">Bendahara</span>
+                    <span class="text-slate-500 truncate block">bendahara@warga.local</span>
+                </button>
+                <button type="button" @click="fillDemo('keamanan@warga.local', 'password')" class="text-left px-2 py-1.5 rounded bg-white hover:bg-blue-100/60 border border-blue-100 transition-colors">
+                    <span class="font-bold text-slate-800 block">Keamanan</span>
+                    <span class="text-slate-500 truncate block">keamanan@warga.local</span>
+                </button>
+            </div>
+            <div class="text-[10px] text-slate-400 text-center pt-1">
+                Password default seluruh akun: <code class="font-mono text-blue-700 bg-white px-1 py-0.5 rounded border border-blue-200">password</code>
+            </div>
+        </div>
+    </div>
 
     <!-- Animated Error/Success Notification Alert -->
     <template x-if="message">
@@ -16,15 +56,15 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
-             :class="isError ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'" 
-             class="p-3.5 mb-6 rounded-xl text-sm border flex items-start justify-between gap-3 shadow-sm animate-slide-down">
+             :class="isError ? 'bg-rose-50 text-rose-800 border-rose-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'" 
+             class="p-3 mb-5 rounded-xl text-xs border flex items-start justify-between gap-3 shadow-sm animate-slide-down">
             <div class="flex items-start gap-2.5">
-                <div :class="isError ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'" class="p-1 rounded-lg shrink-0 mt-0.5">
+                <div :class="isError ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'" class="p-1 rounded-lg shrink-0 mt-0.5">
                     <i :data-lucide="isError ? 'shield-alert' : 'check-circle-2'" class="w-4 h-4"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-xs uppercase tracking-wider mb-0.5" x-text="isError ? 'Autentikasi Gagal' : 'Berhasil'"></h4>
-                    <p x-text="message" class="text-xs leading-relaxed opacity-90"></p>
+                    <h4 class="font-bold uppercase tracking-wider text-[11px]" x-text="isError ? 'Autentikasi Gagal' : 'Berhasil'"></h4>
+                    <p x-text="message" class="text-xs leading-relaxed opacity-90 mt-0.5"></p>
                 </div>
             </div>
             <button type="button" @click="message = null" class="text-slate-400 hover:text-slate-600 transition-colors shrink-0 p-1">
@@ -35,12 +75,13 @@
 
     <form method="POST" action="{{ route('login.post') }}" @submit.prevent="submit" class="space-y-4">
         @csrf
+        
         <!-- Email / No Telepon -->
         <div>
-            <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Alamat Email / No. Telepon</label>
+            <label for="email" class="block text-xs font-semibold text-slate-700 mb-1.5">Alamat Email / No. WhatsApp</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="mail" :class="(errors.email || (isError && !errors.password)) ? 'text-red-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
+                    <i data-lucide="mail" :class="(errors.email || (isError && !errors.password)) ? 'text-rose-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
                 </div>
                 <input type="text" 
                        name="email"
@@ -48,36 +89,36 @@
                        x-ref="emailInput"
                        x-model="form.email" 
                        value="{{ old('email') }}"
-                       :class="(errors.email || (isError && !errors.password)) ? 'border-red-400 focus:border-red-500 focus:ring-red-200 ring-2 ring-red-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
-                       class="block w-full pl-10 pr-10 py-2.5 border rounded-lg focus:ring-2 sm:text-sm text-slate-900 transition-all placeholder:text-slate-400" 
-                       placeholder="email@contoh.com atau 081234567890" 
+                       :class="(errors.email || (isError && !errors.password)) ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-200 ring-2 ring-rose-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
+                       class="block w-full pl-10 pr-10 py-2.5 border rounded-xl focus:ring-2 sm:text-xs text-slate-900 transition-all placeholder:text-slate-400" 
+                       placeholder="nama@email.com atau 081234567890" 
                        required>
                 
                 <template x-if="errors.email || (isError && !errors.password)">
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-red-500">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-rose-500">
                         <i data-lucide="alert-circle" class="h-4 w-4"></i>
                     </div>
                 </template>
             </div>
-            <p class="mt-1 text-xs text-red-600 flex items-center gap-1 font-medium" x-show="errors.email">
+            <p class="mt-1 text-xs text-rose-600 flex items-center gap-1 font-medium" x-show="errors.email">
                 <span x-text="errors.email ? errors.email[0] : ''"></span>
             </p>
         </div>
 
         <!-- Password -->
         <div>
-            <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Kata Sandi</label>
+            <label for="password" class="block text-xs font-semibold text-slate-700 mb-1.5">Kata Sandi</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="lock" :class="(errors.password || isError) ? 'text-red-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
+                    <i data-lucide="lock" :class="(errors.password || isError) ? 'text-rose-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
                 </div>
                 <input :type="showPassword ? 'text' : 'password'" 
                        name="password"
                        id="password"
                        x-ref="passwordInput"
                        x-model="form.password" 
-                       :class="(errors.password || isError) ? 'border-red-400 focus:border-red-500 focus:ring-red-200 ring-2 ring-red-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
-                       class="block w-full pl-10 pr-10 py-2.5 border rounded-lg focus:ring-2 sm:text-sm text-slate-900 transition-all placeholder:text-slate-400" 
+                       :class="(errors.password || isError) ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-200 ring-2 ring-rose-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
+                       class="block w-full pl-10 pr-10 py-2.5 border rounded-xl focus:ring-2 sm:text-xs text-slate-900 transition-all placeholder:text-slate-400" 
                        placeholder="••••••••" 
                        required>
                 
@@ -87,34 +128,40 @@
                     <i :data-lucide="showPassword ? 'eye-off' : 'eye'" class="h-4 w-4"></i>
                 </button>
             </div>
-            <p class="mt-1 text-xs text-red-600 font-medium" x-show="errors.password" x-text="errors.password ? errors.password[0] : ''"></p>
+            <p class="mt-1 text-xs text-rose-600 font-medium" x-show="errors.password" x-text="errors.password ? errors.password[0] : ''"></p>
         </div>
 
-        <div class="flex items-center justify-between pt-1">
+        <div class="flex items-center justify-between pt-0.5">
             <div class="flex items-center">
                 <input id="remember-me" name="remember" type="checkbox" value="1" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded cursor-pointer">
-                <label for="remember-me" class="ml-2 block text-sm text-slate-600 cursor-pointer">
-                    Ingat saya
+                <label for="remember-me" class="ml-2 block text-xs text-slate-600 cursor-pointer">
+                    Ingat sesi saya
                 </label>
             </div>
 
-            <div class="text-sm">
-                <a href="#" class="font-medium text-blue-600 hover:text-blue-800 transition-colors">Lupa sandi?</a>
+            <div class="text-xs">
+                <a href="https://wa.me/6287872004448?text=Halo%20Admin%20PRISMA%20RT%2004,%20saya%20lupa%20kata%20sandi%20akun%20warga." target="_blank" rel="noopener noreferrer" class="font-medium text-blue-600 hover:text-blue-800 transition-colors">
+                    Lupa sandi?
+                </a>
             </div>
         </div>
 
         <button type="submit" 
                 :disabled="isLoading" 
-                class="w-full mt-6 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] disabled:bg-blue-300 disabled:cursor-not-allowed text-white font-medium py-2.5 px-4 rounded-lg transition-all shadow-sm flex justify-center items-center gap-2">
+                class="w-full mt-5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.99] disabled:from-blue-300 disabled:to-indigo-300 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition-all shadow-md shadow-blue-500/20 flex justify-center items-center gap-2 text-sm">
             <template x-if="isLoading">
                 <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
             </template>
-            <span x-text="isLoading ? 'Memeriksa kredensial...' : 'Masuk'"></span>
+            <span x-text="isLoading ? 'Memeriksa kredensial...' : 'Masuk ke Portal'"></span>
         </button>
     </form>
     
-    <div class="mt-6 text-center text-sm text-slate-600">
-        Belum mendaftar? <a href="/register" class="font-semibold text-blue-600 hover:text-blue-800 transition-colors">Daftar sekarang</a>
+    <div class="mt-6 pt-5 border-t border-slate-100 text-center text-xs text-slate-600">
+        Belum memiliki akun warga? 
+        <a href="{{ route('register') }}" class="font-bold text-blue-600 hover:text-blue-800 transition-colors inline-flex items-center gap-1">
+            <span>Daftar Warga</span>
+            <i data-lucide="arrow-right" class="w-3 h-3"></i>
+        </a>
     </div>
 </div>
 
@@ -133,13 +180,22 @@ document.addEventListener('alpine:init', () => {
         message: null,
         isError: false,
         
+        fillDemo(email, password) {
+            this.form.email = email;
+            this.form.password = password;
+            this.message = `Kredensial demo (${email}) diterapkan. Silakan klik Masuk.`;
+            this.isError = false;
+            setTimeout(() => {
+                if (window.lucide) lucide.createIcons();
+            }, 10);
+        },
+
         triggerErrorAnimation(fieldToFocus = 'password') {
             this.isShaking = true;
             setTimeout(() => {
                 this.isShaking = false;
             }, 500);
 
-            // Fokuskan ke kolom input yang salah
             setTimeout(() => {
                 if (fieldToFocus === 'password' && this.$refs.passwordInput) {
                     this.form.password = '';
@@ -147,7 +203,7 @@ document.addEventListener('alpine:init', () => {
                 } else if (fieldToFocus === 'email' && this.$refs.emailInput) {
                     this.$refs.emailInput.focus();
                 }
-                lucide.createIcons();
+                if (window.lucide) lucide.createIcons();
             }, 50);
         },
 
@@ -157,7 +213,6 @@ document.addEventListener('alpine:init', () => {
             this.message = null;
             this.isError = false;
 
-            // Pastikan nilai tersinkronisasi jika browser melakukan autofill
             const emailInput = document.getElementById('email');
             const passwordInput = document.getElementById('password');
             if (emailInput && (!this.form.email || this.form.email.trim() === '')) {
@@ -188,7 +243,7 @@ document.addEventListener('alpine:init', () => {
                     } else if (response.status === 401 || response.status === 403) {
                         this.message = data.message || "Email atau kata sandi salah. Silakan coba lagi.";
                     } else {
-                        this.message = data.message || "Terjadi kesalahan pada sistem. Silakan coba lagi.";
+                        this.message = data.message || "Terjadi kendala pada sistem. Silakan coba kembali.";
                     }
 
                     this.triggerErrorAnimation(this.errors.email ? 'email' : 'password');
@@ -203,7 +258,9 @@ document.addEventListener('alpine:init', () => {
                         localStorage.setItem('user_profile', JSON.stringify(data.user));
                     }
                     
-                    setTimeout(() => lucide.createIcons(), 10);
+                    setTimeout(() => {
+                        if (window.lucide) lucide.createIcons();
+                    }, 10);
                     
                     setTimeout(() => {
                         window.location.href = data.redirect_url || '{{ route('dashboard') }}';
@@ -215,7 +272,9 @@ document.addEventListener('alpine:init', () => {
                 this.triggerErrorAnimation('password');
             } finally {
                 this.isLoading = false;
-                setTimeout(() => lucide.createIcons(), 20);
+                setTimeout(() => {
+                    if (window.lucide) lucide.createIcons();
+                }, 20);
             }
         }
     }))

@@ -1,57 +1,61 @@
-# Dokumentasi Platform Layanan Publik Warga
+# Indeks Dokumentasi Teknis PRISMA RT 04 Kemayoran
 
-Struktur dokumentasi platform telah diklasifikasikan ke dalam 5 subdirektori tematik untuk memudahkan navigasi, audit teknis, serta tata kelola pengembangan sistem:
+Selamat datang di portal dokumentasi arsitektur, rekayasa perangkat lunak, dan tata kelola sistem **PRISMA RT 04 Kemayoran** (*Platform Realisasi Informasi, Sistem Manajemen & Administrasi*).
+
+Seluruh dokumentasi diklasifikasikan ke dalam **5 subdirektori tematik (5 Pilar Dokumentasi)** untuk memudahkan peninjauan teknis, audit keamanan, dan pengembangan berkelanjutan:
 
 ```
 docs/
-├── design/                 # Panduan visual, identitas brand, ERD, dan diagram alur
-├── api_spec/               # Spesifikasi API, kontrak endpoints, dan skema OpenAPI
-├── business/               # Persyaratan bisnis, regulasi data, alur persuratan, dan kas
-├── plan_project/           # Perencanaan proyek, roadmap sprint, dan backlog
-└── project_management/     # Tata kelola RBAC, setup cloud Firebase, dan arsitektur sistem
+├── 1. api_spec/             # Spesifikasi API, kontrak RESTful JSON, dan skema OpenAPI 3.1
+├── 2. business/             # Aturan bisnis, alur registrasi/login, regulasi UU PDP, dan persuratan
+├── 3. design/               # Identitas visual PRISMA, ERD relasional, dan diagram alur sistem
+├── 4. plan_project/         # Metodologi Waterfall + Incremental Sprint, roadmap, dan backlog
+└── 5. project_management/   # Matriks RBAC (Peran & Wewenang), keamanan, dan arsitektur enterprise
 ```
 
 ---
 
-## 1. Desain & Arsitektur Visual (`docs/design/`)
-Subfolder ini berisi panduan identitas visual, perancangan antarmuka pengguna, dan relasi data:
-- **[BRAND_GUIDE.md](design/BRAND_GUIDE.md)**: Panduan warna, tipografi, logo, dan identitas visual resmi platform.
-- **[DIAGRAMS.md](design/DIAGRAMS.md)**: Diagram arsitektur sistem dan interaksi antarkomponen.
-- **[ERD.md](design/ERD.md)**: Entity Relationship Diagram database relasional sistem warga dan kepengurusan.
-- **[UI_PLAN.md](design/UI_PLAN.md)**: Rencana antarmuka pengguna, wireframe, dan tata letak halaman dashboard.
-- **[WEB_PERFORMANCE_SEO_GEO.md](design/WEB_PERFORMANCE_SEO_GEO.md)**: Optimasi Core Web Vitals, metadata SEO lokal, dan performa web.
+## 1. Spesifikasi API & Integrasi ([`docs/api_spec/`](api_spec/README.md))
+- **[README.md](api_spec/README.md)**: Ringkasan katalog endpoint dan panduan pengujian API.
+- **[openapi.yaml](api_spec/openapi.yaml)**: Berkas spesifikasi resmi **OpenAPI 3.1** yang dapat diakses secara interaktif via rute `/docs/api`.
+- **[API_SPEC.md](api_spec/API_SPEC.md)**: Rincian lengkap endpoint API v1 untuk seluruh modul layanan.
+- **[API_V1_1_CONTRACT.md](api_spec/API_V1_1_CONTRACT.md)**: Kontrak penagihan iuran warga dan audit reporting v1.1.
 
 ---
 
-## 2. Spesifikasi API (`docs/api_spec/`)
-Subfolder ini mendokumentasikan antarmuka pemrograman aplikasi (API) untuk integrasi web dan mobile:
-- **[API_SPEC.md](api_spec/API_SPEC.md)**: Rincian seluruh endpoint API v1 beserta format request dan response.
-- **[API_V1_1_CONTRACT.md](api_spec/API_V1_1_CONTRACT.md)**: Kontrak spesifikasi API v1.1 mencakup penagihan iuran dan audit report.
-- **[openapi.yaml](api_spec/openapi.yaml)**: Berkas spesifikasi OpenAPI 3.1 standar industri untuk dokumentasi Swagger UI interaktif (dapat diakses pada rute `/docs/api`).
+## 2. Proses Bisnis & Regulasi Lingkungan ([`docs/business/`](business/README.md))
+- **[README.md](business/README.md)**: Ikhtisar tata kelola operasional dan kebijakan administrasi RT.
+- **[AUTH_REGISTER_AND_LOGIN_SPEC.md](business/AUTH_REGISTER_AND_LOGIN_SPEC.md)**: Spesifikasi mendalam alur pendaftaran mandiri warga (NIK 16 digit), aktivasi warga sensus, alur verifikasi berkas KTP, dan autentikasi multi-identifier.
+- **[SRS.md](business/SRS.md)**: Software Requirements Specification (Kebutuhan Fungsional & Non-Fungsional).
+- **[LETTER_WORKFLOW.md](business/LETTER_WORKFLOW.md)**: Alur birokrasi surat digital 2-tier, tanda tangan digital, QR Code token verifikasi, dan audit log.
+- **[FINANCIAL_REPORTS_AND_BACKUP_STORE.md](business/FINANCIAL_REPORTS_AND_BACKUP_STORE.md)**: Kebijakan buku kas anti-fraud (*immutable ledger*) dan pencadangan terenkripsi.
+- **[DATA_CLASSIFICATION.md](business/DATA_CLASSIFICATION.md)**: Klasifikasi data sensitif kependudukan sesuai UU PDP No. 27/2022.
+- **[DOCUMENT_TEMPLATE.md](business/DOCUMENT_TEMPLATE.md)**: Standardisasi format cetak dokumen resmi RT.
+- **[STORAGE_MEMORY_PERFORMANCE_ANALYSIS.md](business/STORAGE_MEMORY_PERFORMANCE_ANALYSIS.md)**: Analisis kompresi berkas dan kapasitas penyimpanan.
 
 ---
 
-## 3. Proses Bisnis & Regulasi (`docs/business/`)
-Subfolder ini memuat aturan tata kelola lingkungan RT, regulasi data, dan alur operasional:
-- **[SRS.md](business/SRS.md)**: Software Requirements Specification (Spesifikasi Kebutuhan Perangkat Lunak).
-- **[DATA_CLASSIFICATION.md](business/DATA_CLASSIFICATION.md)**: Klasifikasi tingkat sensitivitas data warga (Publik, Internal, Rahasia/PII) dan enkripsi NIK.
-- **[LETTER_WORKFLOW.md](business/LETTER_WORKFLOW.md)**: Alur penerbitan surat pengantar, verifikasi pengurus, tanda tangan elektronik, dan QR verifikasi.
-- **[FINANCIAL_REPORTS_AND_BACKUP_STORE.md](business/FINANCIAL_REPORTS_AND_BACKUP_STORE.md)**: Regulasi laporan keuangan kas, pembatasan unduh rekapitulasi, dan penyimpanan backup terenkripsi.
-- **[DOCUMENT_TEMPLATE.md](business/DOCUMENT_TEMPLATE.md)**: Standardisasi format cetak dokumen resmi RT dan variabel dinamis.
-- **[STORAGE_MEMORY_PERFORMANCE_ANALYSIS.md](business/STORAGE_MEMORY_PERFORMANCE_ANALYSIS.md)**: Analisis efisiensi memori, kompresi berkas, dan kapasitas penyimpanan dokumen.
+## 3. Desain Sistem & Rekayasa Perangkat Lunak ([`docs/design/`](design/README.md))
+- **[README.md](design/README.md)**: Panduan desain arsitektur dan sistem antarmuka PRISMA.
+- **[BRAND_GUIDE.md](design/BRAND_GUIDE.md)**: Identitas brand resmi PRISMA RT 04 (Warna, tipografi, logo, dan panduan komponen).
+- **[ERD.md](design/ERD.md)**: Entity Relationship Diagram 24 tabel relasional MySQL 8.x.
+- **[DIAGRAMS.md](design/DIAGRAMS.md)**: Sequence Diagram kontrol konkurensi optimistik dan Activity Diagram persuratan.
+- **[UI_PLAN.md](design/UI_PLAN.md)**: Rencana antarmuka responsif mobile-first dengan Tailwind CSS v4.
+- **[WEB_PERFORMANCE_SEO_GEO.md](design/WEB_PERFORMANCE_SEO_GEO.md)**: Optimasi Core Web Vitals, JSON-LD Schema, dan SEO lokal Kemayoran.
+- **[CIRCULAR_FRAMEWORK_METHODS_AND_ALGORITHMS.md](design/CIRCULAR_FRAMEWORK_METHODS_AND_ALGORITHMS.md)**: Penerapan metode, algoritma & standarisasi Kerangka Diagram Lingkaran Sistem (Decentralized, Trust, Timestamp, Hash/Signature, Ethics, Autonomous Agent, Governance, AI).
 
 ---
 
-## 4. Perencanaan Proyek & Sprint (`docs/plan_project/`)
-Subfolder ini memuat rencana kerja terstruktur, roadmap multi-sprint, dan status pengerjaan:
-- **[PROJECT_PLAN.md](plan_project/PROJECT_PLAN.md)**: Rencana arsitektur makro, metodologi, dan linimasa peluncuran platform.
-- **[SPRINT_PLAN.md](plan_project/SPRINT_PLAN.md)**: Rincian 10 Sprint pengembangan bertahap dari fondasi data hingga rilis produksi.
+## 4. Perencanaan Proyek & Sprint ([`docs/plan_project/`](plan_project/README.md))
+- **[README.md](plan_project/README.md)**: Kerangka metodologi Waterfall + Incremental Sprint dan tata kelola git branch.
+- **[PROJECT_PLAN.md](plan_project/PROJECT_PLAN.md)**: Rencana induk proyek, ruang lingkup, dan acceptance criteria.
+- **[SPRINT_PLAN.md](plan_project/SPRINT_PLAN.md)**: Pembagian sprint bertahap dari Sprint 0 hingga Sprint 6.
 
 ---
 
-## 5. Tata Kelola & Infrastruktur (`docs/project_management/`)
-Subfolder ini mengatur izin wewenang tim, keamanan role, dan integrasi cloud:
-- **[RBAC.md](project_management/RBAC.md)**: Arsitektur Role-Based Access Control untuk seluruh peran (Warga, Ketua RT, Sekretaris, Bendahara, Petugas Keamanan, Admin, Superadmin).
-- **[RBAC_MATRIX.md](project_management/RBAC_MATRIX.md)**: Matriks hak akses matriks granular per entitas modul.
-- **[FIREBASE_FREE_TIER_SETUP.md](project_management/FIREBASE_FREE_TIER_SETUP.md)**: Panduan konfigurasi Firebase Spark Plan (gratis) untuk FCM Push Notification, Firestore, dan Firebase Storage.
-- **[MICROSERVICES_ENTERPRISE_ARCHITECTURE.md](project_management/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md)**: Strategi modularisasi arsitektur enterprise untuk skalabilitas masa depan.
+## 5. Tata Kelola & Keamanan Sistem ([`docs/project_management/`](project_management/README.md))
+- **[README.md](project_management/README.md)**: Tata kelola wewenang dan keamanan platform.
+- **[RBAC.md](project_management/RBAC.md)**: Arsitektur Role-Based Access Control Laravel Policies dan Gates.
+- **[RBAC_MATRIX.md](project_management/RBAC_MATRIX.md)**: Matriks hak akses matriks granular per peran dan entitas.
+- **[MICROSERVICES_ENTERPRISE_ARCHITECTURE.md](project_management/MICROSERVICES_ENTERPRISE_ARCHITECTURE.md)**: Strategi arsitektur jangka panjang.
+- **[FIREBASE_FREE_TIER_SETUP.md](project_management/FIREBASE_FREE_TIER_SETUP.md)**: Audit dan status integrasi cloud notification.
