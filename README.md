@@ -442,52 +442,96 @@ Dokumentasi proyek diklasifikasikan ke dalam 5 subfolder tematik yang dapat diti
 
 ---
 
-## Panduan Instalasi & Menjalankan Proyek
+## Panduan Instalasi & Menjalankan Proyek (Laragon / XAMPP di Laptop Lain)
 
-### 1. Kebutuhan Sistem
-- **PHP** versi **>= 8.4**
+Aplikasi ini bersifat *self-contained* dan siap dijalankan di perangkat/laptop baru mana pun menggunakan stack lokal standar seperti **Laragon** atau **XAMPP**.
+
+### 1. Kebutuhan Sistem & Prasyarat
+- **PHP** versi **>= 8.4** *(Wajib PHP 8.4+ karena menggunakan Laravel 13)*
+  - Ekstensi PHP yang aktif: `pdo_mysql`, `mbstring`, `openssl`, `curl`, `fileinfo`, `gd`, `zip`.
 - **Composer** versi **>= 2.5**
 - **Node.js** versi **>= 18** & **NPM**
-- **MySQL Database Server** versi **8.x**
-- **Redis Server** (Opsional untuk lingkungan lokal, wajib untuk antrean produksi)
+- **MySQL Database Server** versi **8.x** (atau MariaDB bawaan Laragon/XAMPP)
+- **Redis Server** *(Opsional — aplikasi telah dikonfigurasi otomatis menggunakan driver `database` untuk session, cache, dan queue jika Redis tidak terpasang).*
 
-### 2. Langkah Instalasi Langkah demi Langkah
+> 💡 **Tips Pengguna Laragon / XAMPP (Cara Memastikan PHP 8.4):**
+> 1. Jika Laragon/XAMPP di laptop Anda masih menggunakan PHP 8.1 atau 8.2, unduh paket zip **PHP 8.4 VS17 x64 Thread Safe** dari [windows.php.net/download](https://windows.php.net/download/).
+> 2. Ekstrak ke folder `C:\laragon\bin\php\php-8.4.x-Win32-x64`.
+> 3. Buka Laragon ➡️ Klik Kanan di mana saja ➡️ **PHP** ➡️ **Version** ➡️ Pilih versi **8.4.x**.
 
+---
+
+### 2. Langkah demi Langkah Menjalankan di Laptop Baru (5 Menit)
+
+#### Langkah 1: Clone Repositori dari GitHub
+Buka terminal (Git Bash / PowerShell / Command Prompt):
 ```bash
-# 1. Masuk ke direktori repositori
+git clone https://github.com/not162/platform-layanan-publik-warga.git
 cd platform-layanan-publik-warga
+```
 
-# 2. Instal dependensi PHP via Composer
+#### Langkah 2: Instal Dependensi Backend & Frontend
+```bash
+# Instal dependensi PHP (Laravel 13):
 composer install
 
-# 3. Instal dependensi Frontend via NPM
+# Instal dependensi Frontend (Vite & Tailwind CSS v4):
 npm install
+```
 
-# 4. Buat berkas konfigurasi .env dari template
+#### Langkah 3: Konfigurasi File Lingkungan (`.env`)
+Salin file konfigurasi contoh dan buat kunci enkripsi aplikasi:
+```bash
+# Di Windows PowerShell / CMD:
 copy .env.example .env
 
-# 5. Konfigurasi koneksi MySQL pada berkas .env
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=layanan_publik_warga
-# DB_USERNAME=root
-# DB_PASSWORD=
-
-# 6. Generate kunci enkripsi aplikasi
+# Generate application encryption key:
 php artisan key:generate
+```
 
-# 7. Jalankan migrasi database beserta data awal (Seeder)
+Buka file `.env` di teks editor, lalu sesuaikan koneksi database MySQL Laragon/XAMPP Anda:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=layanan_publik_warga
+DB_USERNAME=root
+DB_PASSWORD=
+```
+*(Driver session, queue, dan cache secara default sudah diset ke `database`, sehingga tidak memerlukan konfigurasi Redis tambahan di laptop lokal).*
+
+#### Langkah 4: Buat Database & Jalankan Migrasi + Seeder
+1. Buka **phpMyAdmin** (`http://localhost/phpmyadmin`) atau HeidiSQL bawaan Laragon.
+2. Buat database baru dengan nama: **`layanan_publik_warga`** (Collation: `utf8mb4_unicode_ci`).
+3. Jalankan migrasi dan pengisian data awal melalui terminal:
+```bash
 php artisan migrate --seed
+```
+*✨ Perintah ini akan otomatis menyusun 33 tabel relasional dan langsung menginjeksi akun pengurus (**Superadmin**, **Ketua RT**, **Sekretaris**, **Bendahara**, **Keamanan**) serta data sensus warga awal.*
 
-# 8. Kompilasi aset Vite & Tailwind CSS
+#### Langkah 5: Kompilasi Aset & Jalankan Server Lokal
+```bash
+# Kompilasi aset Vite & Tailwind CSS:
 npm run build
 
-# 9. Jalankan server lokal
+# Jalankan server aplikasi:
 php artisan serve
 ```
 
-Buka peramban di: **`http://localhost:8000`**
+Buka browser di laptop Anda:
+🌐 **`http://localhost:8000`**
+
+---
+
+### 3. Pintasan Kredensial Pengujian Cepat
+Setelah server berjalan, Anda dapat langsung masuk tanpa perlu repot mendaftar:
+- **Ketua RT:** `ketua_rt@warga.local` | Password: `password`
+- **Sekretaris:** `sekretaris@warga.local` | Password: `password`
+- **Bendahara:** `bendahara@warga.local` | Password: `password`
+- **Petugas Keamanan:** `keamanan@warga.local` | Password: `password`
+- **Superadmin:** `superadmin@warga.local` | Password: `password`
+
+*(Pada antarmuka `/login`, tersedia juga komponen interaktif **"Pintasan Akun Demo"** yang dapat diklik 1 kali untuk otomatis mengisi kredensial).*
 
 ---
 
