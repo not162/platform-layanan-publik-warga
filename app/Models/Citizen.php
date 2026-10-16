@@ -80,6 +80,11 @@ class Citizen extends Model
         return '****************';
     }
 
+    public function getNameAttribute(): ?string
+    {
+        return $this->full_name;
+    }
+
     public function familyCard(): BelongsTo
     {
         return $this->belongsTo(FamilyCard::class);

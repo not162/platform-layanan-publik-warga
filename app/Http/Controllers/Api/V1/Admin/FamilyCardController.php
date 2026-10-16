@@ -133,6 +133,8 @@ class FamilyCardController extends Controller
                 abort(Response::HTTP_CONFLICT, 'Conflict: Data Kartu Keluarga telah diubah oleh pihak lain. Silakan muat ulang.');
             }
             $validated['version'] = (int) $familyCard->version + 1;
+        } else {
+            $validated['version'] = (int) ($familyCard->version ?? 1) + 1;
         }
 
         $familyCard->update($validated);
