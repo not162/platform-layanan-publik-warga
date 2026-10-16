@@ -146,6 +146,14 @@ class LetterController extends Controller
         $newStatus = $data['status'];
         $currentStatus = $letter->status;
 
+        if ($currentStatus === 'completed' && $newStatus !== 'completed') {
+            abort(Response::HTTP_CONFLICT, 'Surat yang telah berstatus selesai (completed) bersifat final dan tidak dapat diubah statusnya.');
+        }
+
+        if ($newStatus === 'draft') {
+            abort(Response::HTTP_CONFLICT, 'Surat tidak dapat dikembalikan menjadi status draf.');
+        }
+
         if ($user->isWarga()) {
             if ($letter->citizen_id !== ($user->citizen->id ?? null)) {
                 abort(Response::HTTP_FORBIDDEN, 'Anda tidak berwenang memperbarui surat ini.');

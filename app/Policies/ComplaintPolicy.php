@@ -12,15 +12,25 @@ class ComplaintPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->isSuperadmin()
+            || $user->hasPermission('complaint.read')
+            || $user->hasPermission('complaint.manage')
+            || $user->isWarga();
     }
 
     /**
      * Determine whether the user can view the model.
+     * Warga can only view their own complaint. Staff can view all.
      */
     public function view(User $user, Complaint $complaint): bool
     {
-        return false;
+        if ($user->isSuperadmin()
+            || $user->hasPermission('complaint.read')
+            || $user->hasPermission('complaint.manage')) {
+            return true;
+        }
+
+        return (int) $complaint->user_id === (int) $user->id;
     }
 
     /**
@@ -28,7 +38,7 @@ class ComplaintPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->isSuperadmin() || $user->isWarga();
     }
 
     /**
@@ -36,7 +46,7 @@ class ComplaintPolicy
      */
     public function update(User $user, Complaint $complaint): bool
     {
-        return false;
+        return $user->isSuperadmin() || $user->hasPermission('complaint.manage');
     }
 
     /**
@@ -44,22 +54,6 @@ class ComplaintPolicy
      */
     public function delete(User $user, Complaint $complaint): bool
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Complaint $complaint): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Complaint $complaint): bool
-    {
-        return false;
+        return $user->isSuperadmin();
     }
 }

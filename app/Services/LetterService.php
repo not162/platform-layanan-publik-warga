@@ -231,6 +231,14 @@ class LetterService
 
         $version = (int) ($data['version'] ?? $letter->version);
 
+        if ($letter->status === 'completed' && $newStatus !== 'completed') {
+            abort(409, 'Surat yang telah berstatus selesai (completed) bersifat final dan tidak dapat diubah statusnya.');
+        }
+
+        if ($newStatus === 'draft') {
+            abort(409, 'Surat tidak dapat dikembalikan menjadi status draf.');
+        }
+
         return match ($newStatus) {
             'submitted' => $this->submit($letter, $actor, $version),
             'verified' => $this->verify($letter, $actor, $version, $data['catatan_admin'] ?? null),
