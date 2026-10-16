@@ -97,14 +97,14 @@ classDiagram
     %% MODELS ENTITY
     class User {
         +bigint id
-        +bigint warga_id
         +string name
         +string email
         +string password
         +UserRole role
         +boolean is_active
         +datetime last_login_at
-        +citizen() Citizen
+        +bigint warga_id [DEPRECATED]
+        +citizen() HasOne
         +auditLogs() HasMany
         +hasPermission(string permission) bool
         +isSuperAdmin() bool
@@ -114,7 +114,7 @@ classDiagram
     class Citizen {
         +bigint id
         +bigint family_card_id
-        +bigint user_id
+        +bigint user_id [FK_UNIQUE, Single Source of Truth]
         +string nik_hash
         +string encrypted_nik
         +string full_name
@@ -145,9 +145,9 @@ classDiagram
         +bigint id
         +bigint user_id
         +bigint citizen_id
-        +bigint letter_type_id
+        +bigint jenis_surat_id [FK to jenis_surat.id]
         +string ticket_number
-        +string reference_number
+        +string letter_number
         +LetterStatus status
         +string verification_token
         +string document_hash
@@ -157,15 +157,16 @@ classDiagram
         +datetime approved_at
         +attachments() HasMany
         +citizen() Citizen
-        +type() LetterType
+        +jenisSurat() JenisSurat
     }
 
-    class LetterType {
+    class JenisSurat {
         +bigint id
-        +string code
-        +string name
-        +text description
-        +json required_fields
+        +string kode_surat [UNIQUE]
+        +string nama_surat
+        +text deskripsi
+        +json template_fields
+        +json required_attachments
         +boolean is_active
     }
 
@@ -180,37 +181,40 @@ classDiagram
 
     class FinanceTransaction {
         +bigint id
-        +bigint user_id
+        +bigint created_by
         +TransactionType transaction_type
-        +decimal amount
+        +bigint amount_idr
         +string category
         +text description
         +date transaction_date
+        +string status
         +boolean is_published
         +boolean is_reversal
-        +bigint reversal_of_id
+        +bigint original_transaction_id
         +user() User
-        +reversalOf() FinanceTransaction
+        +duePayments() HasMany
     }
 
     class ResidentDue {
         +bigint id
         +bigint citizen_id
-        +int due_month
-        +int due_year
-        +decimal amount
+        +int period_month
+        +int period_year
+        +bigint amount_due_idr
         +string status
         +payments() HasMany
     }
 
     class DuePayment {
         +bigint id
-        +bigint resident_due_id
-        +string payment_reference
-        +decimal amount
+        +bigint resident_due_id [FK]
+        +bigint finance_transaction_id [FK RESTRICT]
+        +string receipt_number [UNIQUE]
+        +bigint amount_paid_idr
         +string payment_method
-        +datetime payment_date
+        +datetime paid_at
         +string proof_path
+        +financeTransaction() FinanceTransaction
     }
 
     class Complaint {
@@ -1064,6 +1068,194 @@ flowchart LR
 
     Publik --> UC6
     Publik --> UC9
+```
+
+---
+
+### 5.1.1 Use Case Modular: Modul Kependudukan, Akun & Kartu Keluarga
+
+Diagram modular ini memetakan interaksi pendaftaran mandiri dan pengelolaan data sensus tanpa kepadatan garis silang:
+
+```mermaid
+flowchart LR
+    subgraph AKTOR_KIRI["PENGURUS (KIRI)"]
+        direction TB
+        SA_KK["Superadmin"]
+        SEK_KK["Sekretaris RT"]
+    end
+
+    subgraph SYSTEM_KK["BATAS SISTEM: ADMINISTRASI KEPENDUDUKAN & AKUN"]
+        direction TB
+        UC_KK1(["UC-CIT-01: Pendaftaran Mandiri Akun Warga"])
+        UC_KK2(["UC-CIT-02: Verifikasi Berkas KTP/KK Pemohon"])
+        UC_KK3(["UC-CIT-03: Kelola Sensus Warga & Hubungkan Akun"])
+        UC_KK4(["UC-CIT-04: Manajemen Kartu Keluarga (Optimistic Lock)"])
+        UC_KK5(["UC-CIT-05: Ekspor Rekapitulasi Sensus Warga"])
+
+        UC_KK1 -.->|<<include>>| UC_KK2
+        UC_KK3 -.->|<<extend>>| UC_KK4
+    end
+
+    subgraph AKTOR_KANAN["WARGA & PEMOHON (KANAN)"]
+        direction TB
+        W_Baru_KK["Warga Baru / Belum Berakun"]
+        W_Tetap_KK["Warga Terverifikasi"]
+    end
+
+    %% Relasi Kiri
+    SEK_KK --> UC_KK2
+    SEK_KK --> UC_KK3
+    SEK_KK --> UC_KK4
+    SA_KK --> UC_KK3
+    SA_KK --> UC_KK5
+
+    %% Relasi Kanan
+    W_Baru_KK --> UC_KK1
+    W_Tetap_KK --> UC_KK3
+```
+
+---
+
+### 5.1.2 Use Case Modular: Modul Birokrasi Surat Pengantar 2-Tier & Verifikasi Publik
+
+Diagram modular birokrasi persuratan 2-tier dan validasi QR Code oleh pihak ketiga:
+
+```mermaid
+flowchart LR
+    subgraph AKTOR_KIRI["PENGURUS RT (KIRI)"]
+        direction TB
+        SEK_SRT["Sekretaris RT\n(Verifikator Berkas)"]
+        KRT_SRT["Ketua RT\n(Pengesahan & TTD)"]
+    end
+
+    subgraph SYSTEM_SRT["BATAS SISTEM: PELAYANAN SURAT PENGANTAR DIGITAL"]
+        direction TB
+        UC_SRT1(["UC-SRT-01: Ajukan Permohonan Surat & Syarat"])
+        UC_SRT2(["UC-SRT-02: Verifikasi Kelengkapan Berkas (Tahap 1)"])
+        UC_SRT3(["UC-SRT-03: Pengesahan & Tanda Tangan Digital (Tahap 2)"])
+        UC_SRT4(["UC-SRT-04: Terbitkan QR Code & Dokumen PDF Resmi"])
+        UC_SRT5(["UC-SRT-05: Pelacakan Status & Unduh Dokumen Sah"])
+        UC_SRT6(["UC-SRT-06: Verifikasi Publik Token QR Code"])
+
+        UC_SRT1 -.->|<<include>>| UC_SRT2
+        UC_SRT2 -.->|<<include>>| UC_SRT3
+        UC_SRT3 -.->|<<include>>| UC_SRT4
+        UC_SRT4 -.->|<<extend>>| UC_SRT5
+    end
+
+    subgraph AKTOR_KANAN["WARGA & PEMERIKSA (KANAN)"]
+        direction TB
+        W_SRT["Warga Terverifikasi\n(Pemohon Surat)"]
+        PUB_SRT["Instansi / Kelurahan\n(Pemeriksa Keabsahan)"]
+    end
+
+    %% Relasi Kiri
+    SEK_SRT --> UC_SRT2
+    KRT_SRT --> UC_SRT3
+
+    %% Relasi Kanan
+    W_SRT --> UC_SRT1
+    W_SRT --> UC_SRT5
+    PUB_SRT --> UC_SRT6
+```
+
+---
+
+### 5.1.3 Use Case Modular: Modul Akuntabilitas Keuangan (Iuran & Kas Anti-Fraud)
+
+Diagram modular penerbitan iuran, pencatatan transaksi kas, dan pengawasan audit jurnal pembalik:
+
+```mermaid
+flowchart LR
+    subgraph AKTOR_KIRI["OTORITAS KEUANGAN (KIRI)"]
+        direction TB
+        BEN_FIN["Bendahara RT\n(Pencatat Kas)"]
+        KRT_FIN["Ketua RT\n(Pengawas Anggaran)"]
+        SA_FIN["Superadmin\n(Audit Reversal)"]
+    end
+
+    subgraph SYSTEM_FIN["BATAS SISTEM: PENGELOLAAN KAS RT & IURAN WARGA"]
+        direction TB
+        UC_FIN1(["UC-KEU-01: Terbitkan Tagihan Iuran Warga Bulanan"])
+        UC_FIN2(["UC-KEU-02: Bayar Iuran Mandiri & Unggah Bukti"])
+        UC_FIN3(["UC-KEU-03: Konfirmasi Setoran & Cetak Kuitansi"])
+        UC_FIN4(["UC-KEU-04: Pembukuan Transaksi Kas Masuk & Keluar"])
+        UC_FIN5(["UC-KEU-05: Koreksi Transaksi via Jurnal Reversal"])
+        UC_FIN6(["UC-KEU-06: Sahkan & Publikasikan Laporan Triwulan"])
+        UC_FIN7(["UC-KEU-07: Tinjau Transparansi Kas Lingkungan Publik"])
+
+        UC_FIN2 -.->|<<include>>| UC_FIN3
+        UC_FIN3 -.->|<<include>>| UC_FIN4
+        UC_FIN4 -.->|<<extend>>| UC_FIN5
+        UC_FIN6 -.->|<<extend>>| UC_FIN7
+    end
+
+    subgraph AKTOR_KANAN["KOMUNITAS WARGA (KANAN)"]
+        direction TB
+        W_FIN["Warga Lingkungan\n(Pembayar Iuran)"]
+        PUB_FIN["Warga / Publik\n(Pemeriksa Transparansi)"]
+    end
+
+    %% Relasi Kiri
+    BEN_FIN --> UC_FIN1
+    BEN_FIN --> UC_FIN3
+    BEN_FIN --> UC_FIN4
+    KRT_FIN --> UC_FIN6
+    SA_FIN --> UC_FIN5
+
+    %% Relasi Kanan
+    W_FIN --> UC_FIN2
+    W_FIN --> UC_FIN7
+    PUB_FIN --> UC_FIN7
+```
+
+---
+
+### 5.1.4 Use Case Modular: Modul Pengaduan, Keamanan Lingkungan & Audit Sistem
+
+Diagram modular pelaporan keluhan, penanganan insiden pos keamanan, dan audit sistem RBAC:
+
+```mermaid
+flowchart LR
+    subgraph AKTOR_KIRI["APARAT RT & ADMIN (KIRI)"]
+        direction TB
+        SEC_ADU["Petugas Keamanan\n(Tindak Lapangan)"]
+        KRT_ADU["Ketua / Admin RT\n(Disposisi Tiket)"]
+        SA_ADU["Superadmin\n(Tata Kelola RBAC)"]
+    end
+
+    subgraph SYSTEM_ADU["BATAS SISTEM: PENGADUAN, KEAMANAN & PENGAWASAN"]
+        direction TB
+        UC_ADU1(["UC-ADU-01: Kirim Pengaduan Warga (Opsi Anonim)"])
+        UC_ADU2(["UC-ADU-02: Disposisi Tiket & Tanggapan Petugas"])
+        UC_ADU3(["UC-ADU-03: Lapor Insiden Keamanan & Panggilan Darurat"])
+        UC_ADU4(["UC-ADU-04: Penanganan Insiden Lapangan oleh Keamanan"])
+        UC_ADU5(["UC-ADU-05: Kelola Hak Akses Pengurus (RBAC Matrix)"])
+        UC_ADU6(["UC-ADU-06: Inspeksi Jejak Audit Perubahan Data"])
+        UC_ADU7(["UC-ADU-07: Buat & Unduh Snapshot Backup Enkripsi"])
+
+        UC_ADU1 -.->|<<include>>| UC_ADU2
+        UC_ADU3 -.->|<<include>>| UC_ADU4
+        UC_ADU5 -.->|<<include>>| UC_ADU6
+    end
+
+    subgraph AKTOR_KANAN["WARGA & MASYARAKAT (KANAN)"]
+        direction TB
+        W_ADU["Warga Terdaftar\n(Pelapor Aduan)"]
+        PUB_ADU["Warga / Publik\n(Akses Darurat)"]
+    end
+
+    %% Relasi Kiri
+    KRT_ADU --> UC_ADU2
+    SEC_ADU --> UC_ADU4
+    SA_ADU --> UC_ADU5
+    SA_ADU --> UC_ADU6
+    SA_ADU --> UC_ADU7
+
+    %% Relasi Kanan
+    W_ADU --> UC_ADU1
+    W_ADU --> UC_ADU3
+    PUB_ADU --> UC_ADU3
 ```
 
 ---

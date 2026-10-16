@@ -320,3 +320,53 @@
 * **Role:** PETUGAS_KEAMANAN, SUPERADMIN
 * **Permission:** `security.read`
 * **HTTP Status:** `200 OK`
+
+---
+
+## 5. Matriks Penyelarasan Rute Aplikasi (Application Route & Feature Mapping Matrix)
+
+Tabel berikut memetakan setiap fitur sistem ke aktor pemegang hak akses, endpoint `/api/v1`, tabel basis data yang diakses, kode status respons HTTP, aturan otorisasi/validasi, serta penandaan status aktual vs usulan sesuai instruksi TOGAF Phase C (Application Architecture):
+
+| Modul Fitur | Aktor Utama | Metode & Rute Endpoint `/api/v1` | Tabel Basis Data Terkait | Kode Status HTTP | Aturan Otorisasi & Validasi | Status Implementasi |
+|---|---|---|---|---|---|:---:|
+| **Pendaftaran Mandiri** | Publik / Warga Baru | `POST /register` | `users`, `citizens` | `201 Created`, `422 Unprocessable` | Validasi email unik, password bcrypt, hash NIK 16 digit deterministik | **AKTUAL** |
+| **Pengecekan NIK** | Publik / Warga | `POST /auth/check-citizen` | `citizens` | `200 OK`, `404 Not Found` | Validasi format NIK 16 digit, pencarian via `nik_hash` | **AKTUAL** |
+| **Login Sesi** | Seluruh Pengguna | `POST /login` | `users`, `personal_access_tokens` | `200 OK`, `401 Unauthorized` | Multi-identifier (email, username, phone, NIK via `nik_hash`), rate limit 5/min | **AKTUAL** |
+| **Logout Sesi** | Pengguna Login | `POST /logout` | `personal_access_tokens` | `200 OK` | `auth:sanctum`, revoke current access token | **AKTUAL** |
+| **Profil Warga Mandiri** | Warga Login | `GET /me` | `users`, `citizens` | `200 OK`, `401 Unauthorized` | `auth:sanctum`, memuat resource User & Citizen dengan NIK tersamar (`nik_masked`) | **AKTUAL** |
+| **Perbarui Profil Mandiri**| Warga Login | `PATCH /me` | `users`, `citizens` | `200 OK`, `422 Unprocessable` | `auth:sanctum`, hanya dapat memperbarui phone, email, alamat domisili | **AKTUAL** |
+| **Ekspor Data Pribadi** | Warga Login | `GET /me/export` | `users`, `citizens`, `family_cards` | `200 OK`, `403 Forbidden` | `auth:sanctum`, NIK dimask sesuai UU PDP No. 27/2022 (NFR-01) | **AKTUAL** |
+| **Katalog Jenis Surat** | Publik / Warga | `GET /public/services` & `GET /letter-types` | `jenis_surat` | `200 OK` | Terbuka publik, hanya menampilkan `is_active = true` | **AKTUAL** |
+| **Detail Skema Surat** | Publik / Warga | `GET /letter-types/{code}/form-schema` | `jenis_surat` | `200 OK`, `404 Not Found` | Terbuka publik, mengembalikan JSON schema isian dinamis | **AKTUAL** |
+| **Pelacakan Tiket Surat**| Publik | `GET /public/track/{ticket}` | `letters`, `jenis_surat` | `200 OK`, `404 Not Found` | Anonim, menyembunyikan identitas pemohon dan NIK | **AKTUAL** |
+| **Validasi Publik QR** | Publik / Kelurahan | `GET /public/letter/verify/{token}` | `letters`, `citizens` | `200 OK`, `404 Not Found` | Terbuka publik, memvalidasi keabsahan QR token dan hash dokumen SHA-256 | **AKTUAL** |
+| **Daftar Surat Mandiri** | Warga Login | `GET /letters` | `letters`, `jenis_surat` | `200 OK` | `auth:sanctum`, scoped hanya surat milik `auth()->user()->citizen->id` | **AKTUAL** |
+| **Buat Draf Surat** | Warga Login | `POST /letters` | `letters`, `jenis_surat` | `201 Created`, `422 Unprocessable` | Wajib memiliki profil warga terverifikasi, form_data tervalidasi skema JSON | **AKTUAL** |
+| **Kirim Permohonan Surat**| Warga Login | `POST /letters/{id}/submit` | `letters` | `200 OK`, `409 Conflict` | Status wajib `draft` -> `submitted`, optimistic lock `version` | **AKTUAL** |
+| **Unggah Lampiran Surat** | Warga Login | `POST /letters/{id}/attachments` | `letter_attachments`, `letters` | `201 Created`, `422 Unprocessable` | Max 5MB, format PDF/JPG/PNG, hanya saat status `draft` atau revisi `rejected` | **AKTUAL** |
+| **Pratinjau Surat PDF** | Warga / Pengurus | `GET /letters/{id}/preview` | `letters`, `jenis_surat`, `citizens` | `200 OK`, `403 Forbidden` | Otorisasi kepemilikan surat atau izin `letter.verify` / `letter.approve` | **AKTUAL** |
+| **Unduh Dokumen Surat** | Warga / Pengurus | `GET /letters/{id}/download` | `letters` | `200 OK`, `403 Forbidden` | Hanya surat berstatus `completed` yang dapat diunduh dokumen resminya | **AKTUAL** |
+| **Verifikasi Tahap 1** | Sekretaris RT | `POST/PATCH /admin/letters/{id}/verify` | `letters`, `audit_logs` | `200 OK`, `403 Forbidden`, `409 Conflict` | Izin `letter.verify`, transisi status `submitted` -> `verified`, catat audit log | **AKTUAL** |
+| **Pengesahan Tahap 2** | Ketua RT | `POST/PATCH /admin/letters/{id}/approve` | `letters`, `audit_logs` | `200 OK`, `403 Forbidden`, `409 Conflict` | Izin `letter.approve`, transisi `verified` -> `approved`, generate no surat & QR | **AKTUAL** |
+| **Finalisasi Surat** | Ketua RT / Admin | `POST /admin/letters/{id}/complete` | `letters`, `audit_logs` | `200 OK`, `409 Conflict` | Izin `letter.approve`, transisi `approved` -> `completed`, seal SHA-256 PDF | **AKTUAL** |
+| **Penolakan Permohonan** | Sekretaris / Ketua RT | `POST/PATCH /admin/letters/{id}/reject` | `letters`, `audit_logs` | `200 OK`, `422 Unprocessable` | Izin `letter.verify` / `letter.approve`, alasan penolakan wajib terisi | **AKTUAL** |
+| **Kirim Pengaduan Warga**| Warga Login | `POST /complaints` | `complaints` | `201 Created`, `422 Unprocessable` | Warga login, opsi `is_anonymous` menyembunyikan identitas di tampilan publik | **AKTUAL** |
+| **Disposisi & Respon Aduan**| Admin / Ketua RT | `PATCH /admin/complaints/{id}/status` | `complaints`, `audit_logs` | `200 OK`, `403 Forbidden` | Izin `complaint.manage`, update status (*in_progress, resolved, rejected*) | **AKTUAL** |
+| **Lapor Insiden Keamanan**| Warga / Hansip | `POST /security-reports` | `security_reports` | `201 Created`, `422 Unprocessable` | Warga login, mencatat judul, uraian, lokasi, dan kategori kedaruratan | **AKTUAL** |
+| **Penanganan Insiden** | Petugas Keamanan | `PATCH /admin/security-reports/{id}` | `security_reports` | `200 OK`, `403 Forbidden` | Izin `security.manage`, update disposisi petugas dan catatan tindakan | **AKTUAL** |
+| **Ringkasan Kas Publik** | Publik / Warga | `GET /public/finance/summary` | `finance_transactions` | `200 OK` | Terbuka publik, agregasi saldo, pemasukan, pengeluaran tanpa data mentah | **AKTUAL** |
+| **Mutasi Kas Publik** | Publik / Warga | `GET /public/finance/transactions` | `finance_transactions` | `200 OK` | Hanya transaksi berstatus `published`, cursor pagination | **AKTUAL** |
+| **Tagihan Iuran Mandiri** | Warga Login | `GET /me/dues` & `/me/dues/{id}` | `resident_dues`, `due_payments` | `200 OK`, `401 Unauthorized` | `auth:sanctum`, filter `citizen_id = auth()->user()->citizen->id` | **AKTUAL** |
+| **Pembayaran Iuran Warga**| Warga Login | `POST /me/payments` *(via form upload)* | `due_payments` | `201 Created` | Upload bukti bayar, menunggu konfirmasi Bendahara | **AKTUAL** |
+| **Catat Pembayaran Iuran**| Bendahara RT | `POST /admin/finance/payments` | `due_payments`, `resident_dues`, `finance_transactions` | `201 Created`, `422 Unprocessable` | Izin `finance.payment.manage`, terhubung ke jurnal kas (`RESTRICT FK`), terbit kuitansi | **AKTUAL** |
+| **Catat Transaksi Kas Baru**| Bendahara RT | `POST /admin/finance/transactions` | `finance_transactions`, `audit_logs` | `201 Created`, `422 Unprocessable` | Izin `finance.transaction.create`, status awal `draft` atau `published` | **AKTUAL** |
+| **Reversal Transaksi Kas** | Bendahara / Superadmin | `POST /admin/finance/transactions/{id}/reverse` | `finance_transactions`, `audit_logs` | `200 OK`, `403 Forbidden` | Izin `finance.transaction.reverse`, transaksi asal `published`, buat baris lawan | **AKTUAL** |
+| **Laporan Kas Triwulan** | Bendahara / Ketua RT | `POST /admin/finance/reports/quarterly/generate` | `financial_reports` | `201 Created` | Izin `finance.report.generate`, kalkulasi agregat triwulan | **AKTUAL** |
+| **Publikasi Laporan Triwulan**| Ketua RT | `POST /admin/finance/reports/quarterly/{id}/publish` | `financial_reports` | `200 OK` | Izin `finance.report.publish`, kunci revisi laporan resmi | **AKTUAL** |
+| **Portal Beranda Publik** | Publik / Warga | `GET /public/overview` | `announcements`, `community_events`, `round_schedules`, `emergency_contacts`, `rt_officers` | `200 OK` | Agregat data publik beranda, zero authentication requirement | **AKTUAL** |
+| **Web Push Subscription** | Warga / Pengurus | `POST /push/subscribe` | `push_subscriptions` | `201 Created` | Registrasi endpoint WebPush, public key p256dh, dan auth token | **AKTUAL** |
+| **Snapshot Backup Enkripsi**| Superadmin | `POST /admin/finance/backup-store` | `download_audits` | `200 OK`, `403 Forbidden` | Izin `finance.manage`, enkripsi AES-256 backup SQL dan audit download | **AKTUAL** |
+| **Pembayaran Iuran QRIS Dinamis** | Warga Login | `POST /api/v1/me/dues/{id}/pay-qris` | `due_payments`, `payment_gateways` | `200 OK` | *Usulan Integrasi Payment Gateway Pihak Ketiga (Midtrans/Xendit)* | **USULAN** |
+| **Sinkronisasi PWA Offline** | Warga Mobile | `POST /api/v1/sync/offline-mutations` | `audit_logs`, `sync_queues` | `200 OK` | *Usulan Sinkronisasi Mutasi Offline PWA via Background Sync API* | **USULAN** |
+| **OAuth2 Single Sign-On** | Publik / Warga | `GET /api/v1/auth/sso/google` | `users` | `302 Redirect` | *Usulan Integrasi SSO Akun Google / Identitas Kependudukan Digital (IKD)*| **USULAN** |
+
