@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use App\Models\Citizen;
+use App\Models\CommunityEvent;
 use App\Models\Complaint;
 use App\Models\EmergencyContact;
 use App\Models\FamilyCard;
@@ -176,12 +178,19 @@ class DashboardController extends Controller
 
         // 6. WARGA: Layanan mandiri permohonan surat, iuran kas, dan pelaporan aduan
         $citizenId = $user->citizen?->id;
-        $myLetters = Letter::query()->where('citizen_id', '=', $citizenId, 'and')->latest()->limit(10)->get();
+        $myLetters = Letter::query()->where('citizen_id', '=', $citizenId, 'and')->with('letterType')->latest()->limit(15)->get();
         $myLettersCount = Letter::query()->where('citizen_id', '=', $citizenId, 'and')->count('*');
         $myCompletedLettersCount = Letter::query()->where('citizen_id', '=', $citizenId, 'and')->whereIn('status', ['approved', 'completed'], 'and', false)->count('*');
+        $myComplaints = Complaint::query()->where('user_id', '=', $user->id, 'and')->latest()->limit(10)->get();
         $myComplaintsCount = Complaint::query()->where('user_id', '=', $user->id, 'and')->count('*');
         $mySecurityReportsCount = SecurityReport::query()->where('reporter_user_id', '=', $user->id, 'and')->count('*');
         $financeSummary = $this->financeService->getPublicSummary();
+        $financeTransactions = FinanceTransaction::query()->where('status', 'published')->latest('transaction_date')->limit(8)->get();
+        $announcements = Announcement::query()->where('is_published', true)->latest()->limit(6)->get();
+        $communityEvents = CommunityEvent::query()->where('is_published', true)->orderBy('event_date')->limit(6)->get();
+        $roundSchedules = RoundSchedule::query()->where('is_active', true)->orderBy('day_of_week')->get();
+        $emergencyContacts = EmergencyContact::query()->where('is_active', true)->orderBy('order_index')->get();
+        $rtOfficers = RtOfficer::query()->where('is_active', true)->orderBy('order_index')->get();
 
         return view('dashboard.warga', compact(
             'user',
@@ -189,9 +198,16 @@ class DashboardController extends Controller
             'myLetters',
             'myLettersCount',
             'myCompletedLettersCount',
+            'myComplaints',
             'myComplaintsCount',
             'mySecurityReportsCount',
-            'financeSummary'
+            'financeSummary',
+            'financeTransactions',
+            'announcements',
+            'communityEvents',
+            'roundSchedules',
+            'emergencyContacts',
+            'rtOfficers'
         ));
     }
 

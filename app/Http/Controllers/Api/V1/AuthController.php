@@ -241,6 +241,11 @@ class AuthController extends Controller
             $citizen = Citizen::query()->where('phone', '=', $loginInput, 'and')->first();
             if ($citizen && $citizen->user) {
                 $user = $citizen->user;
+            } elseif (strlen($loginInput) === 16 && ctype_digit($loginInput)) {
+                $nikCitizen = Citizen::query()->where('nik_hash', '=', hash('sha256', $loginInput))->first();
+                if ($nikCitizen && $nikCitizen->user) {
+                    $user = $nikCitizen->user;
+                }
             }
         }
 

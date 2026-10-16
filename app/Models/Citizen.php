@@ -51,6 +51,35 @@ class Citizen extends Model
         ];
     }
 
+    public function getAlamatAttribute(): ?string
+    {
+        return $this->familyCard?->address;
+    }
+
+    public function getAddressAttribute(): ?string
+    {
+        return $this->familyCard?->address;
+    }
+
+    public function getTanggalLahirAttribute(): ?string
+    {
+        return $this->date_of_birth?->format('Y-m-d');
+    }
+
+    public function getNikMaskedAttribute(): string
+    {
+        try {
+            $raw = (string) ($this->nik ?? '');
+            if (strlen($raw) >= 8) {
+                return substr($raw, 0, 4).str_repeat('*', strlen($raw) - 8).substr($raw, -4);
+            }
+        } catch (\Exception) {
+            // Decrypt exception safety fallback
+        }
+
+        return '****************';
+    }
+
     public function familyCard(): BelongsTo
     {
         return $this->belongsTo(FamilyCard::class);

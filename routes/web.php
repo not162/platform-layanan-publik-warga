@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Citizen\ProfileController;
+use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceTransactionController;
 use App\Http\Controllers\HomeController;
@@ -33,7 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/dashboard/profile', [ProfileController::class, 'updateWeb'])->name('profile.update');
     Route::post('/dashboard/profile/photo', [DashboardController::class, 'updatePhoto'])->name('profile.photo.update');
 
-    // Dashboard Quick Actions (Letters & Reports)
+    // Dashboard Quick Actions (Letters, Complaints & Reports)
+    Route::post('/dashboard/complaints', [ComplaintController::class, 'storeWeb'])->name('dashboard.complaints.store');
     Route::post('/dashboard/letters/{id}/verify', [DashboardController::class, 'verifyLetter'])->name('dashboard.letters.verify');
     Route::post('/dashboard/letters/{id}/approve', [DashboardController::class, 'approveLetter'])->name('dashboard.letters.approve');
     Route::post('/dashboard/letters/{id}/reject', [DashboardController::class, 'rejectLetter'])->name('dashboard.letters.reject');

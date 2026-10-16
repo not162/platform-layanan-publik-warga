@@ -8,6 +8,7 @@ use App\Http\Resources\V1\ComplaintResource;
 use App\Models\Complaint;
 use App\Services\ComplaintService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
@@ -100,6 +101,35 @@ class ComplaintController extends Controller
         return (new ComplaintResource($complaint))
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
+    }
+
+    public function storeWeb(StoreComplaintRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+        $hasImage = $request->hasFile('image') || $request->hasFile('attachment');
+        $data = $request->validated();
+
+        $street = $request->input('street_name');
+        $detail = $request->input('location_detail');
+        if ($street || $detail) {
+            $prefix = $street ? "Jalan/Gang: {$street}" : '';
+            $suffix = $detail ? " (Bagian/Posisi: {$detail})" : '';
+            $data['lokasi'] = trim($prefix.$suffix);
+        }
+
+        if (empty($data['kategori']) && ! empty($data['category'])) {
+            $data['kategori'] = $data['category'];
+        }
+
+        if ($hasImage) {
+            $file = $request->file('image') ?? $request->file('attachment');
+            $path = $file->store('private/complaints', 'local');
+            $data['attachment_path'] = $path;
+        }
+
+        $complaint = $this->complaintService->create($data, $user);
+
+        return back()->with('status', "Laporan pengaduan berhasil dikirim dengan nomor tiket {$complaint->ticket_number}. Pengurus RT akan segera menindaklanjutinya.");
     }
 
     public function update(UpdateComplaintRequest $request, string $id): ComplaintResource

@@ -48,6 +48,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function getUsernameAttribute(): string
+    {
+        return $this->name;
+    }
+
     public function citizen(): HasOne
     {
         return $this->hasOne(Citizen::class, 'user_id');

@@ -198,6 +198,14 @@
                     <span class="detail-val">{{ $user->citizen?->nik ?? 'Terkoneksi Akun Pengurus' }}</span>
                 </div>
                 <div class="detail-row">
+                    <span class="detail-label">Tanggal Lahir</span>
+                    <span class="detail-val">{{ $user->citizen?->date_of_birth ? $user->citizen->date_of_birth->translatedFormat('d F Y') : ($user->citizen?->tanggal_lahir ?? 'Belum tercatat') }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Alamat Tempat Tinggal</span>
+                    <span class="detail-val">{{ $user->citizen?->familyCard?->address ?? ($user->citizen?->alamat ?? 'RT 001 / RW 005 Kemayoran') }}</span>
+                </div>
+                <div class="detail-row">
                     <span class="detail-label">Waktu Login Terakhir</span>
                     <span class="detail-val">{{ $user->last_login_at ? $user->last_login_at->translatedFormat('d F Y, H:i') . ' WIB' : 'Sesi saat ini' }}</span>
                 </div>
