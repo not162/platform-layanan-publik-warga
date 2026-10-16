@@ -37,6 +37,7 @@ docs/
 
 ## 3. Desain Sistem & Rekayasa Perangkat Lunak ([`docs/design/`](design/README.md))
 - **[README.md](design/README.md)**: Panduan desain arsitektur dan sistem antarmuka PRISMA.
+- **[SYSTEM_MODELING_5_ELEMENTS.md](design/SYSTEM_MODELING_5_ELEMENTS.md)**: **Master 5 Unsur Pemodelan Sistem (UML, ERD, LRS, Activity Diagram Format Kotak Tabel, dan Use Case Diagram dengan peran Superadmin/Admin di sisi kiri dan Warga di sisi kanan).**
 - **[BRAND_GUIDE.md](design/BRAND_GUIDE.md)**: Identitas brand resmi PRISMA RT 04 (Warna, tipografi, logo, dan panduan komponen).
 - **[ERD.md](design/ERD.md)**: Entity Relationship Diagram 24 tabel relasional MySQL 8.x.
 - **[DIAGRAMS.md](design/DIAGRAMS.md)**: Sequence Diagram kontrol konkurensi optimistik dan Activity Diagram persuratan.

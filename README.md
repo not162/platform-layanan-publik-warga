@@ -12,11 +12,11 @@
 3. [Arsitektur Sistem & Tech Stack](#arsitektur-sistem--tech-stack)
 4. [Daftar Akun & Kredensial Pengurus Default](#daftar-akun--kredensial-pengurus-default)
 5. [Pemodelan Rekayasa Perangkat Lunak (5 Unsur Utama)](#pemodelan-rekayasa-perangkat-lunak-5-unsur-utama)
-   - [1. Entity Relationship Diagram (ERD)](#1-entity-relationship-diagram-erd)
-   - [2. Logical Record Structure (LRS)](#2-logical-record-structure-lrs)
-   - [3. Use Case Diagram & Spesifikasi Aktor](#3-use-case-diagram--spesifikasi-aktor)
-   - [4. Activity Diagram (Alur Verifikasi NIK & Persuratan)](#4-activity-diagram)
-   - [5. Unified Modeling Language (UML) Diagrams](#5-unified-modeling-language-uml-diagrams)
+   - [1. Unified Modeling Language (UML)](#pemodelan-rekayasa-perangkat-lunak-5-unsur-utama)
+   - [2. Entity Relationship Diagram (ERD)](#pemodelan-rekayasa-perangkat-lunak-5-unsur-utama)
+   - [3. Logical Record Structure (LRS)](#pemodelan-rekayasa-perangkat-lunak-5-unsur-utama)
+   - [4. Activity Diagram (Format Kotak Tabel)](#pemodelan-rekayasa-perangkat-lunak-5-unsur-utama)
+   - [5. Use Case Diagram & Spesifikasi Aktor](#pemodelan-rekayasa-perangkat-lunak-5-unsur-utama)
 6. [Fitur Unggulan Antarmuka & Layanan Publik](#fitur-unggulan-antarmuka--layanan-publik)
 7. [Klasifikasi Dokumentasi Teknis (5 Pilar Subfolder `docs/`)](#klasifikasi-dokumentasi-teknis-5-pilar-subfolder-docs)
 8. [Panduan Instalasi & Menjalankan Proyek](#panduan-instalasi--menjalankan-proyek)
@@ -86,311 +86,21 @@ Untuk keperluan pengujian lokal, demo, dan audit evaluasi sistem, database telah
 
 ## Pemodelan Rekayasa Perangkat Lunak (5 Unsur Utama)
 
-Sebagai kepatuhan pada standar dokumentasi rekayasa perangkat lunak (*Software Engineering Documentation*), sistem ini didokumentasikan secara komprehensif melalui **5 Unsur Pemodelan Sistem**:
+Seluruh pemodelan teknis dan diagram rekayasa perangkat lunak telah dipindahkan dan didokumentasikan secara komprehensif ke dalam subfolder dokumentasi resmi:
+👉 **[Dokumentasi Lengkap 5 Unsur Pemodelan Sistem (docs/design/SYSTEM_MODELING_5_ELEMENTS.md)](docs/design/SYSTEM_MODELING_5_ELEMENTS.md)**
 
-### 1. Entity Relationship Diagram (ERD)
+Sistem memodelkan keterkaitan interaksi peran dengan arsitektur pemisahan:
+- **Sisi Kiri**: **Superadmin & Admin (Pengurus RT: Ketua RT, Sekretaris, Bendahara, Petugas Keamanan)**
+- **Sisi Tengah**: **Sistem Platform PRISMA RT 04 (Laravel 13 Engine, DB MySQL, QR Hash Generator)**
+- **Sisi Kanan**: **User & Warga Lingkungan (Warga Sensus, Warga Baru, Pengguna Publik)**
 
-```mermaid
-erDiagram
-    FAMILY_CARDS ||--o{ CITIZENS : "1:N (1 KK menampung N Warga)"
-    CITIZENS ||--o| USERS : "1:1 (1 Warga memiliki 0..1 Akun Login)"
-    
-    USERS ||--o{ ADMIN_PERMISSIONS : "1:N (Resolusi M:N User ke Hak Akses)"
-    USERS ||--o{ PUSH_SUBSCRIPTIONS : "1:N (1 User memiliki N Token Notifikasi)"
-    USERS ||--o{ LETTERS : "1:N (1 Warga mengajukan N Permohonan Surat)"
-    LETTER_TYPES ||--o{ LETTERS : "1:N (1 Format Surat digunakan N Permohonan)"
-    LETTERS ||--o{ LETTER_ATTACHMENTS : "1:N (1 Surat memuat N Berkas Lampiran)"
-    
-    USERS ||--o{ COMPLAINTS : "1:N (1 Warga membuat N Aduan Keluhan)"
-    USERS ||--o{ SECURITY_REPORTS : "1:N (1 Pengguna melaporkan N Insiden)"
-    USERS ||--o{ FINANCE_TRANSACTIONS : "1:N (1 Bendahara mencatat N Transaksi Kas)"
-    USERS ||--o{ RESIDENT_DUES : "1:N (Tagihan iuran bulanan per warga)"
-    RESIDENT_DUES ||--o{ DUE_PAYMENTS : "1:N (Riwayat pembayaran iuran)"
-    USERS ||--o{ AUDIT_LOGS : "1:N (1 User memicu N Rekaman Jejak Audit)"
-
-    FAMILY_CARDS {
-        bigint id PK
-        varchar nomor_kk UK "Nomor KK 16 Digit"
-        varchar kepala_keluarga_name
-        text alamat
-        varchar rt
-        varchar rw
-        varchar kode_pos
-    }
-
-    CITIZENS {
-        bigint id PK
-        bigint family_card_id FK "Relasi ke FAMILY_CARDS"
-        bigint user_id FK "Relasi 1:1 ke USERS (Unique)"
-        varchar nik_hash UK "SHA-256 Blind Index"
-        varchar full_name
-        date birth_date
-        varchar gender
-        text address
-        varchar phone
-        varchar status_warga "tetap / pending_verification"
-        int version "Optimistic Locking"
-    }
-
-    USERS {
-        bigint id PK
-        bigint warga_id FK "Relasi ke CITIZENS (Unique)"
-        varchar name
-        varchar email UK "Email Login Unik"
-        varchar password "Bcrypt Hash"
-        enum role "SUPERADMIN,ADMIN,KETUA_RT,BENDAHARA,SEKRETARIS,WARGA"
-        boolean is_active
-        datetime last_login_at
-    }
-
-    LETTERS {
-        bigint id PK
-        bigint user_id FK
-        bigint citizen_id FK
-        bigint letter_type_id FK
-        varchar ticket_number UK "Nomor Tiket Publik"
-        varchar reference_number "Nomor Surat Resmi RT"
-        varchar status "draft,submitted,verified,approved,rejected,completed"
-        varchar verification_token UK "Token QR Code"
-        varchar document_hash "SHA-256 Validasi Integritas"
-        json form_data
-    }
-
-    FINANCE_TRANSACTIONS {
-        bigint id PK
-        bigint user_id FK "Bendahara Pencatat"
-        varchar transaction_type "income / expense"
-        decimal amount "DECIMAL(15,2)"
-        varchar category
-        text description
-        date transaction_date
-        boolean is_published
-        boolean is_reversal
-    }
-```
-
----
-
-### 2. Logical Record Structure (LRS)
-
-Representasi tabel ternormalisasi bentuk ketiga (3NF) dengan foreign key eksplisit:
-```
-FAMILY_CARDS (id [PK], nomor_kk [UK], kepala_keluarga_name, alamat, rt, rw, kode_pos, created_at)
-CITIZENS (id [PK], family_card_id [FK], user_id [FK, UK], nik_hash [UK], full_name, birth_date, gender, address, phone, status_warga, version, created_at)
-USERS (id [PK], warga_id [FK, UK], name, email [UK], password, role, is_active, last_login_at, created_at)
-LETTER_TYPES (id [PK], code [UK], name, description, required_attachments, is_active, created_at)
-LETTERS (id [PK], user_id [FK], citizen_id [FK], letter_type_id [FK], ticket_number [UK], reference_number, status, verification_token [UK], document_hash, form_data, created_at)
-LETTER_ATTACHMENTS (id [PK], letter_id [FK], file_path, original_name, mime_type, file_size, created_at)
-FINANCE_TRANSACTIONS (id [PK], user_id [FK], transaction_type, amount, category, description, transaction_date, is_published, is_reversal, reversal_of_id [FK], created_at)
-RESIDENT_DUES (id [PK], citizen_id [FK], due_month, due_year, amount, status, created_at)
-DUE_PAYMENTS (id [PK], resident_due_id [FK], payment_reference [UK], amount, payment_method, payment_date, created_at)
-COMPLAINTS (id [PK], user_id [FK], title, description, category, status, photo_path, created_at)
-SECURITY_REPORTS (id [PK], user_id [FK], incident_type, location, description, incident_time, status, photo_path, created_at)
-AUDIT_LOGS (id [PK], user_id [FK], event, auditable_type, auditable_id, old_values, new_values, ip_address, user_agent, created_at)
-```
-
----
-
-### 3. Use Case Diagram & Spesifikasi Aktor
-
-```mermaid
-flowchart LR
-    subgraph Aktor
-        W[Warga Lingkungan]
-        S[Sekretaris RT]
-        K[Ketua RT]
-        B[Bendahara RT]
-        SA[Superadmin]
-    end
-
-    subgraph Modul Layanan PRISMA RT 04
-        UC1(Registrasi Mandiri & Aktivasi NIK)
-        UC2(Pengajuan Surat Pengantar)
-        UC3(Verifikasi Berkas Surat & Warga Baru)
-        UC4(Pengesahan & Tanda Tangan Surat)
-        UC5(Pelacakan Tiket Surat & Verifikasi QR)
-        UC6(Pencatatan Buku Kas & Tagihan Iuran)
-        UC7(Tinjau Transparansi Keuangan Publik)
-        UC8(Pelaporan Aduan & Keamanan)
-        UC9(Manajemen User, RBAC & Audit Trail)
-    end
-
-    W --> UC1
-    W --> UC2
-    W --> UC5
-    W --> UC7
-    W --> UC8
-
-    S --> UC3
-    S --> UC5
-
-    K --> UC4
-    K --> UC7
-    K --> UC8
-
-    B --> UC6
-    B --> UC7
-
-    SA --> UC9
-```
-
----
-
-### 4. Activity Diagram
-
-#### Alur Pendaftaran Mandiri Warga & Validasi NIK Real-Time
-```mermaid
-stateDiagram-v2
-    [*] --> InputNIK: Warga Memasukkan 16 Digit NIK
-    InputNIK --> CheckCitizen: AJAX /api/v1/auth/check-citizen
-    
-    CheckCitizen --> PreRegistered: NIK Terdata di Master Sensus RT
-    CheckCitizen --> NewApplicant: NIK Belum Terdata di Master RT
-    CheckCitizen --> AlreadyActive: NIK Sudah Terhubung Akun User
-
-    AlreadyActive --> RedirectLogin: Tampilkan Alert & Buka /login
-    
-    PreRegistered --> FormAktivasi: Kunci Nama KTP, Isi Email & Password
-    FormAktivasi --> SubmitAktivasi: POST /api/v1/register
-    SubmitAktivasi --> AkunAktif: User Role 'warga' Langsung Aktif
-
-    NewApplicant --> FormLengkap: Isi Nama, Email, Password, Berkas KTP
-    FormLengkap --> SubmitBaru: POST /api/v1/register
-    SubmitBaru --> PendingVerification: Status Citizen 'pending_verification'
-    PendingVerification --> ReviewSekretaris: Sekretaris Memeriksa Berkas KTP
-    ReviewSekretaris --> Disetujui: Warga Diverifikasi
-    
-    AkunAktif --> [*]
-    Disetujui --> [*]
-    RedirectLogin --> [*]
-```
-
-#### Alur Birokrasi Surat Pengantar Digital 2-Tier
-```mermaid
-stateDiagram-v2
-    [*] --> DrafPermohonan: Warga Memilih Jenis Surat & Mengisi Formulir
-    DrafPermohonan --> UnggahLampiran: Unggah Berkas Persyaratan (KTP/KK)
-    UnggahLampiran --> KirimPermohonan: Warga Menyerahkan Surat (Status: SUBMITTED)
-    
-    KirimPermohonan --> MejaSekretaris: Notifikasi Masuk ke Sekretaris RT
-    MejaSekretaris --> VerifikasiBerkas: Sekretaris Memeriksa Keabsahan Berkas
-    
-    VerifikasiBerkas --> DitolakSekretaris: Berkas Kurang Lengkap (Status: REJECTED)
-    VerifikasiBerkas --> Diverifikasi: Berkas Valid (Status: VERIFIED)
-    
-    Diverifikasi --> MejaKetuaRT: Surat Masuk Antrean Pengesahan Ketua RT
-    MejaKetuaRT --> Disahkan: Ketua RT Menyetujui (Status: APPROVED)
-    MejaKetuaRT --> DitolakKetuaRT: Ditolak dengan Catatan (Status: REJECTED)
-    
-    Disahkan --> TerbitkanDokumen: Nomor Surat Terbit, Hash SHA-256 & QR Token Dibuat
-    TerbitkanDokumen --> Selesai: Surat Siap Diunduh PDF Resmi (Status: COMPLETED)
-    
-    Selesai --> [*]
-    DitolakSekretaris --> [*]
-    DitolakKetuaRT --> [*]
-```
-
----
-
-### 5. Unified Modeling Language (UML) Diagrams
-
-#### 5.1. UML Class Diagram
-```mermaid
-classDiagram
-    class User {
-        +bigint id
-        +string name
-        +string email
-        +string password
-        +UserRole role
-        +boolean is_active
-        +citizen() Citizen
-        +hasPermission(string permission) bool
-    }
-
-    class Citizen {
-        +bigint id
-        +string nik
-        +string nik_hash
-        +string full_name
-        +string status_warga
-        +int version
-        +user() User
-        +letters() HasMany
-    }
-
-    class Letter {
-        +bigint id
-        +string ticket_number
-        +string reference_number
-        +string status
-        +string verification_token
-        +string document_hash
-        +verify(User actor) void
-        +approve(User actor) void
-        +reject(User actor, string reason) void
-    }
-
-    class FinanceTransaction {
-        +bigint id
-        +string transaction_type
-        +decimal amount
-        +string category
-        +boolean is_published
-        +publish() void
-        +reverse(string reason) FinanceTransaction
-    }
-
-    class LetterService {
-        +createLetter(Citizen citizen, array data) Letter
-        +verifyLetter(Letter letter, User verifier) Letter
-        +approveLetter(Letter letter, User approver) Letter
-    }
-
-    class FinanceService {
-        +recordTransaction(array data) FinanceTransaction
-        +getPublicSummary() array
-    }
-
-    User "1" <--> "1" Citizen : BelongsTo / HasOne
-    Citizen "1" --> "*" Letter : Submits
-    LetterService ..> Letter : Manages
-    FinanceService ..> FinanceTransaction : Manages
-```
-
-#### 5.2. UML Sequence Diagram: Optimistic Concurrency Control
-```mermaid
-sequenceDiagram
-    actor Admin as Pengurus RT
-    participant Form as Antarmuka Web
-    participant Controller as CitizenController
-    participant Service as CitizenService
-    participant DB as MySQL Database
-
-    Admin->>Form: Buka Formulir Edit Warga
-    Form->>Controller: GET /api/v1/admin/citizens/1
-    Controller->>DB: SELECT * FROM citizens WHERE id = 1
-    DB-->>Controller: Citizen Record (version = 1)
-    Controller-->>Form: JSON Data (version = 1)
-    
-    Admin->>Form: Simpan Perubahan
-    Form->>Controller: PATCH /api/v1/admin/citizens/1 {..., version: 1}
-    Controller->>Service: update(citizen, data, expectedVersion=1)
-    Service->>DB: SELECT version FROM citizens WHERE id = 1 FOR UPDATE
-    DB-->>Service: Current Version (version = 1)
-    
-    alt Versi Cocok (version == expectedVersion)
-        Service->>DB: UPDATE citizens SET ..., version = 2 WHERE id = 1
-        DB-->>Service: OK
-        Service-->>Controller: Updated Record
-        Controller-->>Form: HTTP 200 OK (Data Berhasil Disimpan)
-        Form-->>Admin: Notifikasi Sukses
-    else Konflik Konkurensi (version != expectedVersion)
-        Service-->>Controller: ConcurrencyConflictException
-        Controller-->>Form: HTTP 409 Conflict (Data telah diubah pihak lain)
-        Form-->>Admin: Dialog Peringatan & Muat Ulang Data Terbaru
-    end
-```
+| No | Unsur Pemodelan Sistem | Lingkup & Rincian Implementasi | Tautan Dokumentasi Teknis |
+|:--:|---|---|---|
+| **1** | **Unified Modeling Language (UML)** | • **Class Diagram**: Struktur Model domain (`User`, `Citizen`, `Letter`, dll) & Service Layer.<br>• **Sequence Diagram**: Alur birokrasi persuratan 2-tier dan kontrol konkurensi (*Optimistic Concurrency Control*).<br>• **Component Diagram**: Arsitektur MVC, Database MySQL, Cache Redis, dan Object Storage. | [Buka UML Diagrams](docs/design/SYSTEM_MODELING_5_ELEMENTS.md#unsur-1-unified-modeling-language-uml) |
+| **2** | **Entity Relationship Diagram (ERD)** | • Relasi relasional 15+ entitas (1:1, 1:N, M:N) dengan indeks foreign key dan integritas referensial cascade.<br>• Kamus data lengkap, blind index SHA-256 untuk NIK, dan enkripsi data sensitif (UU PDP No. 27/2022). | [Buka ERD Relasional](docs/design/SYSTEM_MODELING_5_ELEMENTS.md#unsur-2-entity-relationship-diagram-erd) |
+| **3** | **Logical Record Structure (LRS)** | • Struktur baris rekaman logika ternormalisasi bentuk ketiga (3NF).<br>• Matriks relasi tabel asal, kardinalitas, tabel tujuan, serta aturan ON DELETE/ON UPDATE terstandarisasi. | [Buka LRS (3NF)](docs/design/SYSTEM_MODELING_5_ELEMENTS.md#unsur-3-logical-record-structure-lrs) |
+| **4** | **Activity Diagram (Format Kotak Tabel)** | • Alur aktivitas bisnis step-by-step dalam **Format Kotak Tabel Berpetak (*Boxed Table*)**.<br>• Memetakan **Superadmin & Admin di sisi kiri**, **Sistem PRISMA di tengah**, dan **User & Warga di sisi kanan**.<br>• Meliputi alur pendaftaran & cek NIK, birokrasi surat 2-tier, buku kas anti-fraud (*immutable ledger*), penanganan aduan, dan manajemen RBAC. | [Buka Activity Diagram](docs/design/SYSTEM_MODELING_5_ELEMENTS.md#unsur-4-activity-diagram-format-kotak-tabel-step-by-step) |
+| **5** | **Use Case Diagram & Spesifikasi Aktor** | • Diagram boundary use case dengan aktor Superadmin/Admin di sisi kiri dan User/Warga di sisi kanan.<br>• Matriks wewenang granular per peran dan spesifikasi naratif use case utama. | [Buka Use Case Diagram](docs/design/SYSTEM_MODELING_5_ELEMENTS.md#unsur-5-use-case-diagram--spesifikasi-aktor) |
 
 ---
 
@@ -426,6 +136,7 @@ Dokumentasi proyek diklasifikasikan ke dalam 5 subfolder tematik yang dapat diti
    - [FINANCIAL_REPORTS_AND_BACKUP_STORE.md](docs/business/FINANCIAL_REPORTS_AND_BACKUP_STORE.md): Regulasi buku kas anti-fraud & backup store.
    - [DATA_CLASSIFICATION.md](docs/business/DATA_CLASSIFICATION.md): Standar privasi UU PDP No. 27/2022.
 3. **[`docs/design/`](docs/design/README.md)**:
+   - [SYSTEM_MODELING_5_ELEMENTS.md](docs/design/SYSTEM_MODELING_5_ELEMENTS.md): **Master 5 Unsur Pemodelan Sistem (UML, ERD, LRS, Activity Diagram Format Kotak Tabel, dan Use Case Diagram).**
    - [BRAND_GUIDE.md](docs/design/BRAND_GUIDE.md): Pedoman identitas visual resmi PRISMA RT 04.
    - [ERD.md](docs/design/ERD.md): Skema 24 tabel database relasional.
    - [DIAGRAMS.md](docs/design/DIAGRAMS.md): Sequence Diagram dan Activity Diagram.
