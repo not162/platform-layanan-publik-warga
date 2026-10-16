@@ -117,7 +117,7 @@ class ResidentDueService
             $citizenName = $due->citizen?->full_name ?? 'Warga';
             $txNumber = 'TX-DUE-'.date('Ymd').'-'.strtoupper(Str::random(6));
 
-            FinanceTransaction::query()->create([
+            $tx = FinanceTransaction::query()->create([
                 'transaction_number' => $txNumber,
                 'source' => 'Iuran Kas Warga',
                 'amount_idr' => $amountPaidIdr,
@@ -129,6 +129,10 @@ class ResidentDueService
                 'transaction_date' => now(),
                 'status' => 'published',
                 'version' => 1,
+            ]);
+
+            $payment->update([
+                'finance_transaction_id' => $tx->id,
             ]);
 
             return $payment;

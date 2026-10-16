@@ -17,10 +17,12 @@ enum Permission: string
     // Due Payments
     case FINANCE_PAYMENT_READ = 'finance.payment.read';
     case FINANCE_PAYMENT_MANAGE = 'finance.payment.manage';
+    case FINANCE_PAYMENT_CREATE = 'finance.payment.create';
 
     // Purchases & Transparency
     case FINANCE_PURCHASE_READ = 'finance.purchase.read';
     case FINANCE_PURCHASE_MANAGE = 'finance.purchase.manage';
+    case FINANCE_PURCHASE_CREATE = 'finance.purchase.create';
 
     // Financial Reports
     case FINANCE_REPORT_READ = 'finance.report.read';

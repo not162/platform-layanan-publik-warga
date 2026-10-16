@@ -21,6 +21,7 @@ class DuePaymentResource extends JsonResource
         return [
             'id' => $this->id,
             'resident_due_id' => $this->resident_due_id,
+            'finance_transaction_id' => $this->finance_transaction_id,
             'receipt_number' => $this->receipt_number,
             'amount_paid_idr' => (int) $this->amount_paid_idr,
             'paid_at' => $this->paid_at?->toIso8601String(),

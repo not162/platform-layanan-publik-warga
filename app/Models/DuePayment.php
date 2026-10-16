@@ -12,6 +12,7 @@ class DuePayment extends Model
 
     protected $fillable = [
         'resident_due_id',
+        'finance_transaction_id',
         'amount_paid_idr',
         'paid_at',
         'payment_method',
@@ -33,6 +34,11 @@ class DuePayment extends Model
     public function due(): BelongsTo
     {
         return $this->belongsTo(ResidentDue::class, 'resident_due_id');
+    }
+
+    public function financeTransaction(): BelongsTo
+    {
+        return $this->belongsTo(FinanceTransaction::class, 'finance_transaction_id');
     }
 
     public function receiver(): BelongsTo

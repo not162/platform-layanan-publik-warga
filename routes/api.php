@@ -189,13 +189,13 @@ Route::prefix('v1')->group(function () {
             Route::get('/finance/payments', [ResidentDueController::class, 'adminPayments'])
                 ->middleware('permission:finance.payment.read,finance.read,finance.manage');
             Route::post('/finance/payments', [ResidentDueController::class, 'adminRecordPayment'])
-                ->middleware('permission:finance.payment.create,finance.manage');
+                ->middleware('permission:finance.payment.manage,finance.payment.create,finance.manage');
 
             // Purchases & itemized expenditure
             Route::get('/finance/purchases', [PurchaseController::class, 'index'])
                 ->middleware('permission:finance.purchase.read,finance.read,finance.manage');
             Route::post('/finance/purchases', [PurchaseController::class, 'store'])
-                ->middleware('permission:finance.purchase.create,finance.manage');
+                ->middleware('permission:finance.purchase.manage,finance.purchase.create,finance.manage');
             Route::get('/finance/purchases/{id}', [PurchaseController::class, 'show'])
                 ->middleware('permission:finance.purchase.read,finance.read,finance.manage');
 
