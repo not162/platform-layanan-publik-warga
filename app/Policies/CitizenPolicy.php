@@ -12,15 +12,22 @@ class CitizenPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->isSuperadmin()
+            || $user->hasPermission('citizen.read')
+            || $user->hasPermission('citizen.manage');
     }
 
     /**
      * Determine whether the user can view the model.
+     * Warga A cannot view Warga B.
      */
     public function view(User $user, Citizen $citizen): bool
     {
-        return false;
+        if ($user->isSuperadmin() || $user->hasPermission('citizen.read') || $user->hasPermission('citizen.manage')) {
+            return true;
+        }
+
+        return (int) $citizen->user_id === (int) $user->id;
     }
 
     /**
@@ -28,7 +35,7 @@ class CitizenPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->isSuperadmin() || $user->hasPermission('citizen.manage');
     }
 
     /**
@@ -36,7 +43,11 @@ class CitizenPolicy
      */
     public function update(User $user, Citizen $citizen): bool
     {
-        return false;
+        if ($user->isSuperadmin() || $user->hasPermission('citizen.manage')) {
+            return true;
+        }
+
+        return (int) $citizen->user_id === (int) $user->id;
     }
 
     /**
@@ -44,22 +55,17 @@ class CitizenPolicy
      */
     public function delete(User $user, Citizen $citizen): bool
     {
-        return false;
+        return $user->isSuperadmin() || $user->hasPermission('citizen.manage');
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can verify pending citizen application.
      */
-    public function restore(User $user, Citizen $citizen): bool
+    public function verify(User $user, Citizen $citizen): bool
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Citizen $citizen): bool
-    {
-        return false;
+        return $user->isSuperadmin()
+            || $user->isSekretaris()
+            || $user->isKetuaRt()
+            || $user->hasPermission('citizen.manage');
     }
 }

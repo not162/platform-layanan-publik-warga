@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Api\V1\Admin\CitizenController;
+use App\Http\Controllers\Api\V1\Admin\FamilyCardController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Citizen\ProfileController;
 use App\Http\Controllers\Api\V1\FinancialReportController;
@@ -104,6 +105,16 @@ Route::prefix('v1')->group(function () {
             Route::post('/citizens/{id}/verify', [CitizenController::class, 'verifyCitizen'])
                 ->middleware('permission:citizen.manage');
             Route::post('/citizens/{id}/reject', [CitizenController::class, 'rejectCitizen'])
+                ->middleware('permission:citizen.manage');
+
+            // Family cards management
+            Route::get('/family-cards', [FamilyCardController::class, 'index'])
+                ->middleware('permission:citizen.read,citizen.manage');
+            Route::post('/family-cards', [FamilyCardController::class, 'store'])
+                ->middleware('permission:citizen.manage');
+            Route::get('/family-cards/{id}', [FamilyCardController::class, 'show'])
+                ->middleware('permission:citizen.read,citizen.manage');
+            Route::match(['PUT', 'PATCH'], '/family-cards/{id}', [FamilyCardController::class, 'update'])
                 ->middleware('permission:citizen.manage');
 
             // Letters admin actions

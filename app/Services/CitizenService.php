@@ -55,6 +55,10 @@ class CitizenService
 
     public function delete(Citizen $citizen): void
     {
+        if ($citizen->letters()->exists() || $citizen->dues()->exists() || $citizen->complaints()->exists()) {
+            abort(422, 'Tidak dapat menghapus data warga yang telah memiliki riwayat persuratan, iuran, atau pengaduan. Nonaktifkan status warga.');
+        }
+
         $oldValues = $citizen->toArray();
         $citizenId = $citizen->id;
 
