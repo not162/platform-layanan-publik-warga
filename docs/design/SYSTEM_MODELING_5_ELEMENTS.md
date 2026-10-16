@@ -462,6 +462,7 @@ erDiagram
     USERS ||--o{ FINANCE_TRANSACTIONS : "1:N (Bendahara pencatat transaksi)"
     CITIZENS ||--o{ RESIDENT_DUES : "1:N (Tagihan iuran bulanan warga)"
     RESIDENT_DUES ||--o{ DUE_PAYMENTS : "1:N (Riwayat pembayaran iuran)"
+    FINANCE_TRANSACTIONS ||--o{ DUE_PAYMENTS : "1:N (Buku kas pencatat setoran)"
     
     USERS ||--o{ COMPLAINTS : "1:N (Warga pengaju keluhan)"
     USERS ||--o{ SECURITY_REPORTS : "1:N (Warga pelapor insiden)"
@@ -575,6 +576,7 @@ erDiagram
     DUE_PAYMENTS {
         bigint id PK
         bigint resident_due_id FK "Relasi Tagihan"
+        bigint finance_transaction_id FK "Relasi ke FINANCE_TRANSACTIONS (Buku Kas)"
         varchar payment_reference UK "Kode Referensi Pembayaran"
         decimal amount "Nominal Dibayarkan"
         varchar payment_method "transfer_bank, qris, cash"

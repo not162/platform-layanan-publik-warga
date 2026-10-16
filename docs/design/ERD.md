@@ -61,27 +61,71 @@ erDiagram
         timestamp updated_at
     }
 
+    CITIZENS ||--o{ RESIDENT_DUES : "assessed to"
+    RESIDENT_DUES {
+        bigint id PK
+        bigint citizen_id FK
+        smallint period_year
+        tinyint period_month
+        bigint amount_due_idr
+        date due_date
+        string status "UNPAID, PARTIAL, PAID, OVERDUE"
+        text notes
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    RESIDENT_DUES ||--o{ DUE_PAYMENTS : "has payments"
+    FINANCE_TRANSACTIONS ||--o{ DUE_PAYMENTS : "backed by cash entry"
+    DUE_PAYMENTS {
+        bigint id PK
+        bigint resident_due_id FK
+        bigint finance_transaction_id FK
+        bigint amount_paid_idr
+        timestamp paid_at
+        string payment_method
+        string receipt_number
+        string proof_path
+        bigint received_by FK
+        string status "PAID"
+        text notes
+        timestamp created_at
+        timestamp updated_at
+    }
+
     USERS ||--o{ COMPLAINTS : "submits"
     COMPLAINTS {
         bigint id PK
+        bigint citizen_id FK "nullable for anonymous"
         bigint user_id FK "nullable for anonymous"
+        string ticket_number
+        string kategori
         string title
         text description
-        string status "submitted, in_progress, resolved, rejected"
+        string lokasi
         boolean is_anonymous
-        int version
+        string status "submitted, reviewed, processing, resolved, closed, rejected"
+        string priority "rendah, sedang, tinggi, darurat"
+        bigint assigned_admin_id FK
+        text admin_response
+        string attachment_path
+        int version "Optimistic Locking"
         timestamp created_at
         timestamp updated_at
     }
 
     FINANCE_TRANSACTIONS {
         bigint id PK
+        string transaction_number
+        string source
+        bigint amount_idr
         bigint created_by FK
         string type "income, expense"
         string category
         decimal amount
         text description
-        boolean is_published
+        string status "draft, published, reversed"
+        timestamp transaction_date
         bigint reversal_id FK "For tracking reversals"
         int version
         timestamp created_at

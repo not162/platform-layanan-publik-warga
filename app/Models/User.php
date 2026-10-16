@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->hasMany(AdminPermission::class, 'user_id');
     }
 
+    public function complaints(): HasMany
+    {
+        return $this->hasMany(Complaint::class);
+    }
+
     public function isSuperadmin(): bool
     {
         return $this->role === UserRole::SUPERADMIN;
