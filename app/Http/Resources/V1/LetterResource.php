@@ -21,6 +21,7 @@ class LetterResource extends JsonResource
             'attachment_path' => $this->attachment_path,
             'ticket_number' => $this->ticket_number,
             'letter_number' => $this->letter_number,
+            'verification_token' => $this->verification_token,
             'version' => $this->version,
             'citizen' => new CitizenResource($this->whenLoaded('citizen')),
             'created_at' => $this->created_at?->toIso8601String(),

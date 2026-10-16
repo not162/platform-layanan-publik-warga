@@ -41,7 +41,7 @@ class ComplaintService
 
     public function updateStatus(Complaint $complaint, string $status, array $data = [], ?User $admin = null): Complaint
     {
-        $allowedStatuses = ['submitted', 'reviewed', 'processing', 'resolved', 'closed', 'rejected'];
+        $allowedStatuses = ['submitted', 'reviewed', 'processing', 'resolved', 'closed', 'rejected', 'in_progress'];
         if (! in_array($status, $allowedStatuses, true)) {
             abort(422, "Status pengaduan '{$status}' tidak valid.");
         }

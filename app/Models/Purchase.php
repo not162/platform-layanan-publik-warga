@@ -36,6 +36,11 @@ class Purchase extends Model
         return $this->belongsTo(FinanceTransaction::class, 'finance_transaction_id');
     }
 
+    public function financeTransaction(): BelongsTo
+    {
+        return $this->transaction();
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -53,5 +58,10 @@ class Purchase extends Model
         }
 
         return (int) $this->items()->sum('subtotal_idr');
+    }
+
+    public function getTotalAmountIdrAttribute(): int
+    {
+        return $this->calculateTotalIdr();
     }
 }

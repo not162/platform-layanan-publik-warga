@@ -79,11 +79,29 @@ class ResidentDueService
         }
 
         return DB::transaction(function () use ($due, $amountPaidIdr, $paymentMethod, $receiver, $notes, $proofPath) {
+            /** @var ResidentDue $lockedDue */
+            $lockedDue = ResidentDue::query()->lockForUpdate()->findOrFail($due->id);
+
+            // Re-calculate current paid to prevent concurrent duplicate payments
+            $currentPaid = (int) DuePayment::query()
+                ->where('resident_due_id', '=', $lockedDue->id)
+                ->where('status', '=', 'PAID')
+                ->sum('amount_paid_idr');
+
+            $remainingDue = (int) $lockedDue->amount_due_idr - $currentPaid;
+            if ($remainingDue <= 0 || $lockedDue->status === 'PAID') {
+                abort(422, 'Tagihan iuran kas untuk periode ini telah berstatus lunas dan tidak dapat dibayar lagi.');
+            }
+
+            if ($amountPaidIdr > $remainingDue) {
+                abort(422, 'Nominal pembayaran (Rp '.number_format($amountPaidIdr, 0, ',', '.').') melebihi sisa tagihan (Rp '.number_format($remainingDue, 0, ',', '.').').');
+            }
+
             $receiptNumber = 'RCP-'.date('Ymd').'-'.strtoupper(Str::random(6));
 
             /** @var DuePayment $payment */
             $payment = DuePayment::query()->create([
-                'resident_due_id' => $due->id,
+                'resident_due_id' => $lockedDue->id,
                 'amount_paid_idr' => $amountPaidIdr,
                 'paid_at' => now(),
                 'payment_method' => $paymentMethod,
@@ -95,37 +113,34 @@ class ResidentDueService
             ]);
 
             // Re-calculate total paid and update due status
-            $totalPaid = (int) DuePayment::query()
-                ->where('resident_due_id', '=', $due->id, 'and')
-                ->where('status', '=', 'PAID', 'and')
-                ->sum('amount_paid_idr');
+            $totalPaid = $currentPaid + $amountPaidIdr;
 
-            if ($totalPaid >= $due->amount_due_idr) {
+            if ($totalPaid >= $lockedDue->amount_due_idr) {
                 $newStatus = 'PAID';
             } elseif ($totalPaid > 0) {
                 $newStatus = 'PARTIAL';
-            } elseif (now()->toDateString() > $due->due_date->toDateString()) {
+            } elseif (now()->toDateString() > $lockedDue->due_date->toDateString()) {
                 $newStatus = 'OVERDUE';
             } else {
                 $newStatus = 'UNPAID';
             }
 
-            $due->status = $newStatus;
-            $due->save();
+            $lockedDue->status = $newStatus;
+            $lockedDue->save();
 
             // Link to FinanceTransaction for general ledger integrity
-            $citizenName = $due->citizen?->full_name ?? 'Warga';
+            $citizenName = $lockedDue->citizen?->full_name ?? 'Warga';
             $txNumber = 'TX-DUE-'.date('Ymd').'-'.strtoupper(Str::random(6));
 
             $tx = FinanceTransaction::query()->create([
                 'transaction_number' => $txNumber,
                 'source' => 'Iuran Kas Warga',
                 'amount_idr' => $amountPaidIdr,
-                'created_by' => $receiver?->id ?? 1,
+                'created_by' => $receiver?->id,
                 'category' => 'Iuran Kas Warga',
                 'type' => 'income',
                 'amount' => $amountPaidIdr,
-                'description' => "Pembayaran iuran kas RT {$due->period_month}/{$due->period_year} oleh {$citizenName} (Kuitansi: {$receiptNumber})",
+                'description' => "Pembayaran iuran kas RT {$lockedDue->period_month}/{$lockedDue->period_year} oleh {$citizenName} (Kuitansi: {$receiptNumber})",
                 'transaction_date' => now(),
                 'status' => 'published',
                 'version' => 1,
