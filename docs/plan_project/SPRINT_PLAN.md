@@ -30,7 +30,7 @@ Menyiapkan proyek agar development tidak dimulai langsung di production.
 - Add `docs/` planning files.
 - Define branch and PR policy.
 - Define environment matrix: local, staging, production.
-- Confirm Laravel 11/PHP/MySQL requirements.
+- Confirm Laravel 13.x/PHP 8.4/MySQL 8.4 Laragon requirements (sesuai composer.lock & composer.json).
 - Prepare `.env.example` without secrets.
 
 ### Deliverables
@@ -39,6 +39,7 @@ Menyiapkan proyek agar development tidak dimulai langsung di production.
 - branch policy
 - environment matrix
 - project risks and assumptions
+- TOGAF Architecture Vision & Audit Report (`docs/plan_project/SPRINT_0_AUDIT_REPORT_TOGAF.md`)
 
 ### Gate
 

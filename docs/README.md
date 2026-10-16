@@ -51,6 +51,7 @@ docs/
 - **[README.md](plan_project/README.md)**: Kerangka metodologi Waterfall + Incremental Sprint dan tata kelola git branch.
 - **[PROJECT_PLAN.md](plan_project/PROJECT_PLAN.md)**: Rencana induk proyek, ruang lingkup, dan acceptance criteria.
 - **[SPRINT_PLAN.md](plan_project/SPRINT_PLAN.md)**: Pembagian sprint bertahap dari Sprint 0 hingga Sprint 6.
+- **[SPRINT_0_AUDIT_REPORT_TOGAF.md](plan_project/SPRINT_0_AUDIT_REPORT_TOGAF.md)**: **Laporan Audit Awal dan Visi Arsitektur TOGAF ADM (Preliminary & Phase A) dengan verifikasi riil lingkungan MySQL Laragon.**
 
 ---
 
