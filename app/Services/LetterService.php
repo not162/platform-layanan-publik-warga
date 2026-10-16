@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\LetterStatusUpdated;
 use App\Models\DocumentSequence;
 use App\Models\Letter;
 use App\Models\User;
@@ -64,6 +65,8 @@ class LetterService
 
             $this->auditService->log('letter.submitted', 'Letter', $locked->id, $oldValues, $locked->toArray());
 
+            LetterStatusUpdated::dispatch($locked, 'submitted');
+
             return $locked;
         });
     }
@@ -100,6 +103,8 @@ class LetterService
             $locked->save();
 
             $this->auditService->log('letter.verified', 'Letter', $locked->id, $oldValues, $locked->toArray());
+
+            LetterStatusUpdated::dispatch($locked, 'verified');
 
             return $locked;
         });
@@ -140,6 +145,8 @@ class LetterService
 
             $this->auditService->log('letter.approved', 'Letter', $locked->id, $oldValues, $locked->toArray());
 
+            LetterStatusUpdated::dispatch($locked, 'approved');
+
             return $locked;
         });
     }
@@ -174,6 +181,8 @@ class LetterService
             $locked->save();
 
             $this->auditService->log('letter.completed', 'Letter', $locked->id, $oldValues, $locked->toArray());
+
+            LetterStatusUpdated::dispatch($locked, 'completed');
 
             return $locked;
         });
@@ -211,6 +220,8 @@ class LetterService
             $locked->save();
 
             $this->auditService->log('letter.rejected', 'Letter', $locked->id, $oldValues, $locked->toArray());
+
+            LetterStatusUpdated::dispatch($locked, 'rejected');
 
             return $locked;
         });

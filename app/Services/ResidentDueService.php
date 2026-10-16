@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\DuePaymentRecorded;
 use App\Models\Citizen;
 use App\Models\DuePayment;
 use App\Models\FinanceTransaction;
@@ -149,6 +150,8 @@ class ResidentDueService
             $payment->update([
                 'finance_transaction_id' => $tx->id,
             ]);
+
+            DuePaymentRecorded::dispatch($payment, $lockedDue);
 
             return $payment;
         });

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Admin\CitizenController;
 use App\Http\Controllers\Api\V1\Admin\FamilyCardController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Citizen\ProfileController;
+use App\Http\Controllers\Api\V1\DashboardApiController;
 use App\Http\Controllers\Api\V1\FinancialReportController;
 use App\Http\Controllers\Api\V1\LetterTypeController;
 use App\Http\Controllers\Api\V1\PurchaseController;
@@ -94,6 +95,10 @@ Route::prefix('v1')->group(function () {
         Route::get('/me/dues/{id}', [ResidentDueController::class, 'meDueDetail']);
         Route::get('/me/payments', [ResidentDueController::class, 'mePayments']);
         Route::get('/me/finance/summary', [ResidentDueController::class, 'meFinanceSummary']);
+
+        // Role-aware dashboard summary & incremental polling sync (ETag enabled)
+        Route::get('/dashboard/summary', [DashboardApiController::class, 'summary']);
+        Route::get('/sync', [DashboardApiController::class, 'sync']);
 
         // ---------------------------------------------------------
         // Administrative Endpoints (RBAC + Permission Scopes)

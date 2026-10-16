@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\ComplaintStatusUpdated;
 use App\Models\Complaint;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -82,6 +83,8 @@ class ComplaintService
                 oldValues: $oldValues,
                 newValues: $locked->toArray()
             );
+
+            ComplaintStatusUpdated::dispatch($locked, $status);
 
             return $locked;
         });
