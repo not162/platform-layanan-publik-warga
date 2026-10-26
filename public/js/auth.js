@@ -74,7 +74,8 @@
       try {
         const r = await P.post('/api/v1/auth/forgot-password', { username: forgot.username.value, nik: forgot.nik.value, no_kk: forgot.no_kk.value });
         P.ok('Identitas terverifikasi', r.message);
-        setTimeout(() => (location.href = r.reset_url), 700);
+        if (r.reset_url) { setTimeout(() => (location.href = r.reset_url), 700); return; }
+        forgot.innerHTML = `<div class="alert success">${P.icon('check-circle')}<div>${P.esc(r.message)}<br><small>Periksa kotak masuk dan folder spam. Tautan berlaku ${r.expires_in_minutes} menit.</small></div></div><a class="btn btn-block" href="/login">Kembali ke halaman masuk</a>`;
       } catch (err) {
         busy(btn, false); al.textContent = err.message; al.hidden = false; showErrors(forgot, err);
       }

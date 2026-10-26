@@ -1003,6 +1003,30 @@ paths:
       responses:
         '200': { description: OK }
         '422': { description: Validasi gagal }
+  /files/letter-attachments/{id}:
+    get:
+      tags: [Manage CRUD]
+      summary: Unduh lampiran surat (pemilik atau pengurus surat)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: Berkas }
+        '403': { description: Bukan pemilik/pengurus }
+  /files/complaints/{id}:
+    get:
+      tags: [Manage CRUD]
+      summary: Foto bukti pengaduan (pelapor atau pengurus)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: Berkas }
+        '403': { description: Tidak berwenang }
+  /files/ktp/{id}:
+    get:
+      tags: [Manage CRUD]
+      summary: Berkas KTP warga (pemilik atau pengurus kependudukan)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: Berkas }
+        '403': { description: Tidak berwenang }
   /manage/{resource}:
     parameters:
       - name: resource
@@ -1010,7 +1034,7 @@ paths:
         required: true
         schema:
           type: string
-          enum: [users, citizens, announcements, events, officers, schedules, contacts, letters, complaints, security-reports, finance, audit-logs]
+          enum: [users, citizens, announcements, events, officers, schedules, contacts, letters, complaints, security-reports, finance, dues, audit-logs]
     get:
       tags: [Manage CRUD]
       summary: Daftar data (q, page, per_page, status, mine, updated_since)
@@ -1054,7 +1078,7 @@ paths:
   /manage/{resource}/{id}/{action}:
     post:
       tags: [Manage CRUD]
-      summary: "Aksi alur kerja. letters: submit, verify, approve, complete, reject(reason). finance: publish, reverse(reason). citizens: verify, reject(reason)"
+      summary: "Aksi alur kerja. letters: submit, verify, approve, complete, reject(reason). finance: publish, reverse(reason). dues: pay(amount, payment_method). citizens: verify, reject(reason)"
       parameters:
         - { name: resource, in: path, required: true, schema: { type: string } }
         - { name: id, in: path, required: true, schema: { type: integer } }

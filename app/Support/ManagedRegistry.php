@@ -13,6 +13,7 @@ use App\Models\FamilyCard;
 use App\Models\FinanceTransaction;
 use App\Models\Letter;
 use App\Models\LetterType;
+use App\Models\ResidentDue;
 use App\Models\RoundSchedule;
 use App\Models\RtOfficer;
 use App\Models\SecurityReport;
@@ -21,6 +22,7 @@ use App\Services\ComplaintService;
 use App\Services\FinanceService;
 use App\Services\LetterService;
 use App\Services\NotifyService;
+use App\Services\ResidentDueService;
 use App\Services\SecurityReportService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -63,6 +65,7 @@ class ManagedRegistry
             'complaints' => self::complaints(),
             'security-reports' => self::securityReports(),
             'finance' => self::finance(),
+            'dues' => self::dues(),
             'audit-logs' => self::auditLogs(),
         ];
     }
@@ -193,6 +196,7 @@ class ManagedRegistry
                 'is_active' => $c->is_active,
                 'username' => $c->user?->username,
                 'has_account' => $c->user_id !== null,
+                'ktp_url' => $c->ktp_file_path && $actor->hasPermission('citizen.manage') ? url('/api/v1/files/ktp/'.$c->id) : null,
                 'version' => $c->version,
                 'created_at' => self::iso($c->created_at),
                 'updated_at' => self::iso($c->updated_at),
@@ -519,7 +523,7 @@ class ManagedRegistry
                 'update' => fn (User $u, ?Letter $l) => $l ? ($isOwner($u, $l) && $l->status === 'draft') || $u->isSuperadmin() : true,
                 'delete' => fn (User $u, ?Letter $l) => $l ? ($isOwner($u, $l) && $l->status === 'draft') || $u->isSuperadmin() : true,
             ],
-            'with' => ['citizen', 'letterType'],
+            'with' => ['citizen', 'letterType', 'attachments'],
             'query' => function (Builder $q, User $u, Request $r) use ($isStaff) {
                 if ($r->boolean('mine') || ! $isStaff($u)) {
                     $q->where('citizen_id', $u->citizen?->id ?? 0);
@@ -539,6 +543,10 @@ class ManagedRegistry
                 'letter_number' => $l->letter_number,
                 'catatan_admin' => $l->catatan_admin,
                 'rejection_reason' => $l->rejection_reason,
+                'attachments' => $l->attachments->map(fn ($a) => ['id' => $a->id, 'name' => $a->judul_lampiran, 'url' => url('/api/v1/files/letter-attachments/'.$a->id)])->values(),
+                'can_download' => in_array($l->status, ['approved', 'completed'], true),
+                'download_url' => in_array($l->status, ['approved', 'completed'], true) ? url("/api/v1/letters/{$l->id}/download?format=pdf") : null,
+                'preview_url' => url("/api/v1/letters/{$l->id}/preview"),
                 'verification_url' => $l->verification_token ? url('/api/v1/public/letter/verify/'.$l->verification_token) : null,
                 'version' => $l->version,
                 'created_at' => self::iso($l->created_at),
@@ -638,6 +646,7 @@ class ManagedRegistry
                 'status' => $c->status,
                 'priority' => $c->priority,
                 'admin_response' => $c->admin_response,
+                'photo_url' => $c->attachment_path ? url('/api/v1/files/complaints/'.$c->id) : null,
                 'reporter' => $c->is_anonymous && ! $u->hasPermission('complaint.manage') ? 'Anonim' : User::query()->find($c->user_id)?->name,
                 'version' => $c->version,
                 'created_at' => self::iso($c->created_at),
@@ -655,18 +664,24 @@ class ManagedRegistry
                     'lokasi' => ['nullable', 'string', 'max:255'],
                     'priority' => ['nullable', Rule::in(['rendah', 'sedang', 'tinggi', 'darurat'])],
                     'is_anonymous' => ['nullable', 'boolean'],
+                    'attachment' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
                     'status' => ['nullable', Rule::in(['submitted', 'reviewed', 'processing', 'resolved', 'closed', 'rejected'])],
                     'admin_response' => ['nullable', 'string', 'max:2000'],
                 ];
             },
             'store' => function (array $data, User $u) {
                 unset($data['status'], $data['admin_response']);
+                if (isset($data['attachment'])) {
+                    $data['attachment_path'] = $data['attachment']->store('complaints', 'local');
+                }
+                unset($data['attachment']);
                 $complaint = app(ComplaintService::class)->create($data, $u);
                 self::notify()->toRoles([UserRole::KETUA_RT, UserRole::SEKRETARIS], 'Pengaduan baru', "{$complaint->ticket_number}: {$complaint->title}", '/app/complaints', $complaint->priority === 'darurat' ? 'danger' : 'warning');
 
                 return $complaint;
             },
             'update' => function (Complaint $c, array $data, User $u) use ($isOwner) {
+                unset($data['attachment']);
                 if ($u->hasPermission('complaint.manage') && ! $isOwner($u, $c)) {
                     $status = $data['status'] ?? $c->status;
                     $updated = app(ComplaintService::class)->updateStatus($c, $status, $data, $u);
@@ -674,7 +689,7 @@ class ManagedRegistry
 
                     return $updated;
                 }
-                unset($data['status'], $data['admin_response'], $data['priority']);
+                unset($data['status'], $data['admin_response'], $data['priority'], $data['attachment']);
                 $c->update($data + ['version' => $c->version + 1]);
 
                 return $c;
@@ -832,6 +847,85 @@ class ManagedRegistry
                     $reason = (string) $r->validate(['reason' => ['required', 'string', 'max:300']])['reason'];
 
                     return app(FinanceService::class)->reverse($t, (int) $r->input('version', $t->version), $reason);
+                }],
+            ],
+        ];
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Iuran warga */
+    /* ------------------------------------------------------------------ */
+    protected static function dues(): array
+    {
+        $isStaff = fn (User $u) => $u->hasPermission('finance.dues.read') || $u->hasPermission('finance.dues.manage');
+        $months = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        return [
+            'model' => ResidentDue::class,
+            'search' => ['notes'],
+            'abilities' => [
+                'read' => true,
+                'create' => 'finance.dues.manage',
+            ],
+            'with' => ['citizen', 'payments'],
+            'query' => function (Builder $q, User $u, Request $r) use ($isStaff) {
+                if ($r->boolean('mine') || ! $isStaff($u)) {
+                    $q->where('citizen_id', $u->citizen?->id ?? 0);
+                }
+
+                return $q->orderByDesc('period_year')->orderByDesc('period_month')->orderBy('citizen_id');
+            },
+            'filters' => ['period_year', 'period_month'],
+            'transform' => function (ResidentDue $d, User $u) use ($months) {
+                $paid = $d->getTotalPaidIdr();
+
+                return [
+                    'id' => $d->id,
+                    'citizen' => $d->citizen?->full_name,
+                    'period' => ($months[$d->period_month] ?? $d->period_month).' '.$d->period_year,
+                    'amount_due' => $d->amount_due_idr,
+                    'amount_paid' => $paid,
+                    'remaining' => max(0, $d->amount_due_idr - $paid),
+                    'status' => strtolower($d->status),
+                    'due_date' => $d->due_date?->toDateString(),
+                    'receipts' => $d->payments->where('status', 'PAID')->pluck('receipt_number')->values(),
+                    'updated_at' => self::iso($d->updated_at),
+                    'can_pay' => $d->status !== 'PAID' && $u->hasPermission('finance.payment.manage'),
+                ];
+            },
+            'rules' => fn () => [
+                'period_year' => ['required', 'integer', 'min:2020', 'max:2100'],
+                'period_month' => ['required', 'integer', 'between:1,12'],
+                'amount_due_idr' => ['required', 'integer', 'min:1000', 'max:100000000'],
+                'notes' => ['nullable', 'string', 'max:200'],
+            ],
+            'store' => function (array $data, User $u) {
+                $count = app(ResidentDueService::class)->generateMonthlyDues($data['period_year'], $data['period_month'], $data['amount_due_idr'], null, $data['notes'] ?? null);
+                if ($count === 0) {
+                    abort(409, 'Tagihan periode ini sudah pernah dibuat untuk semua warga.');
+                }
+                self::notify()->toRoles([UserRole::WARGA], 'Tagihan iuran baru', 'Iuran '.$data['period_month'].'/'.$data['period_year'].' sebesar Rp '.number_format($data['amount_due_idr'], 0, ',', '.'), '/app/my-dues', 'warning');
+
+                return ResidentDue::query()->where('period_year', $data['period_year'])->where('period_month', $data['period_month'])->latest('id')->firstOrFail();
+            },
+            'actions' => [
+                'pay' => ['ability' => 'finance.payment.manage', 'handler' => function (ResidentDue $d, Request $r, User $actor) {
+                    $data = $r->validate([
+                        'amount' => ['required', 'integer', 'min:1'],
+                        'payment_method' => ['nullable', Rule::in(['cash', 'transfer', 'qris'])],
+                        'notes' => ['nullable', 'string', 'max:200'],
+                    ]);
+                    $remaining = max(0, $d->amount_due_idr - $d->getTotalPaidIdr());
+                    if ($remaining === 0) {
+                        abort(409, 'Tagihan ini sudah lunas.');
+                    }
+                    if ($data['amount'] > $remaining) {
+                        throw ValidationException::withMessages(['amount' => ['Nominal melebihi sisa tagihan (Rp '.number_format($remaining, 0, ',', '.').').']]);
+                    }
+                    $payment = app(ResidentDueService::class)->recordPayment($d, $data['amount'], $data['payment_method'] ?? 'cash', $actor, $data['notes'] ?? null);
+                    self::notify()->to($d->citizen?->user, 'Pembayaran iuran diterima', 'Rp '.number_format($data['amount'], 0, ',', '.').' · No. kuitansi '.$payment->receipt_number, '/app/my-dues', 'success');
+
+                    return $d->refresh();
                 }],
             ],
         ];

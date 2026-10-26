@@ -12,6 +12,12 @@
   const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'].map((d) => [d, d]);
   const COMPLAINT_STATUS = ['submitted', 'reviewed', 'processing', 'resolved', 'closed', 'rejected'].map((s) => [s, P.statusLabel(s)]);
   const SECURITY_STATUS = ['submitted', 'reviewed', 'assigned', 'processing', 'resolved', 'closed'].map((s) => [s, P.statusLabel(s)]);
+  const dueBadge = (r) => `<span class="badge ${({ paid: 'green', partial: 'blue', overdue: 'rose', unpaid: 'amber' }[r.status] || 'gray')}">${({ paid: 'Lunas', partial: 'Sebagian', overdue: 'Terlambat', unpaid: 'Belum bayar' }[r.status] || esc(r.status))}</span>`;
+  const docLinks = (r) => {
+    const out = (r.attachments || []).map((a) => `<a class="link" target="_blank" rel="noopener" href="${esc(a.url)}">${icon('file')} ${esc(a.name)}</a>`);
+    if (r.can_download) out.push(`<a class="link" target="_blank" rel="noopener" href="${esc(r.download_url)}">${icon('download')} Surat PDF</a>`, `<a class="link" target="_blank" rel="noopener" href="${esc(r.preview_url)}">${icon('eye')} Cetak</a>`);
+    return out.length ? `<span style="display:grid;gap:.2rem;text-align:left">${out.join('')}</span>` : '—';
+  };
   const PRIORITY = [['rendah', 'Rendah'], ['sedang', 'Sedang'], ['tinggi', 'Tinggi'], ['darurat', 'Darurat']];
 
   /* ---------- Definisi halaman ---------- */
@@ -43,7 +49,7 @@
         { label: 'Warga', primary: true, render: (r) => sub(r.full_name, r.username ? '@' + r.username : 'Belum punya akun') },
         { label: 'NIK / KK', render: (r) => `<small>${esc(r.nik_masked || '—')}<br>${esc(r.no_kk_masked || '—')}</small>` },
         { label: 'Telepon', render: (r) => esc(r.phone || '—') },
-        { label: 'Status', render: (r) => badge(r.status_warga) },
+        { label: 'Status', render: (r) => badge(r.status_warga) + (r.ktp_url ? `<br><a class="link" target="_blank" rel="noopener" href="${esc(r.ktp_url)}">${icon('file')} Lihat KTP</a>` : '') },
       ],
       fields: (mode) => [
         ...(mode === 'create' ? [{ name: 'nik', label: 'NIK (16 digit)', required: true, maxlength: 16, inputmode: 'numeric' }, { name: 'no_kk', label: 'No. KK (16 digit)', required: true, maxlength: 16, inputmode: 'numeric' }] : []),
@@ -152,6 +158,7 @@
         { label: 'Pemohon', render: (r) => esc(r.applicant || '—') },
         { label: 'Jenis & keperluan', render: (r) => `<b>${esc(r.type)}</b><small class="muted">${esc(r.keperluan || '')}</small>` },
         { label: 'Status', render: (r) => badge(r.status) + (r.rejection_reason ? `<br><small class="muted">${esc(r.rejection_reason)}</small>` : '') },
+        { label: 'Dokumen', render: docLinks },
         { label: 'Update', render: (r) => P.ago(r.updated_at) },
       ],
       actions: [
@@ -167,12 +174,14 @@
         { label: 'Tiket', primary: true, render: (r) => sub(r.ticket_number, r.letter_number || 'Belum bernomor') },
         { label: 'Jenis & keperluan', render: (r) => `<b>${esc(r.type)}</b><small class="muted">${esc(r.keperluan || '')}</small>` },
         { label: 'Status', render: (r) => badge(r.status) + (r.rejection_reason ? `<br><small class="muted">${esc(r.rejection_reason)}</small>` : '') },
+        { label: 'Dokumen', render: docLinks },
         { label: 'Verifikasi', render: (r) => (r.verification_url ? `<a class="link" target="_blank" rel="noopener" href="${esc(r.verification_url)}">Cek keaslian</a>` : '—') },
         { label: 'Update', render: (r) => P.ago(r.updated_at) },
       ],
       fields: () => [
         { name: 'jenis_surat_id', label: 'Jenis surat', type: 'select', options: letterTypesOpt, required: true },
         { name: 'keperluan', label: 'Keperluan', type: 'textarea', required: true },
+        { name: 'attachments', label: 'Lampiran (KTP/KK/dokumen pendukung)', type: 'files', hint: 'PDF/JPG/PNG, maks. 1 MB per berkas, hingga 5 berkas.' },
         { name: 'submit', label: 'Langsung ajukan ke Sekretaris', type: 'checkbox', default: true, createOnly: true },
       ],
       actions: [{ name: 'submit', label: 'Ajukan', icon: 'send', tone: 'success', when: (r) => r.can_submit, confirm: 'Ajukan permohonan ke Sekretaris RT?' }],
@@ -195,7 +204,7 @@
         { name: 'priority', label: 'Prioritas', type: 'select', options: PRIORITY },
         { name: 'admin_response', label: 'Tanggapan untuk warga', type: 'textarea' },
       ],
-      detail: (r) => `<div class="alert info" style="display:block"><b>${esc(r.title)}</b><br>${esc(r.description)}${r.lokasi ? `<br><small>Lokasi: ${esc(r.lokasi)}</small>` : ''}</div>`,
+      detail: (r) => `<div class="alert info" style="display:block"><b>${esc(r.title)}</b><br>${esc(r.description)}${r.lokasi ? `<br><small>Lokasi: ${esc(r.lokasi)}</small>` : ''}${r.photo_url ? `<br><a class="link" target="_blank" rel="noopener" href="${esc(r.photo_url)}">${icon('eye')} Lihat foto bukti</a>` : ''}</div>`,
     },
     'my-complaints': {
       resource: 'complaints', mine: true, noun: 'pengaduan',
@@ -203,7 +212,7 @@
         { label: 'Pengaduan', primary: true, render: (r) => sub(r.title, r.ticket_number + ' · ' + r.kategori) },
         { label: 'Prioritas', render: (r) => badge(r.priority) },
         { label: 'Status', render: (r) => badge(r.status) },
-        { label: 'Tanggapan', render: (r) => esc(r.admin_response || '—') },
+        { label: 'Tanggapan', render: (r) => esc(r.admin_response || '—') + (r.photo_url ? `<br><a class="link" target="_blank" rel="noopener" href="${esc(r.photo_url)}">${icon('eye')} Foto</a>` : '') },
         { label: 'Update', render: (r) => P.ago(r.updated_at) },
       ],
       fields: () => [
@@ -212,6 +221,7 @@
         { name: 'lokasi', label: 'Lokasi kejadian' },
         { name: 'description', label: 'Uraian masalah', type: 'textarea', required: true },
         { name: 'priority', label: 'Prioritas', type: 'select', options: PRIORITY, default: 'sedang' },
+        { name: 'attachment', label: 'Foto bukti (opsional)', type: 'file', createOnly: true, hint: 'JPG/PNG/WebP, maks. 2 MB.' },
         { name: 'is_anonymous', label: 'Kirim sebagai anonim', type: 'checkbox' },
       ],
     },
@@ -277,6 +287,43 @@
       ],
     },
 
+
+    /* ----- Iuran ----- */
+    dues: {
+      resource: 'dues', noun: 'tagihan iuran',
+      createLabel: 'Buat tagihan bulanan',
+      filters: [{ key: 'period_month', label: 'Semua bulan', options: Array.from({ length: 12 }, (_, i) => [String(i + 1), new Date(2000, i, 1).toLocaleString('id-ID', { month: 'long' })]) }],
+      columns: [
+        { label: 'Warga', primary: true, render: (r) => sub(r.citizen || '—', r.period) },
+        { label: 'Tagihan', render: (r) => rp(r.amount_due) },
+        { label: 'Terbayar', render: (r) => rp(r.amount_paid) + (r.remaining ? `<small class="muted">Sisa ${rp(r.remaining)}</small>` : '') },
+        { label: 'Status', render: dueBadge },
+        { label: 'Kuitansi', render: (r) => esc((r.receipts || []).join(', ') || '—') },
+      ],
+      fields: () => [
+        { name: 'period_year', label: 'Tahun', type: 'number', required: true, default: new Date().getFullYear() },
+        { name: 'period_month', label: 'Bulan (1-12)', type: 'number', required: true, min: 1, default: new Date().getMonth() + 1 },
+        { name: 'amount_due_idr', label: 'Iuran per warga (Rp)', type: 'number', required: true, min: 1000, default: 50000 },
+        { name: 'notes', label: 'Catatan' },
+      ],
+      actions: [{ name: 'pay', label: 'Catat bayar', icon: 'check', tone: 'success', when: (r) => r.can_pay,
+        form: (r) => [
+          { name: 'amount', label: 'Nominal dibayar (Rp)', type: 'number', required: true, default: r.remaining, min: 1 },
+          { name: 'payment_method', label: 'Metode', type: 'select', options: [['cash', 'Tunai'], ['transfer', 'Transfer'], ['qris', 'QRIS']], default: 'cash' },
+          { name: 'notes', label: 'Catatan' },
+        ] }],
+    },
+    'my-dues': {
+      resource: 'dues', mine: true, noun: 'iuran', readonly: true,
+      columns: [
+        { label: 'Periode', primary: true, render: (r) => sub(r.period, 'Jatuh tempo ' + date(r.due_date)) },
+        { label: 'Tagihan', render: (r) => rp(r.amount_due) },
+        { label: 'Terbayar', render: (r) => rp(r.amount_paid) + (r.remaining ? `<small class="muted">Sisa ${rp(r.remaining)}</small>` : '') },
+        { label: 'Status', render: dueBadge },
+        { label: 'Kuitansi', render: (r) => esc((r.receipts || []).join(', ') || '—') },
+      ],
+    },
+
     audit: {
       resource: 'audit-logs', noun: 'log', readonly: true,
       columns: [
@@ -302,7 +349,7 @@
   root.innerHTML = `
     <div class="page-head">
       <div><h2>${esc(root.dataset.title)}</h2><p><span class="live-dot"></span>Tersinkron langsung dengan database · <span id="sync-time" class="muted">memuat…</span></p></div>
-      ${canCreate ? `<button class="btn btn-primary" id="btn-add">${icon('plus')} Tambah ${esc(cfg.noun)}</button>` : ''}
+      ${canCreate ? `<button class="btn btn-primary" id="btn-add">${icon('plus')} ${esc(cfg.createLabel || 'Tambah ' + cfg.noun)}</button>` : ''}
     </div>
     <div class="toolbar">
       <div class="search">${icon('search')}<input class="input" id="q" type="search" placeholder="Cari ${esc(cfg.noun)}…" aria-label="Cari"></div>
@@ -384,10 +431,27 @@
       const body = { version: row.version };
       if (a.confirm && !(await P.confirm(a.confirm, { confirmText: a.label, tone: a.tone === 'danger' ? 'danger' : 'success' }))) return;
       if (a.ask) { const v = await P.ask(a.ask, { title: a.label }); if (v === null) return; body[a.askKey] = v; }
+      if (a.form) { const v = await actionForm(a, row); if (v === null) return; Object.assign(body, v); }
       act.disabled = true;
       try { await P.post(`${base}/${row.id}/${a.name}`, body); P.ok('Berhasil', `${a.label} berhasil diproses.`); load(true); } catch (e) { act.disabled = false; P.fail(e); load(true); }
     }
   });
+
+  /* ----- form aksi (mis. catat pembayaran) ----- */
+  async function actionForm(a, row) {
+    const fields = a.form(row);
+    const parts = await Promise.all(fields.map((f) => fieldHtml(f, f.default)));
+    return new Promise((resolve) => {
+      const m = P.modal({ title: a.label, body: `<form id="act-form" novalidate>${parts.join('')}</form>`,
+        foot: `<button class="btn" data-no>Batal</button><button class="btn btn-primary" data-yes>${icon('check')} ${esc(a.label)}</button>`, onClose: () => resolve(null) });
+      $('[data-no]', m.el).onclick = () => { resolve(null); m.close(); };
+      $('[data-yes]', m.el).onclick = () => {
+        const form = $('#act-form', m.el); const out = {};
+        fields.forEach((f) => { const v = form.elements[f.name].value; if (v !== '') out[f.name] = f.type === 'number' ? Number(v) : v; });
+        resolve(out); m.close();
+      };
+    });
+  }
 
   /* ----- form ----- */
   async function fieldHtml(f, value) {
@@ -395,6 +459,7 @@
     const label = `<label for="${id}">${esc(f.label)}${f.required ? ' *' : ''}</label>`;
     const hint = `<div class="hint" data-hint="${f.name}">${esc(f.hint || '')}</div>`;
     if (f.type === 'checkbox') return `<div class="field"><label class="check"><input type="checkbox" id="${id}" name="${f.name}" ${value ? 'checked' : ''}> ${esc(f.label)}</label></div>`;
+    if (f.type === 'file' || f.type === 'files') return `<div class="field">${label}<input class="input" id="${id}" name="${f.name}" type="file" ${f.type === 'files' ? 'multiple accept=".pdf,.jpg,.jpeg,.png"' : 'accept="image/*" capture="environment"'}>${hint}</div>`;
     if (f.type === 'textarea') return `<div class="field">${label}<textarea class="input" id="${id}" name="${f.name}" ${req}>${esc(value ?? '')}</textarea>${hint}</div>`;
     if (f.type === 'select') {
       const opts = typeof f.options === 'function' ? await f.options() : f.options;
@@ -420,9 +485,10 @@
     });
     const form = $('#crud-form', m.el);
     $('#crud-save', m.el).onclick = async () => {
-      const body = {};
+      const body = {}; const files = {};
       fields.forEach((f) => {
         const el = form.elements[f.name]; let v;
+        if (f.type === 'file' || f.type === 'files') { if (el.files.length) files[f.name] = Array.from(el.files); return; }
         if (f.type === 'checkbox') v = el.checked;
         else { v = el.value; if (v === '') v = f.required ? '' : null; else if (f.type === 'number') v = Number(v); }
         if (!(f.type === 'password' && v == null)) body[f.name] = v;
@@ -431,7 +497,20 @@
       $$('.invalid', form).forEach((x) => x.classList.remove('invalid'));
       const btn = $('#crud-save', m.el); btn.disabled = true;
       try {
-        await (mode === 'create' ? P.post(base, body) : P.patch(`${base}/${row.id}`, body));
+        let payload = body;
+        const wantSubmit = cfg.resource === 'letters' && body.submit === true && files.attachments;
+        if (wantSubmit) body.submit = false; // lampiran hanya boleh diunggah saat draft
+        if (files.attachment) { // multipart untuk foto pengaduan
+          payload = new FormData();
+          Object.entries(body).forEach(([k, v]) => v !== null && payload.append(k, v === true ? '1' : v === false ? '0' : v));
+          payload.append('attachment', files.attachment[0]);
+        }
+        const res = await (mode === 'create' ? P.api('POST', base, payload) : P.patch(`${base}/${row.id}`, body));
+        const id = res.data.id;
+        if (files.attachments) {
+          for (const file of files.attachments) { const fd = new FormData(); fd.append('attachment', file); await P.api('POST', `/api/v1/letters/${id}/attachments`, fd); }
+          if (wantSubmit) { const fresh = await P.get(`${base}/${id}`); await P.post(`${base}/${id}/submit`, { version: fresh.data.version }); }
+        }
         P.ok('Tersimpan', `Data ${cfg.noun} berhasil disimpan ke database.`);
         m.close(); load(true);
       } catch (e) {

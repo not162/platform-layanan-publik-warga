@@ -68,6 +68,8 @@ class AppController extends Controller
             'Lihat buku kas' => 'finance.transaction.read',
             'Catat transaksi kas' => 'finance.transaction.create',
             'Terbitkan transaksi kas' => 'finance.transaction.publish',
+            'Kelola tagihan iuran' => 'finance.dues.manage',
+            'Catat pembayaran iuran' => 'finance.payment.manage',
             'Kelola pengumuman' => 'announcement.manage',
             'Kelola agenda' => 'event.manage',
             'Kelola struktur pengurus' => 'officer.manage',

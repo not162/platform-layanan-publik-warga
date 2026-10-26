@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\AccountController;
 use App\Http\Controllers\Api\V1\Admin\CitizenController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Citizen\ProfileController;
+use App\Http\Controllers\Api\V1\FileController;
 use App\Http\Controllers\Api\V1\FinancialReportController;
 use App\Http\Controllers\Api\V1\LetterTypeController;
 use App\Http\Controllers\Api\V1\ManageController;
@@ -70,6 +71,10 @@ Route::prefix('v1')->group(function () {
         Route::get('/me', [ProfileController::class, 'show']);
         Route::patch('/me', [ProfileController::class, 'update']);
         Route::get('/me/export', [ProfileController::class, 'export']);
+
+        Route::get('/files/letter-attachments/{id}', [FileController::class, 'letterAttachment'])->whereNumber('id');
+        Route::get('/files/complaints/{id}', [FileController::class, 'complaintPhoto'])->whereNumber('id');
+        Route::get('/files/ktp/{id}', [FileController::class, 'ktp'])->whereNumber('id');
 
         Route::patch('/me/account', [AccountController::class, 'update']);
         Route::post('/me/password', [AccountController::class, 'password']);

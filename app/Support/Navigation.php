@@ -20,6 +20,7 @@ class Navigation
 
         return [
             'dashboard' => ['label' => 'Beranda', 'icon' => 'home', 'group' => 'Utama', 'can' => fn () => true],
+            'my-dues' => ['label' => 'Iuran Saya', 'short' => 'Iuran', 'icon' => 'wallet', 'group' => 'Layanan', 'can' => fn (User $u) => $u->isWarga()],
             'my-letters' => ['label' => 'Surat Saya', 'short' => 'Surat', 'icon' => 'mail', 'group' => 'Layanan', 'can' => fn (User $u) => $u->isWarga()],
             'my-complaints' => ['label' => 'Pengaduan Saya', 'short' => 'Aduan', 'icon' => 'alert', 'group' => 'Layanan', 'can' => fn (User $u) => $u->isWarga()],
             'my-security' => ['label' => 'Lapor Keamanan', 'short' => 'Keamanan', 'icon' => 'shield', 'group' => 'Layanan', 'can' => fn (User $u) => $u->isWarga()],
@@ -28,6 +29,7 @@ class Navigation
             'security' => ['label' => 'Laporan Keamanan', 'short' => 'Keamanan', 'icon' => 'shield', 'group' => 'Layanan Warga', 'can' => fn (User $u) => $any($u, ['security.read', 'security.manage'])],
             'citizens' => ['label' => 'Data Warga', 'short' => 'Warga', 'icon' => 'users', 'group' => 'Kependudukan', 'can' => fn (User $u) => $u->hasPermission('citizen.read')],
             'finance' => ['label' => 'Buku Kas RT', 'short' => 'Kas', 'icon' => 'wallet', 'group' => 'Keuangan', 'can' => fn (User $u) => $u->hasPermission('finance.transaction.read')],
+            'dues' => ['label' => 'Iuran Warga', 'short' => 'Iuran', 'icon' => 'gift', 'group' => 'Keuangan', 'can' => fn (User $u) => $any($u, ['finance.dues.read', 'finance.dues.manage'])],
             'announcements' => ['label' => 'Pengumuman', 'icon' => 'megaphone', 'group' => 'Konten', 'can' => fn (User $u) => $u->hasPermission('announcement.manage')],
             'events' => ['label' => 'Agenda Kegiatan', 'icon' => 'calendar', 'group' => 'Konten', 'can' => fn (User $u) => $u->hasPermission('event.manage')],
             'officers' => ['label' => 'Struktur Pengurus', 'icon' => 'badge', 'group' => 'Konten', 'can' => fn (User $u) => $u->hasPermission('officer.manage')],
@@ -58,6 +60,7 @@ class Navigation
             'schedules' => $user->hasPermission('round_schedule.manage'),
             'contacts' => $user->hasPermission('emergency.manage'),
             'finance' => $user->hasPermission('finance.transaction.create'),
+            'dues' => $user->hasPermission('finance.dues.manage'),
             'my-letters' => $user->citizen !== null,
             'my-complaints', 'my-security' => true,
             default => false,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\UserRole;
 use App\Events\CitizenRegistered;
 use App\Http\Controllers\Controller;
+use App\Mail\ResetPasswordMail;
 use App\Models\Citizen;
 use App\Models\FamilyCard;
 use App\Models\User;
@@ -15,6 +16,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
@@ -302,9 +305,27 @@ class AuthController extends Controller
 
         $this->audit->log('auth.password_reset_requested', 'User', $user->id, null, ['ip' => $request->ip()]);
 
+        $url = route('password.reset', ['token' => $token]);
+
+        if ($user->email) {
+            try {
+                Mail::to($user->email)->send(new ResetPasswordMail($user->name, $url));
+
+                return response()->json([
+                    'message' => 'Identitas terverifikasi. Tautan atur ulang password dikirim ke '.$this->maskEmail($user->email).' (berlaku 20 menit).',
+                    'emailed' => true,
+                    'expires_in_minutes' => 20,
+                ]);
+            } catch (\Throwable $e) {
+                Log::warning('Gagal mengirim email reset password: '.$e->getMessage());
+            }
+        }
+
+        // Akun tanpa email (atau SMTP belum siap): tautan ditampilkan langsung sebagai cadangan.
         return response()->json([
             'message' => 'Identitas terverifikasi. Silakan buat password baru (berlaku 20 menit).',
-            'reset_url' => route('password.reset', ['token' => $token]),
+            'emailed' => false,
+            'reset_url' => $url,
             'expires_in_minutes' => 20,
         ]);
     }
@@ -425,9 +446,17 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['login' => ['Username atau email wajib diisi.']]);
         }
 
+        $throttleKey = 'login:'.strtolower($login);
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            throw ValidationException::withMessages(['login' => ["Terlalu banyak percobaan gagal. Coba lagi dalam {$seconds} detik."]]);
+        }
+
         $user = User::findByLogin(strtolower($login)) ?? User::findByLogin($login);
 
         if (! $user || ! Hash::check((string) $request->input('password'), $user->password)) {
+            RateLimiter::hit($throttleKey, 300);
+
             throw ValidationException::withMessages(['login' => ['Username atau password salah.']]);
         }
 
@@ -435,6 +464,7 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['login' => ['Akun ini dinonaktifkan. Silakan hubungi admin.']]);
         }
 
+        RateLimiter::clear($throttleKey);
         $user->forceFill(['last_login_at' => now()])->save();
 
         return $user;
@@ -443,6 +473,13 @@ class AuthController extends Controller
     /**
      * Samarkan nama untuk endpoint publik (mis. "Siti Aminah" → "S*** A*****").
      */
+    protected function maskEmail(string $email): string
+    {
+        [$local, $domain] = array_pad(explode('@', $email, 2), 2, '');
+
+        return mb_substr($local, 0, 1).str_repeat('*', max(mb_strlen($local) - 1, 2)).'@'.$domain;
+    }
+
     protected function maskName(string $name): string
     {
         return collect(preg_split('/\s+/', trim($name)))

@@ -9,8 +9,10 @@ use App\Models\EmergencyContact;
 use App\Models\FinanceTransaction;
 use App\Models\Letter;
 use App\Models\LetterType;
+use App\Models\ResidentDue;
 use App\Models\RoundSchedule;
 use App\Models\User;
+use App\Services\ResidentDueService;
 use Illuminate\Database\Seeder;
 
 class PortalContentSeeder extends Seeder
@@ -65,6 +67,10 @@ class PortalContentSeeder extends Seeder
                     'published_at' => $status === 'published' ? now() : null, 'created_by' => $bendahara->id, 'version' => 1,
                 ]);
             }
+        }
+
+        if (ResidentDue::query()->doesntExist()) {
+            app(ResidentDueService::class)->generateMonthlyDues((int) now()->format('Y'), (int) now()->format('n'), 50000);
         }
 
         $warga = User::query()->where('username', 'warga')->with('citizen')->first();

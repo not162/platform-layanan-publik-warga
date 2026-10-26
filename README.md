@@ -136,7 +136,7 @@ Semua akun demo berpassword `password` (hanya environment `local`/`testing`). Ma
 - username unik (tidak peka huruf besar/kecil);
 - password sengaja **tidak** dibuat unik antar-pengguna (itu akan membocorkan password pengguna lain); yang ditegakkan adalah password minimal 8 karakter yang di-hash bcrypt.
 
-**Lupa password**: `/forgot-password` memverifikasi username + NIK + No. KK terhadap database, lalu menerbitkan tautan reset sekali pakai berlaku 20 menit (token disimpan ter-hash di `password_reset_requests`). Akun pengurus tidak memakai jalur ini; Superadmin mengatur ulang lewat Manajemen Pengguna.
+**Lupa password**: `/forgot-password` memverifikasi username + NIK + No. KK terhadap database, lalu **mengirim tautan reset sekali pakai (20 menit) ke email akun**. Akun tanpa email, atau bila SMTP belum diatur, memakai cadangan: tautan ditampilkan di layar. Token disimpan ter-hash di `password_reset_requests`. Login dikunci sementara 5 menit setelah 5 kali gagal per username. Akun pengurus tidak memakai jalur ini; Superadmin mengatur ulang lewat Manajemen Pengguna.
 
 ---
 
@@ -482,7 +482,9 @@ Seluruh data dibaca/ditulis langsung ke MySQL lewat `/api/v1` (autentikasi: sesi
 | `DELETE` | `/api/v1/manage/{resource}/{id}` | Hapus |
 | `POST` | `/api/v1/manage/{resource}/{id}/{aksi}` | Aksi alur kerja: `letters`: `submit`, `verify`, `approve`, `complete`, `reject`; `finance`: `publish`, `reverse`; `citizens`: `verify`, `reject` |
 
-`{resource}`: `users`, `citizens`, `announcements`, `events`, `officers`, `schedules`, `contacts`, `letters`, `complaints`, `security-reports`, `finance`, `audit-logs`. Hak akses tiap resource ditegakkan per peran (lihat matriks di menu *Pemodelan Sistem*); warga hanya dapat melihat datanya sendiri.
+`{resource}`: `users`, `citizens`, `announcements`, `events`, `officers`, `schedules`, `contacts`, `letters`, `complaints`, `security-reports`, `finance`, `dues` (iuran: `POST` = buat tagihan bulanan, aksi `pay` = catat pembayaran), `audit-logs`. Hak akses tiap resource ditegakkan per peran (lihat matriks di menu *Pemodelan Sistem*); warga hanya dapat melihat datanya sendiri.
+
+Berkas privat disajikan setelah otorisasi: `GET /api/v1/files/letter-attachments/{id}`, `/files/complaints/{id}`, `/files/ktp/{id}`; surat sah diunduh lewat `GET /api/v1/letters/{id}/download?format=pdf|docx` (setelah disahkan).
 
 Endpoint pendukung: `GET /api/v1/portal` (beranda publik tanpa cache), `GET /api/v1/dashboard/summary`, `GET|POST|DELETE /api/v1/notifications`, `PATCH /api/v1/me/account`, `POST /api/v1/me/password`, `POST /api/v1/auth/check-citizen`, `POST /api/v1/auth/forgot-password`, `POST /api/v1/auth/reset-password`.
 
@@ -600,7 +602,18 @@ Pada halaman `/login` (environment `local`) tersedia chip **Pintasan akun demo**
 
 Untuk mencoba aktivasi akun dari master RT: buka `/register`, isi NIK `3171045505920002`, No. KK `3171040409950001`, nama `Siti Aminah`, lalu pilih username.
 
-### 4. Membuka Data Langsung di phpMyAdmin
+### 4. Mengirim Email (reset password)
+Default `MAIL_MAILER=log` (email ditulis ke `storage/logs/laravel.log`). Untuk email sungguhan, isi `.env`, contoh Gmail (gunakan *App Password*):
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=akun@gmail.com
+MAIL_PASSWORD=app-password-16-karakter
+MAIL_FROM_ADDRESS=akun@gmail.com
+```
+
+### 5. Membuka Data Langsung di phpMyAdmin
 Setiap aksi CRUD di UI/API langsung ditulis ke MySQL. Buka `http://localhost/phpmyadmin` â†’ database `layanan_publik_warga` â†’ tabel `users`, `citizens`, `letters`, `finance_transactions`, `announcements`, `notifications`, `audit_logs`, dst. Halaman akan menampilkan perubahan tanpa perlu cache apa pun.
 
 ---
@@ -616,10 +629,10 @@ php artisan test --compact
 
 ### Bukti Hasil Pengujian Terkini:
 ```text
-   Tests:    178 passed (876 assertions)
+   Tests:    185 passed (941 assertions)
    Status:   100% OK
 ```
-Cakupan baru: registrasi (NIK/KK/nama/username unik), lupa & reset password, akses per peran (3 tingkat), CRUD `/api/v1/manage/*`, alur surat 2-tier + notifikasi, buku kas, manajemen pengguna, dan PWA (manifest, service worker, offline).
+Cakupan baru: iuran, lampiran & foto, unduh PDF, email reset, penguncian login, registrasi (NIK/KK/nama/username unik), lupa & reset password, akses per peran (3 tingkat), CRUD `/api/v1/manage/*`, alur surat 2-tier + notifikasi, buku kas, manajemen pengguna, dan PWA (manifest, service worker, offline).
 
 ---
 
