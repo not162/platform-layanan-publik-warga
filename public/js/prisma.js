@@ -212,9 +212,24 @@
     window.addEventListener('online', () => P.toast('Kembali online', 'Menyegarkan data…', 'success', 2500));
   };
 
+  /* ---------- Splash: tampil sekali per sesi browser, durasi bisa diatur (ms) ---------- */
+  P.SPLASH_MS = 1500;
+  P.splash = () => {
+    const el = document.getElementById('splash');
+    if (!el || document.documentElement.classList.contains('no-splash')) return;
+    try { sessionStorage.setItem('prisma-splash', '1'); } catch (e) { /* abaikan */ }
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ms = reduce ? Math.min(P.SPLASH_MS, 300) : P.SPLASH_MS;
+    const hide = () => { el.classList.add('hide'); setTimeout(() => el.remove(), 400); };
+    const start = performance.now();
+    const done = () => setTimeout(hide, Math.max(0, ms - (performance.now() - start)));
+    document.readyState === 'complete' ? done() : window.addEventListener('load', done, { once: true });
+    setTimeout(hide, ms + 4000); // pengaman bila 'load' tertahan
+  };
+
   /* ---------- Logout (form POST bawaan) ---------- */
   document.addEventListener('DOMContentLoaded', () => {
-    P.theme(); P.drawer(); P.pwa(); P.notif.init();
+    P.splash(); P.theme(); P.drawer(); P.pwa(); P.notif.init();
     $$('[data-pw-toggle]').forEach((b) => b.addEventListener('click', () => {
       const i = b.parentElement.querySelector('input'); const show = i.type === 'password'; i.type = show ? 'text' : 'password';
       b.innerHTML = P.icon(show ? 'eye-off' : 'eye');

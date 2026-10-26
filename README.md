@@ -1,4 +1,8 @@
+<p align="center"><img src="public/images/prisma-icon.svg" alt="Logo PRISMA RT 04" width="112"></p>
+
 # Platform Layanan Publik Warga PRISMA RT 04 (Laravel 13)
+
+> **Urus surat, cek kas, lapor masalah — semua dari HP.**
 
 > **PRISMA RT 04 Kemayoran**: Platform Realisasi Informasi, Sistem Manajemen & Administrasi Warga Berbasis Web & Progressive Web App (PWA).  
 > **Visual Reference:** [https://prisma-rose.vercel.app/](https://prisma-rose.vercel.app/)  
@@ -23,7 +27,21 @@ php artisan migrate --seed
 php artisan serve               # buka http://localhost:8000
 ```
 
-Di `/login` klik salah satu chip **akun demo** (Superadmin, Admin, Ketua RT, Sekretaris, Bendahara, Keamanan, Warga; password `password`).
+### Akun Default (khusus lokal / testing)
+
+Dibuat otomatis oleh `php artisan migrate --seed` (**tidak** dibuat di `APP_ENV=production`). Masuk di `/login` dengan **username** dan password berikut:
+
+| Peran | Tingkat | Username | Password |
+|---|---|---|---|
+| Superadmin | superadmin | `superadmin` | `password` |
+| Admin | admin | `admin` | `password` |
+| Ketua RT (Raden Erry Adu Sundaru) | admin | `ketua_rt` | `password` |
+| Sekretaris (Melly) | admin | `sekretaris` | `password` |
+| Bendahara (Retno Fellyanti) | admin | `bendahara` | `password` |
+| Petugas Keamanan | admin | `keamanan` | `password` |
+| Warga (Budi Santoso) | user | `warga` | `password` |
+
+> ⚠️ Ganti atau hapus akun-akun ini sebelum dipakai sungguhan. Untuk production buat Superadmin dengan `php artisan app:create-superadmin` (lihat bagian Deploy).
 Pengaturan MySQL ada di `.env` (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`); zona waktu default `Asia/Jakarta`.
 
 ### Peta Singkat: apa ada di mana?
@@ -53,8 +71,75 @@ Pengaturan MySQL ada di `.env` (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`); zo
 
 ---
 
+## Alur Aplikasi
+
+### 1. Alur pengguna secara keseluruhan
+```mermaid
+flowchart TD
+    A([Warga membuka aplikasi / PWA]) --> B[Layar pembuka PRISMA RT 04]
+    B --> C[Beranda publik: kas, pengumuman, agenda, kontak]
+    C --> D{Sudah punya akun?}
+    D -- Belum --> E[Daftar: NIK, No. KK, Nama, Username, Password]
+    E --> F{NIK, nama+KK, username belum terdaftar?}
+    F -- Tidak --> E
+    F -- Ya --> G[Akun dibuat: warga lama langsung aktif, warga baru menunggu verifikasi Sekretaris]
+    D -- Sudah --> H[Masuk dengan username + password]
+    H --> I{Lupa password?}
+    I -- Ya --> J[Isi username + NIK + No. KK] --> K[Tautan reset dikirim ke email, berlaku 20 menit] --> H
+    G --> L
+    H --> L[Dashboard sesuai peran]
+    L --> M{Peran}
+    M -- Warga --> N[Ajukan surat, pengaduan, laporan keamanan, lihat iuran]
+    M -- Sekretaris --> O[Verifikasi surat dan pendaftar, kelola konten]
+    M -- Ketua RT --> P[Sahkan surat, pantau pengaduan dan kas]
+    M -- Bendahara --> Q[Catat kas dan iuran]
+    M -- Keamanan --> R[Tindak laporan keamanan, jadwal ronda]
+    M -- Admin / Superadmin --> S[Kelola pengguna, audit, pemodelan sistem]
+    N --> T[(MySQL)]
+    O --> T
+    P --> T
+    Q --> T
+    R --> T
+    S --> T
+    T --> U[Notifikasi real-time ke pihak terkait]
+    U --> L
+```
+
+### 2. Alur surat pengantar (2 tingkat)
+```mermaid
+flowchart LR
+    W[Warga isi permohonan + lampiran] --> A[Draft]
+    A -->|Ajukan| B[Diajukan]
+    B -->|Notifikasi ke Sekretaris| C{Sekretaris periksa berkas}
+    C -->|Lengkap| D[Terverifikasi]
+    C -->|Kurang| X[Ditolak + alasan]
+    D -->|Notifikasi ke Ketua RT| E{Ketua RT}
+    E -->|Setuju| F[Disahkan: nomor surat + QR keaslian]
+    E -->|Tidak| X
+    F --> G[Surat PDF/Word siap diunduh dengan kop RT 04 / RW 09]
+    X -->|Notifikasi alasan ke warga| W
+```
+
+### 3. Alur data real-time
+```mermaid
+sequenceDiagram
+    participant U as Browser / PWA
+    participant A as API /api/v1
+    participant D as MySQL
+    U->>A: POST/PATCH/DELETE (cookie sesi + CSRF)
+    A->>D: Simpan (transaksi, versi data, audit log)
+    A->>D: Buat notifikasi untuk pihak terkait
+    A-->>U: 200 OK
+    loop tiap 8-10 detik (berhenti saat tab tidak aktif)
+        U->>A: GET daftar / notifikasi (ETag)
+        A-->>U: Data terbaru atau 304
+    end
+```
+
+---
+
 ## Daftar Isi
-0. [Mulai Cepat](#mulai-cepat-3-langkah)
+0. [Mulai Cepat](#mulai-cepat-3-langkah) · [Alur Aplikasi](#alur-aplikasi)
 1. [Tentang Proyek](#tentang-proyek)
 2. [Identitas Komunitas & Referensi Desain](#identitas-komunitas--referensi-desain)
 3. [Arsitektur Sistem & Tech Stack](#arsitektur-sistem--tech-stack)
@@ -601,7 +686,7 @@ Buka browser di laptop Anda:
 ---
 
 ### 3. Pintasan Kredensial Pengujian Cepat
-Pada halaman `/login` (environment `local`) tersedia chip **Pintasan akun demo** satu klik: Superadmin, Admin, Ketua RT, Sekretaris, Bendahara, Keamanan, dan Warga (password `password`).
+Daftar akun default (username + password) ada di bagian **Mulai Cepat → Akun Default** di atas. Halaman login tidak lagi menampilkan pintasan akun apa pun.
 
 Untuk mencoba aktivasi akun dari master RT: buka `/register`, isi NIK `3171045505920002`, No. KK `3171040409950001`, nama `Siti Aminah`, lalu pilih username.
 

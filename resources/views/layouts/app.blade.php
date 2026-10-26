@@ -5,6 +5,7 @@
     @include('partials.head')
 </head>
 <body>
+@include('partials.splash')
 @include('partials.icons')
 @php
     $groups = collect($nav)->groupBy('group');
@@ -25,7 +26,7 @@
 
 <div class="shell">
     <aside class="sidebar" aria-label="Menu utama">
-        <a href="{{ route('home') }}" class="brand"><span class="brand-mark">P</span><span>PRISMA RT 04</span></a>
+        <a href="{{ route('home') }}" class="brand"><span class="brand-mark"><img src="{{ asset('images/prisma-mark.svg') }}" alt="" width="34" height="34"></span><span>PRISMA RT 04</span></a>
         {!! $menuHtml !!}
         <div class="side-user">
             <div class="avatar">@if ($avatarUrl)<img src="{{ $avatarUrl }}" alt="" width="38" height="38">@else{{ $initial }}@endif</div>
@@ -60,7 +61,7 @@
 </div>
 
 <template id="drawer-tpl">
-    <div class="brand" style="padding:.4rem .5rem .6rem"><span class="brand-mark">P</span><span>PRISMA RT 04</span>
+    <div class="brand" style="padding:.4rem .5rem .6rem"><span class="brand-mark"><img src="{{ asset('images/prisma-mark.svg') }}" alt="" width="34" height="34"></span><span>PRISMA RT 04</span>
         <button class="btn btn-ghost btn-icon btn-sm" data-close-drawer style="margin-left:auto">@include('partials.i', ['n' => 'x'])</button></div>
     <div class="side-user" style="margin:.2rem 0 .4rem">
         <div class="avatar">@if ($avatarUrl)<img src="{{ $avatarUrl }}" alt="" width="38" height="38">@else{{ $initial }}@endif</div>

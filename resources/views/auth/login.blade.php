@@ -32,26 +32,6 @@
 
         <div class="auth-foot">Belum punya akun? <a href="{{ route('register') }}">Daftar sebagai warga</a></div>
 
-        @if (app()->environment('local'))
-        <div class="alert info" style="margin-top:1.2rem;margin-bottom:0;display:block">
-            <b>Pintasan akun demo</b> (hanya lingkungan lokal, password: <code>password</code>)
-            <div class="demo-chips">
-                @foreach (['superadmin' => 'Superadmin', 'admin' => 'Admin', 'ketua_rt' => 'Ketua RT', 'sekretaris' => 'Sekretaris', 'bendahara' => 'Bendahara', 'keamanan' => 'Keamanan', 'warga' => 'Warga'] as $u => $l)
-                    <button type="button" class="chip" data-demo="{{ $u }}">{{ $l }}</button>
-                @endforeach
-            </div>
-        </div>
-        @endif
     </div>
 </div>
 @endsection
-
-@push('after')
-<script>
-document.querySelectorAll('[data-demo]').forEach(b => b.addEventListener('click', () => {
-    document.getElementById('login').value = b.dataset.demo;
-    document.getElementById('password').value = 'password';
-    document.getElementById('login-form').requestSubmit();
-}));
-</script>
-@endpush

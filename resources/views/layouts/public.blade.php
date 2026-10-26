@@ -5,6 +5,7 @@
     @include('partials.head')
 </head>
 <body>
+@include('partials.splash')
 @include('partials.icons')
 @php
     $links = [
@@ -19,7 +20,7 @@
     <div class="container">
         <button class="btn btn-icon btn-ghost only-mobile" data-open-drawer aria-label="Menu">@include('partials.i', ['n' => 'menu'])</button>
         <a href="{{ route('home') }}" class="brand" aria-label="PRISMA RT 04">
-            <span class="brand-mark">P</span><span>PRISMA RT 04</span>
+            <span class="brand-mark"><img src="{{ asset('images/prisma-mark.svg') }}" alt="" width="34" height="34"></span><span>PRISMA RT 04</span>
         </a>
         <nav class="navlinks" aria-label="Navigasi utama">
             @foreach ($links as $l)
@@ -40,7 +41,7 @@
 </header>
 
 <template id="drawer-tpl">
-    <div class="brand" style="padding:.4rem .5rem 1rem"><span class="brand-mark">P</span><span>PRISMA RT 04</span>
+    <div class="brand" style="padding:.4rem .5rem 1rem"><span class="brand-mark"><img src="{{ asset('images/prisma-mark.svg') }}" alt="" width="34" height="34"></span><span>PRISMA RT 04</span>
         <button class="btn btn-ghost btn-icon btn-sm" data-close-drawer style="margin-left:auto">@include('partials.i', ['n' => 'x'])</button></div>
     @foreach ($links as $l)
         <a class="nav-link" href="{{ url($l[1]) }}">@include('partials.i', ['n' => $l[2]]) {{ $l[0] }}</a>

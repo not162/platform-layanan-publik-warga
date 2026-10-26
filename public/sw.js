@@ -3,10 +3,10 @@
  * - Navigasi: network-first, fallback ke /offline
  * - /api, /login, /logout, dan semua request non-GET TIDAK pernah di-cache (data harus real-time & privat)
  */
-const VERSION = 'prisma-v3';
+const VERSION = 'prisma-v4';
 const STATIC_CACHE = `${VERSION}-static`;
 const OFFLINE_URL = '/offline';
-const PRECACHE = [OFFLINE_URL, '/css/prisma.css', '/js/prisma.js', '/images/prisma-icon.svg', '/icons/icon-192.png'];
+const PRECACHE = [OFFLINE_URL, '/css/prisma.css', '/js/prisma.js', '/images/prisma-icon.svg', '/images/prisma-mark.svg', '/icons/icon-192.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(STATIC_CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting()));

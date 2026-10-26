@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Logo PRISMA RT 04">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+  </defs>
+  <path d="M256 40 L440 108 V256 C440 368 360 436 256 476 C152 436 72 368 72 256 V108 Z" fill="url(#g)"/>
+  <path d="M256 150 L350 330 H162 Z" fill="#fff"/>
+  <path d="M256 214 L300 298 H212 Z" fill="url(#g)"/>
+</svg>

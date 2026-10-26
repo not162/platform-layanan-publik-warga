@@ -107,7 +107,7 @@ textarea.input { min-height: 96px; resize: vertical; }
 .topnav { position: sticky; top: 0; z-index: 50; height: var(--nav-h); background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
 .topnav .container { height: 100%; display: flex; align-items: center; gap: 1rem; }
 .brand { display: flex; align-items: center; gap: .6rem; font-weight: 800; letter-spacing: -.01em; white-space: nowrap; }
-.brand-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--grad); display: grid; place-items: center; color: #fff; font-weight: 800; box-shadow: 0 6px 16px rgba(37,99,235,.4); }
+.brand-mark { width: 34px; height: 34px; flex: none; display: grid; place-items: center; filter: drop-shadow(0 4px 10px rgba(37,99,235,.35)); } .brand-mark img { width: 100%; height: 100%; display: block; }
 .navlinks { display: flex; gap: .25rem; margin-inline: auto; }
 .navlinks a { padding: .45rem .85rem; border-radius: 10px; font-weight: 600; font-size: .88rem; color: var(--muted); }
 .navlinks a:hover, .navlinks a.active { color: var(--text); background: var(--card-2); }
@@ -310,3 +310,18 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: .88rem; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 @media print { .sidebar, .appbar, .bottom-nav, .toolbar { display: none !important; } }
+
+/* ---------- Splash / loader masuk ---------- */
+#splash { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; text-align: center; padding: 24px; background: radial-gradient(60% 50% at 50% 35%, rgba(37,99,235,.35), transparent 70%), var(--bg); transition: opacity .3s ease, visibility .3s; }
+#splash.hide { opacity: 0; visibility: hidden; }
+html.no-splash #splash { display: none; }
+.splash-in { display: grid; gap: .5rem; justify-items: center; max-width: 340px; animation: splash-pop .6s ease-out both; }
+.splash-in img { width: 96px; height: 96px; filter: drop-shadow(0 10px 28px rgba(37,99,235,.5)); animation: splash-float 2.4s ease-in-out infinite; }
+.splash-in b { font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; margin-top: .4rem; }
+.splash-sub { color: var(--muted); font-size: .82rem; font-weight: 600; }
+.splash-in p { text-wrap: balance; margin-top: .6rem; font-size: .95rem; color: var(--text); font-weight: 600; }
+.splash-in::after { content: ""; width: 120px; height: 4px; margin-top: 1.2rem; border-radius: 99px; background: linear-gradient(90deg, transparent, var(--primary-2), transparent); background-size: 200% 100%; animation: splash-bar 1.1s linear infinite; }
+@keyframes splash-pop { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+@keyframes splash-float { 50% { transform: translateY(-5px); } }
+@keyframes splash-bar { to { background-position: -200% 0; } }
+@media (display-mode: standalone) { body { overscroll-behavior-y: none; } .install-bar, [data-install] { display: none !important; } }

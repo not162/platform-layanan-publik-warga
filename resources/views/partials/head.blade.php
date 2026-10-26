@@ -12,8 +12,9 @@
 <meta name="apple-mobile-web-app-title" content="PRISMA RT 04">
 <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
 <link rel="icon" type="image/svg+xml" href="{{ asset('images/prisma-icon.svg') }}">
-<link rel="apple-touch-icon" href="{{ asset('icons/icon-192.png') }}">
+<link rel="apple-touch-icon" href="{{ asset('icons/apple-touch-icon.png') }}">
 <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
 <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800&display=swap" rel="stylesheet">
+<script>try{if(sessionStorage.getItem('prisma-splash')){document.documentElement.classList.add('no-splash')}}catch(e){}</script>
 <script>try{document.documentElement.dataset.theme=localStorage.getItem('prisma-theme')||'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script>
 <link rel="stylesheet" href="{{ asset('css/prisma.css') }}?v={{ filemtime(public_path('css/prisma.css')) }}">

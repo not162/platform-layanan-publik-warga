@@ -14,9 +14,9 @@ class PwaModuleTest extends TestCase
         $json = json_decode(file_get_contents(public_path('manifest.webmanifest')), true);
 
         $this->assertIsArray($json);
-        $this->assertSame('PRISMA RT 04 Kemayoran', $json['name']);
+        $this->assertSame('PRISMA RT 04 — Layanan Warga', $json['name']);
         $this->assertSame('standalone', $json['display']);
-        $this->assertSame('/dashboard', $json['start_url']);
+        $this->assertSame('/dashboard?source=pwa', $json['start_url']);
 
         $sizes = collect($json['icons'])->pluck('sizes')->all();
         $this->assertContains('192x192', $sizes);
@@ -35,6 +35,19 @@ class PwaModuleTest extends TestCase
         $this->assertStringContainsString('/offline', $content);
         $this->assertStringContainsString('api|sanctum|login|logout', $content);
         $this->assertStringContainsString("request.method !== 'GET'", $content);
+    }
+
+    public function test_brand_logo_splash_and_pwa_icons_are_present_and_demo_shortcuts_are_gone(): void
+    {
+        foreach (['images/prisma-mark.svg', 'images/prisma-icon.svg', 'icons/apple-touch-icon.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'] as $file) {
+            $this->assertFileExists(public_path($file));
+        }
+
+        $home = $this->get('/')->assertOk()->assertSee('id="splash"', false)->assertSee('Urus surat, cek kas, lapor masalah', false)->assertSee('prisma-mark.svg', false);
+        $this->assertStringContainsString('apple-touch-icon.png', $home->getContent());
+
+        $this->get('/login')->assertOk()->assertDontSee('Pintasan akun demo')->assertDontSee('data-demo', false)->assertDontSee('Superadmin');
+        $this->assertSame('standalone', json_decode(file_get_contents(public_path('manifest.webmanifest')), true)['display']);
     }
 
     public function test_offline_fallback_page_renders(): void
