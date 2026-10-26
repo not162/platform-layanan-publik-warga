@@ -212,19 +212,22 @@
     window.addEventListener('online', () => P.toast('Kembali online', 'Menyegarkan data…', 'success', 2500));
   };
 
-  /* ---------- Splash: tampil sekali per sesi browser, durasi bisa diatur (ms) ---------- */
-  P.SPLASH_MS = 1500;
+  /* ---------- Splash: logo dulu, slogan menyusul, lalu masuk ke beranda (tampil sekali per sesi) ---------- */
+  P.SPLASH_LOGO_MS = 8000;   // lama logo tampil sendirian sebelum slogan muncul
+  P.SPLASH_SLOGAN_MS = 2500; // lama slogan tampil sebelum masuk ke beranda
   P.splash = () => {
     const el = document.getElementById('splash');
     if (!el || document.documentElement.classList.contains('no-splash')) return;
     try { sessionStorage.setItem('prisma-splash', '1'); } catch (e) { /* abaikan */ }
     const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const ms = reduce ? Math.min(P.SPLASH_MS, 300) : P.SPLASH_MS;
-    const hide = () => { el.classList.add('hide'); setTimeout(() => el.remove(), 400); };
-    const start = performance.now();
-    const done = () => setTimeout(hide, Math.max(0, ms - (performance.now() - start)));
-    document.readyState === 'complete' ? done() : window.addEventListener('load', done, { once: true });
-    setTimeout(hide, ms + 4000); // pengaman bila 'load' tertahan
+    const logoMs = reduce ? 800 : P.SPLASH_LOGO_MS;
+    const sloganMs = reduce ? 800 : P.SPLASH_SLOGAN_MS;
+    let closed = false; const timers = [];
+    const close = () => { if (closed) return; closed = true; timers.forEach(clearTimeout); el.classList.add('hide'); setTimeout(() => el.remove(), 400); };
+    timers.push(setTimeout(() => el.classList.add('show-slogan'), logoMs));
+    timers.push(setTimeout(close, logoMs + sloganMs));
+    document.getElementById('splash-skip')?.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => (e.key === 'Escape' || e.key === 'Enter') && close(), { once: true });
   };
 
   /* ---------- Logout (form POST bawaan) ---------- */

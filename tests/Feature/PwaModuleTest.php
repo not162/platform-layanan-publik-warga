@@ -43,7 +43,7 @@ class PwaModuleTest extends TestCase
             $this->assertFileExists(public_path($file));
         }
 
-        $home = $this->get('/')->assertOk()->assertSee('id="splash"', false)->assertSee('Urus surat, cek kas, lapor masalah', false)->assertSee('prisma-mark.svg', false);
+        $home = $this->get('/')->assertOk()->assertSee('id="splash"', false)->assertSee('Urus surat, cek kas, lapor masalah', false)->assertSee('prisma-mark.svg', false)->assertSee('splash-skip', false);
         $this->assertStringContainsString('apple-touch-icon.png', $home->getContent());
 
         $this->get('/login')->assertOk()->assertDontSee('Pintasan akun demo')->assertDontSee('data-demo', false)->assertDontSee('Superadmin');
