@@ -2,197 +2,214 @@
 
 namespace Tests\Feature;
 
-use App\Enums\UserRole;
 use App\Models\Citizen;
+use App\Models\FamilyCard;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class AuthSelfRegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_warga_can_self_register_even_if_nik_not_yet_in_database(): void
+    /**
+     * @param  array<string, string>  $override
+     * @return array<string, string>
+     */
+    protected function payload(array $override = []): array
     {
-        Storage::fake('local');
-        $file = UploadedFile::fake()->create('ktp_warga.jpg', 300, 'image/jpeg');
-
-        $payload = [
-            'nik' => '3171031605030002',
-            'name' => 'SWAN DARU TIRTA SANDHIKA',
-            'email' => 'obryanswan@gmail.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'ktp_file' => $file,
-            'notes' => 'Warga baru RT 01 No 15',
-        ];
-
-        $response = $this->postJson('/api/v1/register', $payload);
-
-        $response->assertStatus(201);
-        $response->assertJsonStructure([
-            'message',
-            'is_pending_verification',
-            'access_token',
-            'user' => ['id', 'name', 'email', 'role', 'citizen'],
-        ]);
-        $this->assertTrue($response->json('is_pending_verification'));
-
-        $this->assertDatabaseHas('users', [
-            'email' => 'obryanswan@gmail.com',
-            'role' => UserRole::WARGA->value,
-        ]);
-
-        $user = User::where('email', 'obryanswan@gmail.com')->first();
-        $this->assertNotNull($user);
-        $this->assertNotNull($user->warga_id);
-
-        $this->assertDatabaseHas('citizens', [
-            'id' => $user->warga_id,
-            'user_id' => $user->id,
-            'full_name' => 'SWAN DARU TIRTA SANDHIKA',
-            'email' => 'obryanswan@gmail.com',
-            'status_warga' => 'pending_verification',
-        ]);
+        return array_merge([
+            'nik' => '3171041203900001',
+            'no_kk' => '3171040409950001',
+            'name' => 'Budi Santoso',
+            'username' => 'budi.santoso',
+            'password' => 'rahasia123',
+            'password_confirmation' => 'rahasia123',
+        ], $override);
     }
 
-    public function test_pre_registered_citizen_links_to_new_user_on_registration(): void
+    protected function resetToken(array $identity): string
     {
-        $nik = '3171032001950001';
-        $citizen = Citizen::factory()->create([
-            'nik' => $nik,
-            'nik_hash' => hash('sha256', $nik),
-            'full_name' => 'Warga Lama Terdata',
-            'user_id' => null,
-            'status_warga' => 'tetap',
-        ]);
+        $res = $this->postJson('/api/v1/auth/forgot-password', $identity)->assertOk();
 
-        $payload = [
-            'nik' => $nik,
-            'name' => 'Warga Lama Terdata',
-            'email' => 'wargalama@gmail.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-        ];
+        return basename((string) parse_url($res->json('reset_url'), PHP_URL_PATH));
+    }
 
-        $response = $this->postJson('/api/v1/register', $payload);
+    public function test_new_resident_registers_as_pending_with_family_card_and_username(): void
+    {
+        $this->postJson('/api/v1/register', $this->payload())
+            ->assertCreated()
+            ->assertJsonPath('is_pending_verification', true)
+            ->assertJsonPath('user.username', 'budi.santoso')
+            ->assertJsonPath('user.tier', 'user');
 
-        $response->assertStatus(201);
-        $this->assertEquals($citizen->id, $response->json('user.citizen.id'));
-
-        $citizen->refresh();
+        $citizen = Citizen::query()->where('nik_hash', hash('sha256', '3171041203900001'))->firstOrFail();
+        $this->assertSame('pending_verification', $citizen->status_warga);
+        $this->assertSame('3171040409950001', $citizen->familyCard->no_kk);
         $this->assertNotNull($citizen->user_id);
     }
 
-    public function test_duplicate_nik_registration_is_rejected(): void
+    public function test_same_nik_cannot_register_twice(): void
     {
-        $nik = '3171032001950002';
-        $existingUser = User::factory()->warga()->create();
+        $this->postJson('/api/v1/register', $this->payload())->assertCreated();
+
+        $this->postJson('/api/v1/register', $this->payload(['username' => 'budi.dua']))
+            ->assertStatus(422)->assertJsonValidationErrors('nik');
+    }
+
+    public function test_same_name_and_family_card_cannot_register_twice_even_with_other_nik_and_username(): void
+    {
+        $this->postJson('/api/v1/register', $this->payload())->assertCreated();
+
+        $this->postJson('/api/v1/register', $this->payload([
+            'nik' => '3171041203900099', 'username' => 'budi.lain', 'name' => '  budi   SANTOSO ',
+        ]))->assertStatus(422)->assertJsonValidationErrors('name');
+
+        $this->assertSame(1, Citizen::query()->count());
+    }
+
+    public function test_same_name_in_different_family_card_is_allowed(): void
+    {
+        $this->postJson('/api/v1/register', $this->payload())->assertCreated();
+
+        $this->postJson('/api/v1/register', $this->payload([
+            'nik' => '3171041203900002', 'no_kk' => '3171040409950002', 'username' => 'budi.kk2',
+        ]))->assertCreated();
+    }
+
+    public function test_username_must_be_unique_case_insensitively(): void
+    {
+        $this->postJson('/api/v1/register', $this->payload())->assertCreated();
+
+        $this->postJson('/api/v1/register', $this->payload([
+            'nik' => '3171041203900002', 'no_kk' => '3171040409950002', 'username' => 'BUDI.SANTOSO',
+        ]))->assertStatus(422)->assertJsonValidationErrors('username');
+    }
+
+    public function test_two_residents_may_choose_the_same_password(): void
+    {
+        $this->postJson('/api/v1/register', $this->payload())->assertCreated();
+
+        $this->postJson('/api/v1/register', $this->payload([
+            'nik' => '3171041203900002', 'no_kk' => '3171040409950002', 'name' => 'Ani Wijaya', 'username' => 'ani.wijaya',
+        ]))->assertCreated();
+    }
+
+    public function test_pre_registered_citizen_activates_account_and_name_is_locked(): void
+    {
+        $card = FamilyCard::factory()->create(['no_kk' => '3171040409950001', 'no_kk_hash' => hash('sha256', '3171040409950001')]);
         Citizen::factory()->create([
-            'nik' => $nik,
-            'nik_hash' => hash('sha256', $nik),
-            'user_id' => $existingUser->id,
+            'family_card_id' => $card->id, 'nik' => '3171041203900001', 'nik_hash' => hash('sha256', '3171041203900001'),
+            'full_name' => 'Budi Santoso', 'status_warga' => 'tetap',
         ]);
 
-        $payload = [
-            'nik' => $nik,
-            'name' => 'Orang Lain',
-            'email' => 'oranglain@gmail.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-        ];
+        $this->postJson('/api/v1/register', $this->payload(['name' => 'Nama Lain']))
+            ->assertStatus(422)->assertJsonValidationErrors('name');
 
-        $response = $this->postJson('/api/v1/register', $payload);
+        $this->postJson('/api/v1/register', $this->payload())
+            ->assertCreated()->assertJsonPath('is_pending_verification', false);
 
-        $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['nik']);
+        $this->assertSame(1, Citizen::query()->count());
     }
 
-    public function test_check_citizen_endpoint_detects_already_registered_nik_and_hides_button(): void
+    public function test_pre_registered_citizen_requires_matching_family_card(): void
     {
-        $nik = '3171032001950003';
-        $user = User::factory()->warga()->create();
+        $card = FamilyCard::factory()->create(['no_kk' => '3171040409950001', 'no_kk_hash' => hash('sha256', '3171040409950001')]);
         Citizen::factory()->create([
-            'nik' => $nik,
-            'nik_hash' => hash('sha256', $nik),
-            'full_name' => 'Warga Punya Akun',
-            'user_id' => $user->id,
+            'family_card_id' => $card->id, 'nik' => '3171041203900001', 'nik_hash' => hash('sha256', '3171041203900001'), 'full_name' => 'Budi Santoso',
         ]);
 
-        $response = $this->postJson('/api/v1/auth/check-citizen', [
-            'nik' => $nik,
-        ]);
-
-        $response->assertStatus(200);
-        $response->assertJsonPath('status', 'ALREADY_REGISTERED');
-        $response->assertJsonPath('has_account', true);
-        $response->assertJsonPath('allow_new_application', false); // Button ajukan warga baru TIDAK MUNCUL
-        $this->assertStringContainsString('SUDAH TERDAFTAR', $response->json('message'));
+        $this->postJson('/api/v1/register', $this->payload(['no_kk' => '3171040409950777']))
+            ->assertStatus(422)->assertJsonValidationErrors('no_kk');
     }
 
-    public function test_check_citizen_endpoint_detects_pre_registered_citizen_in_rt_master(): void
+    public function test_database_enforces_unique_name_per_family_card(): void
     {
-        $nik = '3171032001950004';
+        $card = FamilyCard::factory()->create();
+        Citizen::factory()->create(['family_card_id' => $card->id, 'full_name' => 'Siti Aminah']);
+
+        $this->expectException(QueryException::class);
+        DB::table('citizens')->insert([
+            'family_card_id' => $card->id, 'nik' => 'x', 'nik_hash' => hash('sha256', 'dup'), 'full_name' => 'siti aminah',
+            'full_name_key' => 'siti aminah', 'gender' => 'Perempuan', 'status_warga' => 'tetap', 'created_at' => now(), 'updated_at' => now(),
+        ]);
+    }
+
+    public function test_check_endpoint_reports_each_field_in_real_time(): void
+    {
+        $this->postJson('/api/v1/register', $this->payload())->assertCreated();
+
+        $this->postJson('/api/v1/auth/check-citizen', $this->payload())->assertOk()
+            ->assertJsonPath('status', 'ALREADY_REGISTERED')
+            ->assertJsonPath('checks.nik.ok', false)
+            ->assertJsonPath('checks.name.ok', false)
+            ->assertJsonPath('checks.username.ok', false);
+
+        $this->postJson('/api/v1/auth/check-citizen', ['username' => 'baru.sekali'])
+            ->assertJsonPath('checks.username.ok', true);
+    }
+
+    public function test_forgot_password_requires_matching_identity_then_resets_password(): void
+    {
+        $this->postJson('/api/v1/register', $this->payload())->assertCreated();
+        $identity = ['username' => 'budi.santoso', 'nik' => '3171041203900001', 'no_kk' => '3171040409950001'];
+
+        $this->postJson('/api/v1/auth/forgot-password', array_merge($identity, ['no_kk' => '3171040409950999']))->assertStatus(422);
+
+        $token = $this->resetToken($identity);
+        auth()->guard('web')->logout();
+        $this->get('/reset-password/'.$token)->assertOk()->assertSee('Buat password baru');
+
+        $new = ['token' => $token, 'password' => 'baruaman99', 'password_confirmation' => 'baruaman99'];
+        $this->postJson('/api/v1/auth/reset-password', $new)->assertOk();
+        $this->postJson('/api/v1/auth/reset-password', $new)->assertStatus(422);
+
+        $this->post('/login', ['login' => 'budi.santoso', 'password' => 'baruaman99'])->assertRedirect('/dashboard');
+    }
+
+    public function test_expired_reset_token_is_rejected(): void
+    {
+        $this->postJson('/api/v1/register', $this->payload())->assertCreated();
+        $token = $this->resetToken(['username' => 'budi.santoso', 'nik' => '3171041203900001', 'no_kk' => '3171040409950001']);
+
+        DB::table('password_reset_requests')->update(['expires_at' => now()->subMinute()]);
+
+        $this->postJson('/api/v1/auth/reset-password', ['token' => $token, 'password' => 'baruaman99', 'password_confirmation' => 'baruaman99'])
+            ->assertStatus(422)->assertJsonValidationErrors('token');
+    }
+
+    public function test_public_endpoints_never_reveal_a_residents_full_name(): void
+    {
+        $card = FamilyCard::factory()->create(['no_kk' => '3171040409950001', 'no_kk_hash' => hash('sha256', '3171040409950001')]);
         Citizen::factory()->create([
-            'nik' => $nik,
-            'nik_hash' => hash('sha256', $nik),
-            'full_name' => 'Warga Belum Aktivasi',
-            'user_id' => null,
-            'status_warga' => 'tetap',
+            'family_card_id' => $card->id, 'nik' => '3171041203900001', 'nik_hash' => hash('sha256', '3171041203900001'), 'full_name' => 'Siti Aminah',
         ]);
 
-        $response = $this->postJson('/api/v1/auth/check-citizen', [
-            'nik' => $nik,
-        ]);
+        $check = $this->postJson('/api/v1/auth/check-citizen', ['nik' => '3171041203900001'])->assertOk();
+        $this->assertStringNotContainsString('Siti Aminah', $check->getContent());
+        $check->assertJsonPath('registered_name', 'S*** A*****');
 
-        $response->assertStatus(200);
-        $response->assertJsonPath('status', 'PRE_REGISTERED_RT');
-        $response->assertJsonPath('has_account', false);
-        $response->assertJsonPath('allow_new_application', false); // Button ajukan warga baru TIDAK MUNCUL
-        $response->assertJsonPath('registered_name', 'Warga Belum Aktivasi');
+        $wrong = $this->postJson('/api/v1/register', $this->payload(['name' => 'Orang Lain']))->assertStatus(422);
+        $this->assertStringNotContainsString('Siti', $wrong->getContent());
     }
 
-    public function test_check_citizen_endpoint_detects_not_found_nik_and_allows_new_application(): void
+    public function test_successful_login_is_written_to_audit_log(): void
     {
-        $response = $this->postJson('/api/v1/auth/check-citizen', [
-            'nik' => '3171039999990001',
-        ]);
+        User::factory()->warga()->create(['username' => 'auditme', 'password' => 'password123']);
 
-        $response->assertStatus(200);
-        $response->assertJsonPath('status', 'NOT_FOUND');
-        $response->assertJsonPath('allow_new_application', true); // Button ajukan warga baru MUNCUL
+        $this->post('/login', ['login' => 'auditme', 'password' => 'password123'])->assertRedirect('/dashboard');
+
+        $this->assertDatabaseHas('audit_logs', ['action' => 'auth.login']);
+        $this->assertDatabaseCount('personal_access_tokens', 0);
     }
 
-    public function test_check_citizen_endpoint_detects_similar_names_in_rt_database(): void
+    public function test_staff_accounts_cannot_use_self_service_password_reset(): void
     {
-        Citizen::factory()->create([
-            'nik' => '3171031111110001',
-            'nik_hash' => hash('sha256', '3171031111110001'),
-            'full_name' => 'Bambang Pamungkas',
-        ]);
+        User::factory()->ketuaRt()->create(['username' => 'ketua_rt']);
 
-        $response = $this->postJson('/api/v1/auth/check-citizen', [
-            'name' => 'Bambang',
-        ]);
-
-        $response->assertStatus(200);
-        $response->assertJsonCount(1, 'similar_citizens');
-        $this->assertEquals('Bambang Pamungkas', $response->json('similar_citizens.0.name'));
-    }
-
-    public function test_admin_can_verify_pending_citizen_application(): void
-    {
-        $sekretaris = User::factory()->sekretaris()->create();
-        $citizen = Citizen::factory()->create([
-            'status_warga' => 'pending_verification',
-        ]);
-
-        $response = $this->actingAs($sekretaris)->postJson("/api/v1/admin/citizens/{$citizen->id}/verify");
-
-        $response->assertStatus(200);
-        $citizen->refresh();
-        $this->assertEquals('tetap', $citizen->status_warga);
+        $this->postJson('/api/v1/auth/forgot-password', ['username' => 'ketua_rt', 'nik' => '3171041203900001', 'no_kk' => '3171040409950001'])
+            ->assertStatus(422);
     }
 }

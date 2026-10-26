@@ -18,6 +18,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'role',
@@ -61,6 +62,33 @@ class User extends Authenticatable
     public function permissions(): HasMany
     {
         return $this->hasMany(AdminPermission::class, 'user_id');
+    }
+
+    public function tier(): string
+    {
+        return $this->role->tier();
+    }
+
+    /**
+     * Normalise a login identifier (username, email, or phone).
+     */
+    public static function findByLogin(string $login): ?self
+    {
+        $login = trim($login);
+        if ($login === '') {
+            return null;
+        }
+
+        $user = static::query()
+            ->where('username', $login)
+            ->orWhere('email', $login)
+            ->first();
+
+        if (! $user && ctype_digit(ltrim($login, '+'))) {
+            $user = Citizen::query()->where('phone', $login)->first()?->user;
+        }
+
+        return $user;
     }
 
     public function isSuperadmin(): bool
@@ -120,6 +148,25 @@ class User extends Authenticatable
 
         // Default role permissions matrix based on normalized singular resource names
         $rolePermissions = match ($this->role) {
+            UserRole::ADMIN => [
+                'user.manage',
+                'citizen.read',
+                'citizen.manage',
+                'citizens.manage',
+                'letter.read',
+                'complaint.read',
+                'complaint.manage',
+                'security.read',
+                'announcement.manage',
+                'announcements.manage',
+                'event.manage',
+                'round_schedule.manage',
+                'emergency.manage',
+                'officer.manage',
+                'audit.read',
+                'finance.transaction.read',
+                'finance.read',
+            ],
             UserRole::BENDAHARA => [
                 // Canonical Finance Permissions
                 'finance.transaction.read',
@@ -181,6 +228,7 @@ class User extends Authenticatable
                 'letter.complete',
                 'letter.template.manage',
                 'letters.manage',
+                'officer.manage',
                 'complaint.read',
                 'complaint.manage',
                 'complaints.manage',

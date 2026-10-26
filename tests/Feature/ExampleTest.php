@@ -24,7 +24,7 @@ class ExampleTest extends TestCase
         $response = $this->get('/login');
 
         $response->assertStatus(200);
-        $response->assertSee('Layanan Publik Warga');
+        $response->assertSee('Masuk ke PRISMA')->assertSee('Lupa password?');
     }
 
     public function test_register_page_returns_successful_response(): void
@@ -32,6 +32,6 @@ class ExampleTest extends TestCase
         $response = $this->get('/register');
 
         $response->assertStatus(200);
-        $response->assertSee('Pendaftaran Warga');
+        $response->assertSee('Daftar Warga')->assertSee('No. Kartu Keluarga')->assertSee('Username');
     }
 }

@@ -1,43 +1,35 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\Citizen\ProfileController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AppController;
 use App\Http\Controllers\FinanceTransactionController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
-Route::get('/offline', function () {
-    return view('offline');
-})->name('offline');
+Route::get('/offline', fn () => view('offline'))->name('offline');
 
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
+// -----------------------------------------------------------------
+// Autentikasi (tamu)
+// -----------------------------------------------------------------
+Route::middleware('guest')->group(function () {
+    Route::get('/login', fn () => view('auth.login'))->name('login');
+    Route::get('/register', fn () => view('auth.register'))->name('register');
+    Route::get('/forgot-password', fn () => view('auth.forgot'))->name('password.request');
+    Route::get('/reset-password/{token}', fn (string $token) => view('auth.reset', ['token' => $token]))->name('password.reset');
+});
 
-Route::get('/login', function () {
-    if (auth()->guard('web')->check()) {
-        return redirect()->route('dashboard');
-    }
-
-    return view('auth.login');
-})->name('login');
-Route::post('/login', [AuthController::class, 'webLogin'])->name('login.post');
+Route::post('/login', [AuthController::class, 'webLogin'])->name('login.post')->middleware('throttle:20,1');
 Route::post('/logout', [AuthController::class, 'webLogout'])->name('logout');
 
+// -----------------------------------------------------------------
+// Aplikasi (wajib login) — satu shell, halaman diatur per peran
+// -----------------------------------------------------------------
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/profile', [DashboardController::class, 'profile'])->name('profile');
-    Route::patch('/dashboard/profile', [ProfileController::class, 'updateWeb'])->name('profile.update');
-    Route::post('/dashboard/profile/photo', [DashboardController::class, 'updatePhoto'])->name('profile.photo.update');
-
-    // Dashboard Quick Actions (Letters & Reports)
-    Route::post('/dashboard/letters/{id}/verify', [DashboardController::class, 'verifyLetter'])->name('dashboard.letters.verify');
-    Route::post('/dashboard/letters/{id}/approve', [DashboardController::class, 'approveLetter'])->name('dashboard.letters.approve');
-    Route::post('/dashboard/letters/{id}/reject', [DashboardController::class, 'rejectLetter'])->name('dashboard.letters.reject');
-    Route::post('/dashboard/finance/reports/{id}/approve', [DashboardController::class, 'approveFinancialReport'])->name('dashboard.finance.reports.approve');
+    Route::get('/dashboard', [AppController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard/profile', [AppController::class, 'profile'])->name('profile');
+    Route::get('/app/{page}', [AppController::class, 'page'])->name('app.page');
 
     Route::get('/dashboard/finance/reports/monthly', [FinanceTransactionController::class, 'downloadMonthlyReport'])->name('finance.report.monthly');
     Route::get('/dashboard/finance/reports/citizen-dues', [FinanceTransactionController::class, 'downloadCitizenDuesReport'])->name('finance.report.citizen-dues');
@@ -47,26 +39,17 @@ Route::middleware('auth')->group(function () {
 });
 
 // -----------------------------------------------------------------
-// OpenAPI 3.1 & Interactive Swagger UI Documentation
+// OpenAPI 3.1 & Swagger UI
 // -----------------------------------------------------------------
 Route::get('/docs/openapi.yaml', function () {
     $path = file_exists(base_path('docs/api_spec/openapi.yaml'))
         ? base_path('docs/api_spec/openapi.yaml')
         : base_path('docs/openapi.yaml');
 
-    if (! file_exists($path)) {
-        abort(404, 'Spesifikasi OpenAPI tidak ditemukan.');
-    }
+    abort_unless(file_exists($path), 404, 'Spesifikasi OpenAPI tidak ditemukan.');
 
-    return response(file_get_contents($path), 200, [
-        'Content-Type' => 'text/yaml; charset=UTF-8',
-    ]);
+    return response(file_get_contents($path), 200, ['Content-Type' => 'text/yaml; charset=UTF-8']);
 })->name('docs.openapi');
 
-Route::get('/docs/api', function () {
-    return view('docs.swagger');
-})->name('docs.swagger');
-
-Route::get('/api/documentation', function () {
-    return redirect()->route('docs.swagger');
-});
+Route::get('/docs/api', fn () => view('docs.swagger'))->name('docs.swagger');
+Route::get('/api/documentation', fn () => redirect()->route('docs.swagger'));

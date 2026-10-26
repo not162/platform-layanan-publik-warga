@@ -9,51 +9,46 @@ class PwaModuleTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_manifest_webmanifest_is_accessible_and_valid_json(): void
+    public function test_manifest_webmanifest_is_valid_and_installable(): void
     {
-        $path = public_path('manifest.webmanifest');
-        $this->assertFileExists($path);
-
-        $content = file_get_contents($path);
-        $json = json_decode($content, true);
+        $json = json_decode(file_get_contents(public_path('manifest.webmanifest')), true);
 
         $this->assertIsArray($json);
-        $this->assertEquals('Layanan Publik Warga', $json['name']);
-        $this->assertEquals('Portal Warga', $json['short_name']);
-        $this->assertEquals('standalone', $json['display']);
-        $this->assertEquals('#F8FAFC', $json['background_color']);
-        $this->assertEquals('#1B365D', $json['theme_color']);
-        $this->assertNotEmpty($json['icons']);
+        $this->assertSame('PRISMA RT 04 Kemayoran', $json['name']);
+        $this->assertSame('standalone', $json['display']);
+        $this->assertSame('/dashboard', $json['start_url']);
+
+        $sizes = collect($json['icons'])->pluck('sizes')->all();
+        $this->assertContains('192x192', $sizes);
+        $this->assertContains('512x512', $sizes);
+        $this->assertContains('maskable', collect($json['icons'])->pluck('purpose')->all());
+
+        foreach ($json['icons'] as $icon) {
+            $this->assertFileExists(public_path(ltrim($icon['src'], '/')));
+        }
     }
 
-    public function test_service_worker_file_is_accessible(): void
+    public function test_service_worker_never_caches_api_and_has_offline_fallback(): void
     {
-        $path = public_path('sw.js');
-        $this->assertFileExists($path);
+        $content = file_get_contents(public_path('sw.js'));
 
-        $content = file_get_contents($path);
-        $this->assertStringContainsString('lpw-static-v1', $content);
         $this->assertStringContainsString('/offline', $content);
-        // Ensure private APIs are excluded from caching
-        $this->assertStringContainsString("url.pathname.startsWith('/api/')", $content);
+        $this->assertStringContainsString('api|sanctum|login|logout', $content);
+        $this->assertStringContainsString("request.method !== 'GET'", $content);
     }
 
-    public function test_offline_fallback_page_returns_successful_response(): void
+    public function test_offline_fallback_page_renders(): void
     {
-        $response = $this->get('/offline');
-
-        $response->assertStatus(200)
-            ->assertSee('Anda Sedang Luring (Offline)', false)
-            ->assertSee('color-scheme', false);
+        $this->get('/offline')->assertOk()->assertSee('Anda sedang offline');
     }
 
-    public function test_home_page_includes_manifest_and_pwa_meta_tags(): void
+    public function test_public_pages_expose_pwa_meta_and_mobile_navigation(): void
     {
-        $response = $this->get('/');
-
-        $response->assertStatus(200)
+        $this->get('/')->assertOk()
             ->assertSee('manifest.webmanifest', false)
-            ->assertSee('name="theme-color" content="#1B365D"', false)
-            ->assertSee('name="color-scheme" content="light"', false);
+            ->assertSee('name="theme-color"', false)
+            ->assertSee('viewport-fit=cover', false)
+            ->assertSee('class="bottom-nav"', false)
+            ->assertSee('class="topnav"', false);
     }
 }

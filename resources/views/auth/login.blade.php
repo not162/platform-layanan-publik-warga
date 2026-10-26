@@ -1,284 +1,57 @@
-@extends('layouts.auth')
-
-@section('title', 'Masuk Portal')
+@extends('layouts.public')
+@section('title', 'Masuk')
 
 @section('content')
-<div x-data="loginForm()" :class="{ 'animate-shake': isShaking }">
-    <div class="mb-5 text-center">
-        <h2 class="text-xl font-bold text-slate-800 tracking-tight">Selamat Datang Kembali</h2>
-        <p class="text-xs text-slate-500 mt-1">Masuk ke portal layanan publik PRISMA RT 04</p>
-    </div>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <h1>Masuk ke PRISMA</h1>
+        <p class="sub">Gunakan username dan password akun Anda.</p>
 
-    <!-- Quick Demo Accounts Toggle for Evaluators & Testers -->
-    <div class="mb-5 bg-blue-50/70 border border-blue-200/80 rounded-xl p-3 text-xs" x-data="{ showDemo: false }">
-        <div class="flex items-center justify-between cursor-pointer" @click="showDemo = !showDemo">
-            <div class="flex items-center gap-2 text-blue-700 font-semibold">
-                <i data-lucide="key" class="w-3.5 h-3.5 text-blue-600"></i>
-                <span>Kredensial Akun Demo (Pengujian)</span>
-            </div>
-            <button type="button" class="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
-                <span x-text="showDemo ? 'Tutup' : 'Lihat Akun'"></span>
-                <i :data-lucide="showDemo ? 'chevron-up' : 'chevron-down'" class="w-3.5 h-3.5"></i>
-            </button>
-        </div>
-        <div x-show="showDemo" x-cloak class="mt-2.5 pt-2.5 border-t border-blue-200/60 space-y-1.5 text-[11px] text-slate-600">
-            <p class="text-slate-500 mb-1">Klik salah satu role untuk mengisi formulir otomatis:</p>
-            <div class="grid grid-cols-2 gap-1.5">
-                <button type="button" @click="fillDemo('ketua_rt@warga.local', 'password')" class="text-left px-2 py-1.5 rounded bg-white hover:bg-blue-100/60 border border-blue-100 transition-colors">
-                    <span class="font-bold text-slate-800 block">Ketua RT</span>
-                    <span class="text-slate-500 truncate block">ketua_rt@warga.local</span>
-                </button>
-                <button type="button" @click="fillDemo('sekretaris@warga.local', 'password')" class="text-left px-2 py-1.5 rounded bg-white hover:bg-blue-100/60 border border-blue-100 transition-colors">
-                    <span class="font-bold text-slate-800 block">Sekretaris</span>
-                    <span class="text-slate-500 truncate block">sekretaris@warga.local</span>
-                </button>
-                <button type="button" @click="fillDemo('bendahara@warga.local', 'password')" class="text-left px-2 py-1.5 rounded bg-white hover:bg-blue-100/60 border border-blue-100 transition-colors">
-                    <span class="font-bold text-slate-800 block">Bendahara</span>
-                    <span class="text-slate-500 truncate block">bendahara@warga.local</span>
-                </button>
-                <button type="button" @click="fillDemo('keamanan@warga.local', 'password')" class="text-left px-2 py-1.5 rounded bg-white hover:bg-blue-100/60 border border-blue-100 transition-colors">
-                    <span class="font-bold text-slate-800 block">Keamanan</span>
-                    <span class="text-slate-500 truncate block">keamanan@warga.local</span>
-                </button>
-            </div>
-            <div class="text-[10px] text-slate-400 text-center pt-1">
-                Password default seluruh akun: <code class="font-mono text-blue-700 bg-white px-1 py-0.5 rounded border border-blue-200">password</code>
-            </div>
-        </div>
-    </div>
+        @if (session('status'))<div class="alert success">@include('partials.i', ['n' => 'check-circle']) {{ session('status') }}</div>@endif
+        @if ($errors->any())<div class="alert danger">@include('partials.i', ['n' => 'alert']) {{ $errors->first() }}</div>@endif
 
-    <!-- Animated Error/Success Notification Alert -->
-    <template x-if="message">
-        <div x-show="message" 
-             x-transition:enter="transition ease-out duration-300 transform"
-             x-transition:enter-start="-translate-y-2 opacity-0 scale-95"
-             x-transition:enter-end="translate-y-0 opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             :class="isError ? 'bg-rose-50 text-rose-800 border-rose-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'" 
-             class="p-3 mb-5 rounded-xl text-xs border flex items-start justify-between gap-3 shadow-sm animate-slide-down">
-            <div class="flex items-start gap-2.5">
-                <div :class="isError ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'" class="p-1 rounded-lg shrink-0 mt-0.5">
-                    <i :data-lucide="isError ? 'shield-alert' : 'check-circle-2'" class="w-4 h-4"></i>
-                </div>
-                <div>
-                    <h4 class="font-bold uppercase tracking-wider text-[11px]" x-text="isError ? 'Autentikasi Gagal' : 'Berhasil'"></h4>
-                    <p x-text="message" class="text-xs leading-relaxed opacity-90 mt-0.5"></p>
+        <form method="POST" action="{{ route('login.post') }}" id="login-form">
+            @csrf
+            <div class="field">
+                <label for="login">Username atau email</label>
+                <input class="input @error('login') invalid @enderror" id="login" name="login" value="{{ old('login') }}" autocomplete="username" required autofocus>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <div class="pw">
+                    <input class="input" id="password" name="password" type="password" autocomplete="current-password" required>
+                    <button type="button" data-pw-toggle aria-label="Tampilkan password">@include('partials.i', ['n' => 'eye'])</button>
                 </div>
             </div>
-            <button type="button" @click="message = null" class="text-slate-400 hover:text-slate-600 transition-colors shrink-0 p-1">
-                <i data-lucide="x" class="w-3.5 h-3.5"></i>
-            </button>
-        </div>
-    </template>
-
-    <form method="POST" action="{{ route('login.post') }}" @submit.prevent="submit" class="space-y-4">
-        @csrf
-        
-        <!-- Email / No Telepon -->
-        <div>
-            <label for="email" class="block text-xs font-semibold text-slate-700 mb-1.5">Alamat Email / No. WhatsApp</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="mail" :class="(errors.email || (isError && !errors.password)) ? 'text-rose-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
-                </div>
-                <input type="text" 
-                       name="email"
-                       id="email"
-                       x-ref="emailInput"
-                       x-model="form.email" 
-                       value="{{ old('email') }}"
-                       :class="(errors.email || (isError && !errors.password)) ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-200 ring-2 ring-rose-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
-                       class="block w-full pl-10 pr-10 py-2.5 border rounded-xl focus:ring-2 sm:text-xs text-slate-900 transition-all placeholder:text-slate-400" 
-                       placeholder="nama@email.com atau 081234567890" 
-                       required>
-                
-                <template x-if="errors.email || (isError && !errors.password)">
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-rose-500">
-                        <i data-lucide="alert-circle" class="h-4 w-4"></i>
-                    </div>
-                </template>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem">
+                <label class="check"><input type="checkbox" name="remember" value="1"> Ingat saya</label>
+                <a class="link" href="{{ route('password.request') }}">Lupa password?</a>
             </div>
-            <p class="mt-1 text-xs text-rose-600 flex items-center gap-1 font-medium" x-show="errors.email">
-                <span x-text="errors.email ? errors.email[0] : ''"></span>
-            </p>
-        </div>
+            <button class="btn btn-primary btn-block" type="submit">Masuk</button>
+        </form>
 
-        <!-- Password -->
-        <div>
-            <label for="password" class="block text-xs font-semibold text-slate-700 mb-1.5">Kata Sandi</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="lock" :class="(errors.password || isError) ? 'text-rose-500' : 'text-slate-400'" class="h-4 w-4 transition-colors"></i>
-                </div>
-                <input :type="showPassword ? 'text' : 'password'" 
-                       name="password"
-                       id="password"
-                       x-ref="passwordInput"
-                       x-model="form.password" 
-                       :class="(errors.password || isError) ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-200 ring-2 ring-rose-50 animate-pulse-error' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'"
-                       class="block w-full pl-10 pr-10 py-2.5 border rounded-xl focus:ring-2 sm:text-xs text-slate-900 transition-all placeholder:text-slate-400" 
-                       placeholder="••••••••" 
-                       required>
-                
-                <button type="button" 
-                        @click="showPassword = !showPassword; setTimeout(() => lucide.createIcons(), 10);" 
-                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
-                    <i :data-lucide="showPassword ? 'eye-off' : 'eye'" class="h-4 w-4"></i>
-                </button>
-            </div>
-            <p class="mt-1 text-xs text-rose-600 font-medium" x-show="errors.password" x-text="errors.password ? errors.password[0] : ''"></p>
-        </div>
+        <div class="auth-foot">Belum punya akun? <a href="{{ route('register') }}">Daftar sebagai warga</a></div>
 
-        <div class="flex items-center justify-between pt-0.5">
-            <div class="flex items-center">
-                <input id="remember-me" name="remember" type="checkbox" value="1" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded cursor-pointer">
-                <label for="remember-me" class="ml-2 block text-xs text-slate-600 cursor-pointer">
-                    Ingat sesi saya
-                </label>
-            </div>
-
-            <div class="text-xs">
-                <a href="https://wa.me/6287872004448?text=Halo%20Admin%20PRISMA%20RT%2004,%20saya%20lupa%20kata%20sandi%20akun%20warga." target="_blank" rel="noopener noreferrer" class="font-medium text-blue-600 hover:text-blue-800 transition-colors">
-                    Lupa sandi?
-                </a>
+        @if (app()->environment('local'))
+        <div class="alert info" style="margin-top:1.2rem;margin-bottom:0;display:block">
+            <b>Pintasan akun demo</b> (hanya lingkungan lokal, password: <code>password</code>)
+            <div class="demo-chips">
+                @foreach (['superadmin' => 'Superadmin', 'admin' => 'Admin', 'ketua_rt' => 'Ketua RT', 'sekretaris' => 'Sekretaris', 'bendahara' => 'Bendahara', 'keamanan' => 'Keamanan', 'warga' => 'Warga'] as $u => $l)
+                    <button type="button" class="chip" data-demo="{{ $u }}">{{ $l }}</button>
+                @endforeach
             </div>
         </div>
-
-        <button type="submit" 
-                :disabled="isLoading" 
-                class="w-full mt-5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.99] disabled:from-blue-300 disabled:to-indigo-300 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition-all shadow-md shadow-blue-500/20 flex justify-center items-center gap-2 text-sm">
-            <template x-if="isLoading">
-                <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
-            </template>
-            <span x-text="isLoading ? 'Memeriksa kredensial...' : 'Masuk ke Portal'"></span>
-        </button>
-    </form>
-    
-    <div class="mt-6 pt-5 border-t border-slate-100 text-center text-xs text-slate-600">
-        Belum memiliki akun warga? 
-        <a href="{{ route('register') }}" class="font-bold text-blue-600 hover:text-blue-800 transition-colors inline-flex items-center gap-1">
-            <span>Daftar Warga</span>
-            <i data-lucide="arrow-right" class="w-3 h-3"></i>
-        </a>
+        @endif
     </div>
 </div>
+@endsection
 
-@push('scripts')
+@push('after')
 <script>
-document.addEventListener('alpine:init', () => {
-    Alpine.data('loginForm', () => ({
-        form: {
-            email: '',
-            password: '',
-        },
-        errors: {},
-        isLoading: false,
-        isShaking: false,
-        showPassword: false,
-        message: null,
-        isError: false,
-        
-        fillDemo(email, password) {
-            this.form.email = email;
-            this.form.password = password;
-            this.message = `Kredensial demo (${email}) diterapkan. Silakan klik Masuk.`;
-            this.isError = false;
-            setTimeout(() => {
-                if (window.lucide) lucide.createIcons();
-            }, 10);
-        },
-
-        triggerErrorAnimation(fieldToFocus = 'password') {
-            this.isShaking = true;
-            setTimeout(() => {
-                this.isShaking = false;
-            }, 500);
-
-            setTimeout(() => {
-                if (fieldToFocus === 'password' && this.$refs.passwordInput) {
-                    this.form.password = '';
-                    this.$refs.passwordInput.focus();
-                } else if (fieldToFocus === 'email' && this.$refs.emailInput) {
-                    this.$refs.emailInput.focus();
-                }
-                if (window.lucide) lucide.createIcons();
-            }, 50);
-        },
-
-        async submit() {
-            this.isLoading = true;
-            this.errors = {};
-            this.message = null;
-            this.isError = false;
-
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-            if (emailInput && (!this.form.email || this.form.email.trim() === '')) {
-                this.form.email = emailInput.value.trim();
-            }
-            if (passwordInput && (!this.form.password || this.form.password.trim() === '')) {
-                this.form.password = passwordInput.value;
-            }
-
-            try {
-                const response = await fetch('{{ route('login.post') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(this.form)
-                });
-                
-                const data = await response.json();
-
-                if (!response.ok) {
-                    this.isError = true;
-                    if (response.status === 422) {
-                        this.errors = data.errors || {};
-                        this.message = data.message || "Email atau kata sandi tidak cocok.";
-                    } else if (response.status === 401 || response.status === 403) {
-                        this.message = data.message || "Email atau kata sandi salah. Silakan coba lagi.";
-                    } else {
-                        this.message = data.message || "Terjadi kendala pada sistem. Silakan coba kembali.";
-                    }
-
-                    this.triggerErrorAnimation(this.errors.email ? 'email' : 'password');
-                } else {
-                    this.isError = false;
-                    this.message = "Kredensial sesuai. Mengalihkan ke portal dashboard...";
-                    
-                    if (data.access_token) {
-                        localStorage.setItem('auth_token', data.access_token);
-                    }
-                    if (data.user) {
-                        localStorage.setItem('user_profile', JSON.stringify(data.user));
-                    }
-                    
-                    setTimeout(() => {
-                        if (window.lucide) lucide.createIcons();
-                    }, 10);
-                    
-                    setTimeout(() => {
-                        window.location.href = data.redirect_url || '{{ route('dashboard') }}';
-                    }, 500);
-                }
-            } catch (error) {
-                this.isError = true;
-                this.message = "Gagal terhubung ke server. Periksa koneksi internet Anda.";
-                this.triggerErrorAnimation('password');
-            } finally {
-                this.isLoading = false;
-                setTimeout(() => {
-                    if (window.lucide) lucide.createIcons();
-                }, 20);
-            }
-        }
-    }))
-})
+document.querySelectorAll('[data-demo]').forEach(b => b.addEventListener('click', () => {
+    document.getElementById('login').value = b.dataset.demo;
+    document.getElementById('password').value = 'password';
+    document.getElementById('login-form').requestSubmit();
+}));
 </script>
 @endpush
-@endsection
