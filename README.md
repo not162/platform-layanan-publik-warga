@@ -36,6 +36,7 @@ Pengaturan MySQL ada di `.env` (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`); zo
 | Menu & halaman per peran | `app/Support/Navigation.php`, `app/Models/User.php` (`hasPermission`) |
 | Registrasi, login, lupa password | `app/Http/Controllers/Api/V1/AuthController.php`, `public/js/auth.js` |
 | Notifikasi | `app/Services/NotifyService.php`, `public/js/prisma.js` |
+| **Kop surat, wilayah, kontak sekretariat, nama Ketua/Sekretaris/Bendahara** | `config/rt.php` (atau variabel `RT_*` di `.env`) |
 | Diagram 5 unsur | `resources/views/app/system.blade.php` (menu *Pemodelan Sistem*) |
 
 ### Pemecahan Masalah
@@ -615,7 +616,20 @@ MAIL_PASSWORD=app-password-16-karakter
 MAIL_FROM_ADDRESS=akun@gmail.com
 ```
 
-### 5. Deploy ke Production
+### 5. Kop Surat & Pejabat Penandatangan
+Semua dokumen resmi (surat HTML/PDF/DOCX, laporan keamanan, laporan kas & rekap iuran) memakai satu sumber identitas di `config/rt.php`:
+
+| Data | Nilai default | Variabel `.env` |
+|---|---|---|
+| Wilayah | RT 04 / RW 09, Kelurahan Kemayoran, Kecamatan Kemayoran, Jakarta Pusat | `RT_NUMBER`, `RW_NUMBER`, `RT_KELURAHAN`, `RT_KECAMATAN`, `RT_KOTA` |
+| Kontak sekretariat | Gg. Bugis No. 95 · +62 878-7200-4448 · swandrax@gmail.com | `RT_ADDRESS`, `RT_PHONE`, `RT_EMAIL` |
+| Ketua RT (penandatangan surat) | Raden Erry Adu Sundaru | `RT_KETUA` |
+| Sekretaris (pemeriksa berkas) | Melly | `RT_SEKRETARIS` |
+| Bendahara (laporan kas) | Retno Fellyanti | `RT_BENDAHARA` |
+
+Nama penandatangan selalu mengikuti konfigurasi ini, bukan akun yang kebetulan menekan tombol *Sahkan*, sehingga surat tetap sah bila pengurus berganti akun. Jika jabatan berganti, cukup ubah `.env` lalu `php artisan config:clear`. Penomoran surat memakai `RT04`.
+
+### 6. Deploy ke Production
 Seeder demo **tidak berjalan** di `APP_ENV=production` (tidak ada akun/password bawaan). Urutan:
 ```bash
 # .env production: APP_ENV=production, APP_DEBUG=false, APP_URL=https://domain-anda, DB_*, SESSION_SECURE_COOKIE=true, MAIL_* (SMTP)
@@ -628,7 +642,7 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 ```
 Catatan: login web memakai cookie sesi + CSRF (host dari `APP_URL` otomatis terdaftar sebagai domain stateful Sanctum; domain tambahan: `SANCTUM_STATEFUL_DOMAINS`). Backup rutin database MySQL dan folder `storage/app/private` (KTP, lampiran). PWA mensyaratkan HTTPS.
 
-### 6. Membuka Data Langsung di phpMyAdmin
+### 7. Membuka Data Langsung di phpMyAdmin
 Setiap aksi CRUD di UI/API langsung ditulis ke MySQL. Buka `http://localhost/phpmyadmin` â†’ database `layanan_publik_warga` â†’ tabel `users`, `citizens`, `letters`, `finance_transactions`, `announcements`, `notifications`, `audit_logs`, dst. Halaman akan menampilkan perubahan tanpa perlu cache apa pun.
 
 ---
@@ -644,7 +658,7 @@ php artisan test --compact
 
 ### Bukti Hasil Pengujian Terkini:
 ```text
-   Tests:    190 passed (976 assertions)
+   Tests:    194 passed (1011 assertions)
    Status:   100% OK
 ```
 Cakupan baru: iuran, lampiran & foto, unduh PDF, email reset, penguncian login, registrasi (NIK/KK/nama/username unik), lupa & reset password, akses per peran (3 tingkat), CRUD `/api/v1/manage/*`, alur surat 2-tier + notifikasi, buku kas, manajemen pengguna, dan PWA (manifest, service worker, offline).

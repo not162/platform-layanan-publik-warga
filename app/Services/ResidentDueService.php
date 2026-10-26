@@ -53,7 +53,7 @@ class ResidentDueService
                         'amount_due_idr' => $amountDueIdr,
                         'due_date' => $dueDateTime,
                         'status' => 'UNPAID',
-                        'notes' => $notes ?? "Iuran Warga RT 01 Bulan {$month}/{$year}",
+                        'notes' => $notes ?? 'Iuran Warga RT '.config('rt.rt')." Bulan {$month}/{$year}",
                     ]);
                     $generatedCount++;
                 }

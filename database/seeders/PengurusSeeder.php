@@ -23,9 +23,9 @@ class PengurusSeeder extends Seeder
         $accounts = [
             ['superadmin', 'Super Administrator', UserRole::SUPERADMIN, 'superadmin@warga.local', null],
             ['admin', 'Administrator RT', UserRole::ADMIN, 'admin@warga.local', null],
-            ['ketua_rt', 'Bapak Ketua RT', UserRole::KETUA_RT, 'ketua_rt@warga.local', 'Ketua RT 04 / RW 09'],
-            ['sekretaris', 'Bapak Sekretaris', UserRole::SEKRETARIS, 'sekretaris@warga.local', 'Sekretaris RT 04'],
-            ['bendahara', 'Bapak Bendahara', UserRole::BENDAHARA, 'bendahara@warga.local', 'Bendahara RT 04'],
+            ['ketua_rt', config('rt.officers.ketua'), UserRole::KETUA_RT, 'ketua_rt@warga.local', 'Ketua RT '.config('rt.rt').' / RW '.config('rt.rw')],
+            ['sekretaris', config('rt.officers.sekretaris'), UserRole::SEKRETARIS, 'sekretaris@warga.local', 'Sekretaris RT '.config('rt.rt')],
+            ['bendahara', config('rt.officers.bendahara'), UserRole::BENDAHARA, 'bendahara@warga.local', 'Bendahara RT '.config('rt.rt')],
             ['keamanan', 'Bapak Petugas Keamanan', UserRole::PETUGAS_KEAMANAN, 'keamanan@warga.local', 'Seksi Keamanan & Ketertiban'],
         ];
 

@@ -20,7 +20,7 @@ class SecurityReportResource extends JsonResource
 
         $reporterName = null;
         if (! $this->is_anonymous || $isStaff || $isOwner) {
-            $reporterName = $this->citizen?->full_name ?? ($this->reporter?->name ?? 'Warga RT 01');
+            $reporterName = $this->citizen?->full_name ?? ($this->reporter?->name ?? 'Warga RT '.config('rt.rt'));
         } else {
             $reporterName = 'Warga (Anonim)';
         }

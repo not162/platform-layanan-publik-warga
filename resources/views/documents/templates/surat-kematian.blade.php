@@ -28,19 +28,15 @@
 </head>
 <body>
 
-    <div class="kop">
-        <h2>Rukun Tetangga 01 / Rukun Warga 05</h2>
-        <h3>Kelurahan Sejahtera, Kecamatan Bahagia</h3>
-        <p>Sekretariat: Balai Warga RT 01 RW 05, Telp/WhatsApp: 0812-3456-7890</p>
-    </div>
+    @include('documents.partials.kop')
 
     <div class="judul-surat">
         <h4>SURAT KETERANGAN KEMATIAN</h4>
-        <p>Nomor: {{ $letter_number ?? '___/SKK/RT01/___/____' }}</p>
+        <p>Nomor: {{ $letter_number ?? '___/SKK/RT'.config('rt.rt').'/___/____' }}</p>
     </div>
 
     <div class="content">
-        <p>Yang bertanda tangan di bawah ini, Pengurus Rukun Tetangga (RT) 01 RW 05 Kelurahan Sejahtera, menerangkan bahwa telah meninggal dunia seorang warga kami:</p>
+        <p>Yang bertanda tangan di bawah ini, Pengurus Rukun Tetangga (RT) {{ config('rt.rt') }} RW {{ config('rt.rw') }} Kelurahan {{ config('rt.kelurahan') }}, menerangkan bahwa telah meninggal dunia seorang warga kami:</p>
     </div>
 
     <table class="table-data">
@@ -113,23 +109,23 @@
                 <strong>( {{ $citizen['full_name'] ?? 'Pelapor' }} )</strong>
             </td>
             <td>
-                Jakarta, {{ $issued_at ?? now()->translatedFormat('d F Y') }}<br>
-                Ketua RT 01 RW 05,
+                {{ config('rt.tempat_surat') }}, {{ $issued_at ?? now()->translatedFormat('d F Y') }}<br>
+                Ketua RT {{ config('rt.rt') }} RW {{ config('rt.rw') }},
                 <div class="ttd-space">
                     @if(!empty($verification_token))
                     <div class="qr-placeholder">
                         ✓ Disetujui Secara Digital<br>
-                        Token: {{ substr($verification_token, 0, 16) }}...
+                        Token: {{ substr($verification_token, 0, 16) }}...<br>Diverifikasi: Sekretaris {{ $verifier_name ?? config('rt.officers.sekretaris') }}
                     </div>
                     @endif
                 </div>
-                <strong>( {{ $officer['name'] ?? 'Ketua RT' }} )</strong>
+                <strong>( {{ $officer['name'] ?? config('rt.officers.ketua') }} )</strong>
             </td>
         </tr>
     </table>
 
     <div class="footer-verification">
-        Dokumen resmi diterbitkan melalui Portal Layanan Publik Warga RT 01 RW 05.<br>
+        Dokumen resmi diterbitkan melalui Portal Layanan Publik Warga RT {{ config('rt.rt') }} RW {{ config('rt.rw') }}.<br>
         Verifikasi keaslian dokumen secara publik: <strong>{{ $verification_url ?? url('/api/v1/public/letter/verify/' . ($verification_token ?? 'TOKEN')) }}</strong>
     </div>
 

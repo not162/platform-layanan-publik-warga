@@ -12,27 +12,27 @@ class DocumentExportService
      */
     public function generatePdf(Letter $letter, string $htmlContent): string
     {
-        $letterNumber = $letter->letter_number ?: ($letter->ticket_number ?: 'SK/RT01/'.date('Ymd'));
-        $citizenName = $letter->citizen?->full_name ?? 'Warga RT 01';
+        $letterNumber = $letter->letter_number ?: ($letter->ticket_number ?: 'SK/RT'.config('rt.rt').'/'.date('Ymd'));
+        $citizenName = $letter->citizen?->full_name ?? 'Warga RT '.config('rt.rt');
         $letterTitle = strtoupper($letter->letterType?->nama_surat ?? ($letter->type ?: 'Surat Pengantar RT'));
         $purpose = $letter->keperluan ?? 'Keperluan administrasi kependudukan';
         $issuedDate = ($letter->approved_at ?? now())->translatedFormat('d F Y');
-        $signer = $letter->approvedBy?->name ?? 'Ketua RT 01';
+        $signer = config('rt.officers.ketua');
         $token = $letter->verification_token ?? substr(hash('sha256', $letter->id.$letterNumber), 0, 16);
         $verifyUrl = url('/api/v1/public/letter/verify/'.$token);
 
         // Prepare clean text lines for standard PDF stream
         $lines = [
             ['font' => 'F2', 'size' => 14, 'text' => 'PEMERINTAH PROVINSI DKI JAKARTA'],
-            ['font' => 'F2', 'size' => 12, 'text' => 'KECAMATAN KEMAYORAN - KELURAHAN KEMAYORAN'],
-            ['font' => 'F2', 'size' => 12, 'text' => 'RUKUN TETANGGA 01 / RUKUN WARGA 05'],
-            ['font' => 'F1', 'size' => 9, 'text' => 'Jl. Kemayoran Raya No. 01, Jakarta Pusat 10620'],
+            ['font' => 'F2', 'size' => 12, 'text' => 'KECAMATAN '.strtoupper(config('rt.kecamatan')).' - KELURAHAN '.strtoupper(config('rt.kelurahan')).''],
+            ['font' => 'F2', 'size' => 12, 'text' => 'RUKUN TETANGGA '.config('rt.rt').' / RUKUN WARGA '.config('rt.rw')],
+            ['font' => 'F1', 'size' => 9, 'text' => config('rt.secretariat.address').' - Telp/WA '.config('rt.secretariat.phone')],
             ['separator' => true],
             ['space' => 15],
             ['font' => 'F2', 'size' => 13, 'text' => $letterTitle],
             ['font' => 'F1', 'size' => 10, 'text' => 'Nomor: '.$letterNumber],
             ['space' => 20],
-            ['font' => 'F1', 'size' => 10, 'text' => 'Yang bertanda tangan di bawah ini Ketua RT 01 / RW 05 Kemayoran, menerangkan bahwa:'],
+            ['font' => 'F1', 'size' => 10, 'text' => 'Yang bertanda tangan di bawah ini Ketua RT '.config('rt.rt').' / RW '.config('rt.rw').' Kelurahan '.config('rt.kelurahan').', Kecamatan '.config('rt.kecamatan').', menerangkan bahwa:'],
             ['space' => 10],
             ['font' => 'F2', 'size' => 10, 'text' => 'Nama Lengkap       : '.$citizenName],
             ['font' => 'F1', 'size' => 10, 'text' => 'Status Warga       : '.ucfirst($letter->citizen?->status_warga ?? 'Tetap')],
@@ -41,8 +41,8 @@ class DocumentExportService
             ['font' => 'F1', 'size' => 10, 'text' => 'Demikian surat keterangan ini diberikan kepada yang bersangkutan untuk dapat dipergunakan'],
             ['font' => 'F1', 'size' => 10, 'text' => 'sebagaimana mestinya sesuai ketentuan yang berlaku.'],
             ['space' => 30],
-            ['font' => 'F1', 'size' => 10, 'text' => 'Jakarta, '.$issuedDate],
-            ['font' => 'F2', 'size' => 10, 'text' => 'Ketua RT 01 / RW 05'],
+            ['font' => 'F1', 'size' => 10, 'text' => config('rt.tempat_surat').', '.$issuedDate],
+            ['font' => 'F2', 'size' => 10, 'text' => 'Ketua RT '.config('rt.rt').' / RW '.config('rt.rw')],
             ['space' => 35],
             ['font' => 'F2', 'size' => 10, 'text' => '[ TERTANDA DIGITAL RESMI ]'],
             ['font' => 'F2', 'size' => 10, 'text' => $signer],
@@ -59,12 +59,12 @@ class DocumentExportService
      */
     public function generateDocx(Letter $letter, string $htmlContent): string
     {
-        $letterNumber = $letter->letter_number ?: ($letter->ticket_number ?: 'SK/RT01/'.date('Ymd'));
-        $citizenName = htmlspecialchars($letter->citizen?->full_name ?? 'Warga RT 01', ENT_XML1);
+        $letterNumber = $letter->letter_number ?: ($letter->ticket_number ?: 'SK/RT'.config('rt.rt').'/'.date('Ymd'));
+        $citizenName = htmlspecialchars($letter->citizen?->full_name ?? 'Warga RT '.config('rt.rt'), ENT_XML1);
         $letterTitle = htmlspecialchars(strtoupper($letter->letterType?->nama_surat ?? ($letter->type ?: 'Surat Pengantar RT')), ENT_XML1);
         $purpose = htmlspecialchars($letter->keperluan ?? 'Keperluan administrasi kependudukan', ENT_XML1);
         $issuedDate = htmlspecialchars(($letter->approved_at ?? now())->translatedFormat('d F Y'), ENT_XML1);
-        $signer = htmlspecialchars($letter->approvedBy?->name ?? 'Ketua RT 01', ENT_XML1);
+        $signer = htmlspecialchars(config('rt.officers.ketua'), ENT_XML1);
         $token = $letter->verification_token ?? substr(hash('sha256', $letter->id.$letterNumber), 0, 16);
         $verifyUrl = htmlspecialchars(url('/api/v1/public/letter/verify/'.$token), ENT_XML1);
 
@@ -98,15 +98,15 @@ class DocumentExportService
     </w:p>
     <w:p>
       <w:pPr><w:jc w:val="center"/></w:pPr>
-      <w:r><w:rPr><w:b/><w:sz w:val="24"/></w:rPr><w:t>KECAMATAN KEMAYORAN - KELURAHAN KEMAYORAN</w:t></w:r>
+      <w:r><w:rPr><w:b/><w:sz w:val="24"/></w:rPr><w:t>KECAMATAN '.strtoupper(config('rt.kecamatan')).' - KELURAHAN '.strtoupper(config('rt.kelurahan')).'</w:t></w:r>
     </w:p>
     <w:p>
       <w:pPr><w:jc w:val="center"/></w:pPr>
-      <w:r><w:rPr><w:b/><w:sz w:val="24"/></w:rPr><w:t>RUKUN TETANGGA 01 / RUKUN WARGA 05</w:t></w:r>
+      <w:r><w:rPr><w:b/><w:sz w:val="24"/></w:rPr><w:t>RUKUN TETANGGA '.config('rt.rt').' / RUKUN WARGA '.config('rt.rw').'</w:t></w:r>
     </w:p>
     <w:p>
       <w:pPr><w:jc w:val="center"/></w:pPr>
-      <w:r><w:rPr><w:sz w:val="18"/><w:color w:val="666666"/></w:rPr><w:t>Jl. Kemayoran Raya No. 01, Jakarta Pusat 10620</w:t></w:r>
+      <w:r><w:rPr><w:sz w:val="18"/><w:color w:val="666666"/></w:rPr><w:t>'.htmlspecialchars(config('rt.secretariat.address').' - Telp/WA '.config('rt.secretariat.phone').' - '.config('rt.secretariat.email'), ENT_XML1).'</w:t></w:r>
     </w:p>
     <w:p>
       <w:pPr>
@@ -124,7 +124,7 @@ class DocumentExportService
     </w:p>
     <w:p><w:r><w:t></w:t></w:r></w:p>
     <w:p>
-      <w:r><w:rPr><w:sz w:val="22"/></w:rPr><w:t>Yang bertanda tangan di bawah ini Ketua RT 01 / RW 05 Kemayoran, menerangkan bahwa:</w:t></w:r>
+      <w:r><w:rPr><w:sz w:val="22"/></w:rPr><w:t>Yang bertanda tangan di bawah ini Ketua RT '.config('rt.rt').' / RW '.config('rt.rw').' Kelurahan '.config('rt.kelurahan').', Kecamatan '.config('rt.kecamatan').', menerangkan bahwa:</w:t></w:r>
     </w:p>
     <w:p>
       <w:r><w:rPr><w:b/><w:sz w:val="22"/></w:rPr><w:t>Nama Lengkap       : '.$citizenName.'</w:t></w:r>
@@ -139,11 +139,11 @@ class DocumentExportService
     <w:p><w:r><w:t></w:t></w:r></w:p>
     <w:p>
       <w:pPr><w:ind w:left="5000"/></w:pPr>
-      <w:r><w:rPr><w:sz w:val="22"/></w:rPr><w:t>Jakarta, '.$issuedDate.'</w:t></w:r>
+      <w:r><w:rPr><w:sz w:val="22"/></w:rPr><w:t>'.config('rt.tempat_surat').', '.$issuedDate.'</w:t></w:r>
     </w:p>
     <w:p>
       <w:pPr><w:ind w:left="5000"/></w:pPr>
-      <w:r><w:rPr><w:b/><w:sz w:val="22"/></w:rPr><w:t>Ketua RT 01 / RW 05</w:t></w:r>
+      <w:r><w:rPr><w:b/><w:sz w:val="22"/></w:rPr><w:t>Ketua RT '.config('rt.rt').' / RW '.config('rt.rw').'</w:t></w:r>
     </w:p>
     <w:p><w:pPr><w:ind w:left="5000"/></w:pPr><w:r><w:t></w:t></w:r></w:p>
     <w:p><w:pPr><w:ind w:left="5000"/></w:pPr><w:r><w:t></w:t></w:r></w:p>

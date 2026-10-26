@@ -31,6 +31,10 @@ class FinanceReportService
      */
     public function generateMonthlyReport(int $year, int $month, string $format = 'html'): array
     {
+        $rtNo = config('rt.rt');
+        $rwNo = config('rt.rw');
+        $ketuaName = config('rt.officers.ketua');
+        $bendaharaName = config('rt.officers.bendahara');
         $disk = Storage::disk('local');
         $transactions = FinanceTransaction::query()
             ->where('status', 'published')
@@ -146,15 +150,15 @@ class FinanceReportService
   <div class='signatures'>
     <div class='sig-block'>
       <p>Mengetahui,</p>
-      <p style='font-weight: bold;'>Ketua RT 01</p>
+      <p style='font-weight: bold;'>Ketua RT {$rtNo} / RW {$rwNo}</p>
       <br><br><br>
-      <p style='text-decoration: underline; font-weight: bold;'>( Bpk. Ketua RT )</p>
+      <p style='text-decoration: underline; font-weight: bold;'>( {$ketuaName} )</p>
     </div>
     <div class='sig-block'>
       <p>Dibuat dan Disahkan oleh,</p>
-      <p style='font-weight: bold;'>Bendahara RT 01</p>
+      <p style='font-weight: bold;'>Bendahara RT {$rtNo}</p>
       <br><br><br>
-      <p style='text-decoration: underline; font-weight: bold;'>( Bendahara RT )</p>
+      <p style='text-decoration: underline; font-weight: bold;'>( {$bendaharaName} )</p>
     </div>
   </div>
 </body>
@@ -176,6 +180,10 @@ class FinanceReportService
      */
     public function generateCitizenDuesReport(int $year, int $month): array
     {
+        $rtNo = config('rt.rt');
+        $rwNo = config('rt.rw');
+        $ketuaName = config('rt.officers.ketua');
+        $bendaharaName = config('rt.officers.bendahara');
         $disk = Storage::disk('local');
         $citizens = Citizen::query()->with('familyCard')->get();
         $duesTransactions = FinanceTransaction::query()
@@ -239,7 +247,7 @@ class FinanceReportService
 </head>
 <body>
   <div class='header'>
-    <h2>REKAPITULASI PEMBAYARAN KAS / IURAN WARGA RT 01</h2>
+    <h2>REKAPITULASI PEMBAYARAN KAS / IURAN WARGA RT {$rtNo} / RW {$rwNo}</h2>
     <p>Periode: <strong>{$period}</strong> | Arsip Subfolder: <code>{$this->citizenDuesDir}</code></p>
   </div>
 
