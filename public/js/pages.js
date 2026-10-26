@@ -43,7 +43,7 @@
     },
 
     citizens: {
-      resource: 'citizens', noun: 'warga',
+      resource: 'citizens', exportable: true, noun: 'warga',
       filters: [{ key: 'status_warga', label: 'Semua status', options: [['tetap', 'Warga tetap'], ['pending_verification', 'Menunggu verifikasi'], ['pindah', 'Nonaktif']] }],
       columns: [
         { label: 'Warga', primary: true, render: (r) => sub(r.full_name, r.username ? '@' + r.username : 'Belum punya akun') },
@@ -151,7 +151,7 @@
 
     /* ----- Surat ----- */
     letters: {
-      resource: 'letters', noun: 'surat', readonly: true,
+      resource: 'letters', exportable: true, noun: 'surat', readonly: true,
       filters: [{ key: 'status', label: 'Semua status', options: ['submitted', 'verified', 'approved', 'completed', 'rejected', 'draft'].map((s) => [s, P.statusLabel(s)]) }],
       columns: [
         { label: 'Tiket', primary: true, render: (r) => sub(r.ticket_number, r.letter_number || 'Belum bernomor') },
@@ -189,7 +189,7 @@
 
     /* ----- Pengaduan ----- */
     complaints: {
-      resource: 'complaints', noun: 'pengaduan',
+      resource: 'complaints', exportable: true, noun: 'pengaduan',
       filters: [{ key: 'status', label: 'Semua status', options: COMPLAINT_STATUS }, { key: 'priority', label: 'Semua prioritas', options: PRIORITY }],
       columns: [
         { label: 'Pengaduan', primary: true, render: (r) => sub(r.title, r.ticket_number + ' · ' + r.kategori) },
@@ -266,7 +266,7 @@
 
     /* ----- Keuangan ----- */
     finance: {
-      resource: 'finance', noun: 'transaksi kas',
+      resource: 'finance', exportable: true, noun: 'transaksi kas',
       filters: [{ key: 'status', label: 'Semua status', options: [['draft', 'Draft'], ['published', 'Terbit'], ['reversed', 'Dikoreksi']] }, { key: 'type', label: 'Semua jenis', options: [['income', 'Pemasukan'], ['expense', 'Pengeluaran']] }],
       columns: [
         { label: 'Transaksi', primary: true, render: (r) => sub(r.category, r.transaction_number + (r.description ? ' · ' + r.description : '')) },
@@ -290,7 +290,7 @@
 
     /* ----- Iuran ----- */
     dues: {
-      resource: 'dues', noun: 'tagihan iuran',
+      resource: 'dues', exportable: true, noun: 'tagihan iuran',
       createLabel: 'Buat tagihan bulanan',
       filters: [{ key: 'period_month', label: 'Semua bulan', options: Array.from({ length: 12 }, (_, i) => [String(i + 1), new Date(2000, i, 1).toLocaleString('id-ID', { month: 'long' })]) }],
       columns: [
@@ -325,7 +325,7 @@
     },
 
     audit: {
-      resource: 'audit-logs', noun: 'log', readonly: true,
+      resource: 'audit-logs', exportable: true, noun: 'log', readonly: true,
       columns: [
         { label: 'Aksi', primary: true, render: (r) => sub(r.action, r.entity) },
         { label: 'Pengguna', render: (r) => esc(r.user) },
@@ -354,6 +354,7 @@
     <div class="toolbar">
       <div class="search">${icon('search')}<input class="input" id="q" type="search" placeholder="Cari ${esc(cfg.noun)}…" aria-label="Cari"></div>
       ${(cfg.filters || []).map((f) => `<select class="input" data-filter="${f.key}" aria-label="${esc(f.label)}"><option value="">${esc(f.label)}</option></select>`).join('')}
+      ${cfg.exportable ? `<a class="btn" id="btn-export" href="#" download>${icon('download')} Ekspor CSV</a>` : ''}
       <button class="btn btn-icon" id="btn-refresh" aria-label="Muat ulang">${icon('refresh')}</button>
     </div>
     <div class="table-wrap">
@@ -370,6 +371,7 @@
 
   let st; $('#q', root).addEventListener('input', (e) => { clearTimeout(st); st = setTimeout(() => { state.q = e.target.value.trim(); state.page = 1; load(true); }, 300); });
   $('#btn-refresh', root).onclick = () => load(true);
+  $('#btn-export', root)?.addEventListener('click', (e) => { e.currentTarget.href = url().replace(base + '?', base + '/export?'); });
   $('#prev', root).onclick = () => { if (state.page > 1) { state.page--; load(true); } };
   $('#next', root).onclick = () => { if (state.meta && state.page < state.meta.last_page) { state.page++; load(true); } };
   $('#btn-add', root)?.addEventListener('click', () => openForm('create'));

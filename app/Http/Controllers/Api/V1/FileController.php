@@ -53,6 +53,13 @@ class FileController extends Controller
         return $this->serve((string) $citizen->ktp_file_path, 'ktp-'.$citizen->id);
     }
 
+    public function avatar(int $id): StreamedResponse
+    {
+        $user = User::query()->findOrFail($id);
+
+        return $this->serve((string) $user->avatar_url, 'avatar-'.$user->id);
+    }
+
     protected function serve(string $path, string $name): StreamedResponse
     {
         abort_if($path === '' || ! Storage::disk('local')->exists($path), 404, 'Berkas tidak ditemukan.');

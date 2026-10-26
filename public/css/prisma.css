@@ -180,6 +180,7 @@ textarea.input { min-height: 96px; resize: vertical; }
 .nav-link .count { margin-left: auto; }
 .side-user { margin-top: auto; padding: .8rem; border-radius: 14px; background: var(--card); border: 1px solid var(--border); display: flex; gap: .7rem; align-items: center; }
 .avatar { width: 38px; height: 38px; border-radius: 12px; background: var(--grad); color: #fff; display: grid; place-items: center; font-weight: 800; flex: none; }
+.avatar { overflow: hidden; } .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .side-user .who { min-width: 0; flex: 1; } .side-user .who b { display: block; font-size: .86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .side-user .who span { font-size: .72rem; color: var(--muted); }
 .main { min-width: 0; display: flex; flex-direction: column; }

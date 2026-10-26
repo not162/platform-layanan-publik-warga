@@ -6,11 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\AuditService;
 use App\Support\ManagedRegistry;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * CRUD generik: GET / POST / PATCH(PUT) / DELETE pada /api/v1/manage/{resource}
@@ -26,6 +29,75 @@ class ManageController extends Controller
         $user = $this->actor($request);
         $this->authorizeAbility($def, 'read', $user);
 
+        $query = $this->buildQuery($def, $user, $request);
+
+        $perPage = max(1, min((int) $request->input('per_page', 15), 100));
+        $page = $query->paginate($perPage);
+
+        return response()->json([
+            'data' => $page->getCollection()->map(fn (Model $m) => $def['transform']($m, $user))->values(),
+            'meta' => [
+                'current_page' => $page->currentPage(),
+                'per_page' => $page->perPage(),
+                'total' => $page->total(),
+                'last_page' => $page->lastPage(),
+                'server_time' => now()->toIso8601String(),
+            ],
+            'message' => 'OK',
+        ]);
+    }
+
+    /**
+     * Ekspor CSV (bisa dibuka di Excel) dengan filter yang sama seperti daftar. Sel diamankan dari CSV/formula injection.
+     */
+    public function export(Request $request, string $resource): StreamedResponse
+    {
+        $def = $this->definition($resource);
+        $user = $this->actor($request);
+        $this->authorizeAbility($def, 'read', $user);
+        abort_if($resource === 'audit-logs' && ! $user->hasPermission('audit.read'), 403);
+
+        $query = $this->buildQuery($def, $user, $request);
+        $this->audit->log("{$resource}.exported", class_basename($def['model']), 0, null, ['by' => $user->username, 'filters' => $request->query()]);
+
+        $safe = static function (mixed $value): string {
+            if (is_bool($value)) {
+                return $value ? 'ya' : 'tidak';
+            }
+            if (is_array($value) || $value instanceof Collection) {
+                $value = collect($value)->map(fn ($v) => is_scalar($v) ? $v : json_encode($v))->implode('; ');
+            }
+            $text = (string) ($value ?? '');
+
+            return preg_match('/^[=+\-@\t\r]/', $text) ? "'".$text : $text;
+        };
+
+        return response()->streamDownload(function () use ($query, $def, $user, $safe) {
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // BOM agar Excel membaca UTF-8
+            $headerWritten = false;
+
+            $query->limit(5000)->get()->each(function (Model $m) use ($def, $user, $out, $safe, &$headerWritten) {
+                $row = collect($def['transform']($m, $user))
+                    ->reject(fn ($v, $k) => str_starts_with((string) $k, 'can_') || str_ends_with((string) $k, '_url') || $k === 'attachments')
+                    ->all();
+                if (! $headerWritten) {
+                    fputcsv($out, array_keys($row));
+                    $headerWritten = true;
+                }
+                fputcsv($out, array_map($safe, array_values($row)));
+            });
+
+            fclose($out);
+        }, $resource.'-'.now()->format('Ymd-His').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8', 'Cache-Control' => 'private, no-store']);
+    }
+
+    /**
+     * @param  array<string, mixed>  $def
+     * @return Builder<Model>
+     */
+    protected function buildQuery(array $def, User $user, Request $request)
+    {
         $query = $def['model']::query();
 
         if (! empty($def['with'])) {
@@ -54,20 +126,7 @@ class ManageController extends Controller
             $query->where('updated_at', '>', $since);
         }
 
-        $perPage = max(1, min((int) $request->input('per_page', 15), 100));
-        $page = $query->paginate($perPage);
-
-        return response()->json([
-            'data' => $page->getCollection()->map(fn (Model $m) => $def['transform']($m, $user))->values(),
-            'meta' => [
-                'current_page' => $page->currentPage(),
-                'per_page' => $page->perPage(),
-                'total' => $page->total(),
-                'last_page' => $page->lastPage(),
-                'server_time' => now()->toIso8601String(),
-            ],
-            'message' => 'OK',
-        ]);
+        return $query;
     }
 
     public function show(Request $request, string $resource, int $id): JsonResponse

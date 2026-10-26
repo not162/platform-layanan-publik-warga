@@ -9,6 +9,7 @@
 @php
     $groups = collect($nav)->groupBy('group');
     $initial = mb_strtoupper(mb_substr($user->name, 0, 1));
+    $avatarUrl = $user->avatar_url ? url('/api/v1/files/avatar/'.$user->id).'?v='.$user->updated_at->timestamp : null;
     $tierLabel = ['superadmin' => 'Superadmin', 'admin' => 'Admin', 'user' => 'User'][$user->tier()];
 @endphp
 
@@ -27,7 +28,7 @@
         <a href="{{ route('home') }}" class="brand"><span class="brand-mark">P</span><span>PRISMA RT 04</span></a>
         {!! $menuHtml !!}
         <div class="side-user">
-            <div class="avatar">{{ $initial }}</div>
+            <div class="avatar">@if ($avatarUrl)<img src="{{ $avatarUrl }}" alt="" width="38" height="38">@else{{ $initial }}@endif</div>
             <div class="who"><b>{{ $user->name }}</b><span>{{ $user->role->label() }}</span></div>
             <form method="POST" action="{{ route('logout') }}">@csrf
                 <button class="btn btn-icon btn-sm btn-ghost" title="Keluar" aria-label="Keluar">@include('partials.i', ['n' => 'logout'])</button>
@@ -62,7 +63,7 @@
     <div class="brand" style="padding:.4rem .5rem .6rem"><span class="brand-mark">P</span><span>PRISMA RT 04</span>
         <button class="btn btn-ghost btn-icon btn-sm" data-close-drawer style="margin-left:auto">@include('partials.i', ['n' => 'x'])</button></div>
     <div class="side-user" style="margin:.2rem 0 .4rem">
-        <div class="avatar">{{ $initial }}</div>
+        <div class="avatar">@if ($avatarUrl)<img src="{{ $avatarUrl }}" alt="" width="38" height="38">@else{{ $initial }}@endif</div>
         <div class="who"><b>{{ $user->name }}</b><span>{{ $tierLabel }} · {{ $user->role->label() }}</span></div>
     </div>
     {!! $menuHtml !!}

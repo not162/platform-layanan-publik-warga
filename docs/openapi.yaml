@@ -1003,6 +1003,32 @@ paths:
       responses:
         '200': { description: OK }
         '422': { description: Validasi gagal }
+  /manage/{resource}/export:
+    get:
+      tags: [Manage CRUD]
+      summary: Ekspor CSV (filter sama dengan daftar; maks. 5.000 baris)
+      parameters: [{ name: resource, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: "text/csv UTF-8 (BOM)" }
+        '403': { description: Peran tidak berwenang }
+  /me/photo:
+    post:
+      tags: [Citizen Profile]
+      summary: Unggah foto profil (JPG/PNG/WebP maks. 2 MB, multipart field photo)
+      responses:
+        '200': { description: OK }
+    delete:
+      tags: [Citizen Profile]
+      summary: Hapus foto profil
+      responses:
+        '200': { description: OK }
+  /files/avatar/{id}:
+    get:
+      tags: [Manage CRUD]
+      summary: Foto profil pengguna (wajib login)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: Gambar }
   /files/letter-attachments/{id}:
     get:
       tags: [Manage CRUD]

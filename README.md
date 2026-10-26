@@ -1,4 +1,4 @@
-﻿# Platform Layanan Publik Warga PRISMA RT 04 (Laravel 13)
+# Platform Layanan Publik Warga PRISMA RT 04 (Laravel 13)
 
 > **PRISMA RT 04 Kemayoran**: Platform Realisasi Informasi, Sistem Manajemen & Administrasi Warga Berbasis Web & Progressive Web App (PWA).  
 > **Visual Reference:** [https://prisma-rose.vercel.app/](https://prisma-rose.vercel.app/)  
@@ -486,6 +486,8 @@ Seluruh data dibaca/ditulis langsung ke MySQL lewat `/api/v1` (autentikasi: sesi
 
 Berkas privat disajikan setelah otorisasi: `GET /api/v1/files/letter-attachments/{id}`, `/files/complaints/{id}`, `/files/ktp/{id}`; surat sah diunduh lewat `GET /api/v1/letters/{id}/download?format=pdf|docx` (setelah disahkan).
 
+**Ekspor CSV** (Excel-ready, UTF-8 BOM, aman dari formula injection, maks. 5.000 baris, tercatat di audit log): `GET /api/v1/manage/{resource}/export?status=&q=` — tombol *Ekspor CSV* ada di halaman Warga, Kas, Iuran, Surat, Pengaduan, dan Audit. **Foto profil:** `POST|DELETE /api/v1/me/photo`.
+
 Endpoint pendukung: `GET /api/v1/portal` (beranda publik tanpa cache), `GET /api/v1/dashboard/summary`, `GET|POST|DELETE /api/v1/notifications`, `PATCH /api/v1/me/account`, `POST /api/v1/me/password`, `POST /api/v1/auth/check-citizen`, `POST /api/v1/auth/forgot-password`, `POST /api/v1/auth/reset-password`.
 
 **Real-time:** UI memakai polling `fetch` (8 detik untuk tabel/dashboard, 10 detik untuk notifikasi, 20 detik untuk beranda publik) yang berhenti otomatis saat tab tidak aktif; respons API dilengkapi `ETag`. Setiap perubahan memicu notifikasi database (`notifications`) + toast/alert, badge lonceng, dan notifikasi browser bila diizinkan.
@@ -613,7 +615,20 @@ MAIL_PASSWORD=app-password-16-karakter
 MAIL_FROM_ADDRESS=akun@gmail.com
 ```
 
-### 5. Membuka Data Langsung di phpMyAdmin
+### 5. Deploy ke Production
+Seeder demo **tidak berjalan** di `APP_ENV=production` (tidak ada akun/password bawaan). Urutan:
+```bash
+# .env production: APP_ENV=production, APP_DEBUG=false, APP_URL=https://domain-anda, DB_*, SESSION_SECURE_COOKIE=true, MAIL_* (SMTP)
+composer install --no-dev --optimize-autoloader
+php artisan key:generate --force
+php artisan migrate --force
+php artisan app:create-superadmin admin.rt --name="Nama Anda" --email=anda@domain.com   # password diminta interaktif
+php artisan storage:link   # hanya bila memakai disk public
+php artisan config:cache && php artisan route:cache && php artisan view:cache
+```
+Catatan: login web memakai cookie sesi + CSRF (host dari `APP_URL` otomatis terdaftar sebagai domain stateful Sanctum; domain tambahan: `SANCTUM_STATEFUL_DOMAINS`). Backup rutin database MySQL dan folder `storage/app/private` (KTP, lampiran). PWA mensyaratkan HTTPS.
+
+### 6. Membuka Data Langsung di phpMyAdmin
 Setiap aksi CRUD di UI/API langsung ditulis ke MySQL. Buka `http://localhost/phpmyadmin` â†’ database `layanan_publik_warga` â†’ tabel `users`, `citizens`, `letters`, `finance_transactions`, `announcements`, `notifications`, `audit_logs`, dst. Halaman akan menampilkan perubahan tanpa perlu cache apa pun.
 
 ---
@@ -629,7 +644,7 @@ php artisan test --compact
 
 ### Bukti Hasil Pengujian Terkini:
 ```text
-   Tests:    185 passed (941 assertions)
+   Tests:    190 passed (976 assertions)
    Status:   100% OK
 ```
 Cakupan baru: iuran, lampiran & foto, unduh PDF, email reset, penguncian login, registrasi (NIK/KK/nama/username unik), lupa & reset password, akses per peran (3 tingkat), CRUD `/api/v1/manage/*`, alur surat 2-tier + notifikasi, buku kas, manajemen pengguna, dan PWA (manifest, service worker, offline).

@@ -7,11 +7,15 @@
     <div class="card">
         <div class="card-title">@include('partials.i', ['n' => 'user']) Data akun</div>
         <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem">
-            <div class="avatar" style="width:54px;height:54px;font-size:1.3rem">{{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}</div>
+            <div class="avatar" id="avatar-box" style="width:72px;height:72px;font-size:1.6rem;border-radius:20px">@if ($user->avatar_url)<img src="{{ url('/api/v1/files/avatar/'.$user->id).'?v='.$user->updated_at->timestamp }}" alt="Foto profil" width="72" height="72">@else{{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}@endif</div>
             <div><b>{{ $user->role->label() }}</b><br>
                 <span class="badge blue">Akses {{ ['superadmin' => 'Superadmin', 'admin' => 'Admin', 'user' => 'User (Warga)'][$user->tier()] }}</span>
                 @if ($user->citizen?->status_warga === 'pending_verification') <span class="badge amber">Menunggu verifikasi</span> @endif
             </div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:-.4rem 0 1rem">
+            <label class="btn btn-sm" style="cursor:pointer">@include('partials.i', ['n' => 'edit']) Ganti foto<input type="file" id="photo-input" accept="image/*" hidden></label>
+            @if ($user->avatar_url)<button type="button" class="btn btn-sm btn-danger" id="photo-remove">@include('partials.i', ['n' => 'trash']) Hapus foto</button>@endif
         </div>
         <form id="account-form" novalidate>
             <div class="field"><label for="name">Nama lengkap</label><input class="input" id="name" name="name" value="{{ $user->name }}" required><div class="hint" data-hint="name"></div></div>
@@ -55,6 +59,14 @@
             catch (err) { Object.entries(err.errors || {}).forEach(([k, v]) => hint(f, k, v[0])); P.fail(err); }
         });
     };
+    document.getElementById('photo-input').addEventListener('change', async (e) => {
+        const file = e.target.files[0]; if (!file) return;
+        const fd = new FormData(); fd.append('photo', file);
+        try { await P.api('POST', '/api/v1/me/photo', fd); P.ok('Foto diperbarui'); setTimeout(() => location.reload(), 600); } catch (err) { P.fail(err); }
+    });
+    document.getElementById('photo-remove')?.addEventListener('click', async () => {
+        if (await P.confirm('Hapus foto profil?')) { await P.del('/api/v1/me/photo'); location.reload(); }
+    });
     wire('account-form', 'PATCH', '/api/v1/me/account');
     wire('password-form', 'POST', '/api/v1/me/password', (f) => f.reset());
 })();

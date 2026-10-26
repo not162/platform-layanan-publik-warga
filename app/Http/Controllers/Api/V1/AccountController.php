@@ -7,6 +7,7 @@ use App\Services\AuditService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
@@ -39,6 +40,35 @@ class AccountController extends Controller
         $this->audit->log('account.updated', 'User', $user->id, null, ['username' => $user->username]);
 
         return response()->json(['message' => 'Profil berhasil diperbarui.', 'data' => $this->payload($request)]);
+    }
+
+    public function photo(Request $request): JsonResponse
+    {
+        $request->validate(['photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048']], [
+            'photo.image' => 'Berkas harus berupa gambar JPG, PNG, atau WebP.',
+            'photo.max' => 'Ukuran foto maksimal 2 MB.',
+        ]);
+
+        $user = $request->user();
+        if ($user->avatar_url) {
+            Storage::disk('local')->delete($user->avatar_url);
+        }
+
+        $user->update(['avatar_url' => $request->file('photo')->store('avatars', 'local')]);
+        $this->audit->log('account.photo_changed', 'User', $user->id);
+
+        return response()->json(['message' => 'Foto profil diperbarui.', 'data' => ['avatar' => url('/api/v1/files/avatar/'.$user->id).'?v='.time()]]);
+    }
+
+    public function removePhoto(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if ($user->avatar_url) {
+            Storage::disk('local')->delete($user->avatar_url);
+            $user->update(['avatar_url' => null]);
+        }
+
+        return response()->json(['message' => 'Foto profil dihapus.']);
     }
 
     public function password(Request $request): JsonResponse

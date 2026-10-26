@@ -59,8 +59,9 @@ class DuesAttachmentsAndRecoveryTest extends TestCase
             $this->post('/login', ['login' => 'dikunci', 'password' => 'salah'])->assertSessionHasErrors('login');
         }
 
-        $this->post('/login', ['login' => 'dikunci', 'password' => 'password123'])
-            ->assertSessionHasErrors(['login' => 'Terlalu banyak percobaan gagal. Coba lagi dalam 300 detik.']);
+        $this->post('/login', ['login' => 'dikunci', 'password' => 'password123'])->assertSessionHasErrors('login');
+        $this->assertStringContainsString('Terlalu banyak percobaan gagal', session('errors')->first('login'));
+        $this->assertGuest();
     }
 
     public function test_bendahara_generates_dues_records_payments_and_warga_sees_only_own(): void

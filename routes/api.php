@@ -76,6 +76,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/files/complaints/{id}', [FileController::class, 'complaintPhoto'])->whereNumber('id');
         Route::get('/files/ktp/{id}', [FileController::class, 'ktp'])->whereNumber('id');
 
+        Route::get('/files/avatar/{id}', [FileController::class, 'avatar'])->whereNumber('id');
+        Route::post('/me/photo', [AccountController::class, 'photo']);
+        Route::delete('/me/photo', [AccountController::class, 'removePhoto']);
         Route::patch('/me/account', [AccountController::class, 'update']);
         Route::post('/me/password', [AccountController::class, 'password']);
 
@@ -91,6 +94,7 @@ Route::prefix('v1')->group(function () {
         // CRUD real-time ke MySQL: GET list/detail, POST create, PATCH|PUT update, DELETE destroy
         Route::prefix('manage/{resource}')->where(['resource' => '[a-z\-]+'])->group(function () {
             Route::get('/', [ManageController::class, 'index']);
+            Route::get('/export', [ManageController::class, 'export']);
             Route::post('/', [ManageController::class, 'store']);
             Route::get('/{id}', [ManageController::class, 'show'])->whereNumber('id');
             Route::match(['PUT', 'PATCH'], '/{id}', [ManageController::class, 'update'])->whereNumber('id');
