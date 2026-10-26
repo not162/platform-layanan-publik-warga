@@ -21,6 +21,11 @@ Dokumen ini mendefinisikan arsitektur otorisasi berbasis peran (*Role-Based Acce
 
 ## 2. Matriks Hak Akses Peran × Fitur (Role Access Control Matrix)
 
+> **Pembaruan v2 (PWA redesign):** Sistem memakai **3 tingkat akses** — `superadmin` (penuh), `admin` (ADMIN, KETUA_RT, SEKRETARIS, BENDAHARA, PETUGAS_KEAMANAN) dan `user` (WARGA).
+> Peran `ADMIN` kini memiliki izin bawaan: `user.manage`, `citizen.*`, `complaint.*`, `announcement.manage`, `event.manage`, `round_schedule.manage`, `emergency.manage`, `officer.manage`, `audit.read` (baca kas & surat saja).
+> `ADMIN` hanya boleh membuat/ubah akun KETUA_RT, SEKRETARIS, BENDAHARA, PETUGAS_KEAMANAN, WARGA — bukan `SUPERADMIN`/`ADMIN`, dan tidak dapat mengubah/menghapus akunnya sendiri.
+> Matriks yang selalu mutakhir dihitung dari kode di menu **Pemodelan Sistem → Matriks Hak Akses**; sumber kebenarannya `User::hasPermission()` dan `App\Support\ManagedRegistry`.
+
 | Fitur / Modul | WARGA | ADMIN (Staff) | SEKRETARIS | KETUA_RT | BENDAHARA | PETUGAS_KEAMANAN | SUPERADMIN |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Profil Akun Sendiri** | CRUD Sendiri | Read | Read | Read | Read | Read | Full Access |

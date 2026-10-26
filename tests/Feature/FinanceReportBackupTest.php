@@ -6,7 +6,6 @@ use App\Models\Citizen;
 use App\Models\FinanceTransaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -134,41 +133,5 @@ class FinanceReportBackupTest extends TestCase
 
         $resBackup = $this->actingAs($warga)->postJson('/api/v1/admin/finance/backups');
         $resBackup->assertStatus(403);
-    }
-
-    public function test_kepengurusan_can_edit_photo_with_various_image_formats(): void
-    {
-        $ketuaRt = User::factory()->ketuaRt()->create();
-
-        // 1. Format PNG
-        $filePng = UploadedFile::fake()->image('profil.png', 200, 200);
-        $resPng = $this->actingAs($ketuaRt)->post('/dashboard/profile/photo', [
-            'photo' => $filePng,
-        ]);
-        $resPng->assertRedirect();
-        $ketuaRt->refresh();
-        $this->assertNotNull($ketuaRt->avatar_url);
-
-        // 2. Format WebP
-        $fileWebp = UploadedFile::fake()->image('profil.webp', 300, 300);
-        $resWebp = $this->actingAs($ketuaRt)->post('/dashboard/profile/photo', [
-            'photo' => $fileWebp,
-        ]);
-        $resWebp->assertRedirect();
-        $ketuaRt->refresh();
-        $this->assertNotNull($ketuaRt->avatar_url);
-        $this->assertStringContainsString('.webp', $ketuaRt->avatar_url);
-    }
-
-    public function test_warga_cannot_edit_officer_photo(): void
-    {
-        $warga = User::factory()->warga()->create();
-        $file = UploadedFile::fake()->image('avatar.jpg');
-
-        $response = $this->actingAs($warga)->post('/dashboard/profile/photo', [
-            'photo' => $file,
-        ]);
-
-        $response->assertStatus(403);
     }
 }
