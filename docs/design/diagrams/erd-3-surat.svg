@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1082 508" width="1082" height="508" role="img" aria-label="Surat Pengantar">
+<rect width="1082" height="508" fill="#ffffff"/>
+<path d="M674.8 274.2 H767.7 V400.7 H878.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M674.8 349.6 H776.7 V427.3 H878.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M439.6 236.5 H353.6 V151.5 H249.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M674.8 198.8 H767.7 V272.0 H878.6" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M864.8 109.0 H769.8 V123.4 H674.8" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="40.0" y="40.0" width="209.6" height="223.0" fill="#f3eef5" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="40.0" width="209.6" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
+<text x="144.8" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">jenis_surat</text>
+<text x="52.0" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="52.0" y="103.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">kode_surat : varchar {UK}</text>
+<text x="52.0" y="120.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">nama_surat : varchar</text>
+<text x="52.0" y="137.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">format_penomoran : varchar</text>
+<text x="52.0" y="154.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">syarat_dokumen : text</text>
+<text x="52.0" y="171.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_active : boolean</text>
+<text x="52.0" y="188.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">template_key : varchar</text>
+<text x="52.0" y="205.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">template_version : int</text>
+<text x="52.0" y="222.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">form_schema : text</text>
+<text x="52.0" y="239.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">approval_flow : text</text>
+<text x="52.0" y="256.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">estimated_process_hours : int</text>
+<line x1="40.0" y1="88.0" x2="249.6" y2="88.0" stroke="#111827" stroke-width="1"/>
+<rect x="439.6" y="40.0" width="235.2" height="393.0" fill="#eef5ed" stroke="#111827" stroke-width="1.3"/>
+<rect x="439.6" y="40.0" width="235.2" height="28" fill="#d5e8d4" stroke="#111827" stroke-width="1.3"/>
+<text x="557.2" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">letters</text>
+<text x="451.6" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="451.6" y="103.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">citizen_id : int</text>
+<text x="451.6" y="120.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">jenis_surat_id : int</text>
+<text x="451.6" y="137.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">type : varchar</text>
+<text x="451.6" y="154.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">ticket_number : varchar {UK}</text>
+<text x="451.6" y="171.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">keperluan : varchar</text>
+<text x="451.6" y="188.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">data_tambahan : text</text>
+<text x="451.6" y="205.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">status : varchar</text>
+<text x="451.6" y="222.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">letter_number : varchar {UK}</text>
+<text x="451.6" y="239.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">catatan_admin : text</text>
+<text x="451.6" y="256.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">rejection_reason : text</text>
+<text x="451.6" y="273.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">verified_by : int</text>
+<text x="451.6" y="290.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">verified_at : datetime</text>
+<text x="451.6" y="307.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">approved_by : int</text>
+<text x="451.6" y="324.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">approved_at : datetime</text>
+<text x="451.6" y="341.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">verification_token : varchar {UK}</text>
+<text x="451.6" y="358.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">file_path : varchar</text>
+<text x="451.6" y="375.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">attachment_path : varchar</text>
+<text x="451.6" y="392.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">version : int</text>
+<text x="451.6" y="409.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">document_hash : varchar</text>
+<text x="451.6" y="426.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">generated_at : datetime</text>
+<line x1="439.6" y1="88.0" x2="674.8" y2="88.0" stroke="#111827" stroke-width="1"/>
+<rect x="864.8" y="40.0" width="177.6" height="138.0" fill="#f0f5fd" stroke="#111827" stroke-width="1.3"/>
+<rect x="864.8" y="40.0" width="177.6" height="28" fill="#dae8fc" stroke="#111827" stroke-width="1.3"/>
+<text x="953.6" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">letter_attachments</text>
+<text x="876.8" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="876.8" y="103.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">letter_id : int</text>
+<text x="876.8" y="120.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">judul_lampiran : varchar</text>
+<text x="876.8" y="137.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">file_path : varchar</text>
+<text x="876.8" y="154.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">mime_type : varchar</text>
+<text x="876.8" y="171.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">file_size : int</text>
+<line x1="864.8" y1="88.0" x2="1042.4" y2="88.0" stroke="#111827" stroke-width="1"/>
+<rect x="59.2" y="309.0" width="171.2" height="121.0" fill="#fff9ea" stroke="#111827" stroke-width="1.3"/>
+<rect x="59.2" y="309.0" width="171.2" height="28" fill="#fff2cc" stroke="#111827" stroke-width="1.3"/>
+<text x="144.8" y="328" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">document_sequences</text>
+<text x="71.2" y="351.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="71.2" y="372.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">document_type : varchar</text>
+<text x="71.2" y="389.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">year : int</text>
+<text x="71.2" y="406.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">month : int</text>
+<text x="71.2" y="423.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">last_number : int</text>
+<line x1="59.2" y1="357.0" x2="230.4" y2="357.0" stroke="#111827" stroke-width="1"/>
+<rect x="878.6" y="224.0" width="150.0" height="96.0" fill="#f4f5f7" stroke="#111827" stroke-width="1.3"/>
+<rect x="878.6" y="224.0" width="150.0" height="28" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
+<text x="953.6" y="243" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">citizens</text>
+<text x="890.6" y="266.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<rect x="878.6" y="366.0" width="150.0" height="96.0" fill="#f4f5f7" stroke="#111827" stroke-width="1.3"/>
+<rect x="878.6" y="366.0" width="150.0" height="28" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
+<text x="953.6" y="385" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">users</text>
+<text x="890.6" y="408.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<line x1="687.8" y1="274.2" x2="674.8" y2="267.2" stroke="#111827" stroke-width="1.3"/><line x1="687.8" y1="274.2" x2="674.8" y2="281.2" stroke="#111827" stroke-width="1.3"/><line x1="687.8" y1="274.2" x2="674.8" y2="274.2" stroke="#111827" stroke-width="1.3"/><circle cx="693.3" cy="274.2" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="870.6" y1="406.7" x2="870.6" y2="394.7" stroke="#111827" stroke-width="1.3"/><circle cx="864.1" cy="400.7" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="687.8" y1="349.6" x2="674.8" y2="342.6" stroke="#111827" stroke-width="1.3"/><line x1="687.8" y1="349.6" x2="674.8" y2="356.6" stroke="#111827" stroke-width="1.3"/><line x1="687.8" y1="349.6" x2="674.8" y2="349.6" stroke="#111827" stroke-width="1.3"/><circle cx="693.3" cy="349.6" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="870.6" y1="433.3" x2="870.6" y2="421.3" stroke="#111827" stroke-width="1.3"/><circle cx="864.1" cy="427.3" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="426.6" y1="236.5" x2="439.6" y2="243.5" stroke="#111827" stroke-width="1.3"/><line x1="426.6" y1="236.5" x2="439.6" y2="229.5" stroke="#111827" stroke-width="1.3"/><line x1="426.6" y1="236.5" x2="439.6" y2="236.5" stroke="#111827" stroke-width="1.3"/><circle cx="421.1" cy="236.5" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="257.6" y1="145.5" x2="257.6" y2="157.5" stroke="#111827" stroke-width="1.3"/><circle cx="264.1" cy="151.5" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="687.8" y1="198.8" x2="674.8" y2="191.8" stroke="#111827" stroke-width="1.3"/><line x1="687.8" y1="198.8" x2="674.8" y2="205.8" stroke="#111827" stroke-width="1.3"/><line x1="687.8" y1="198.8" x2="674.8" y2="198.8" stroke="#111827" stroke-width="1.3"/><circle cx="693.3" cy="198.8" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="869.6" y1="278.0" x2="869.6" y2="266.0" stroke="#111827" stroke-width="1.3"/><line x1="864.6" y1="278.0" x2="864.6" y2="266.0" stroke="#111827" stroke-width="1.3"/>
+<line x1="851.8" y1="109.0" x2="864.8" y2="116.0" stroke="#111827" stroke-width="1.3"/><line x1="851.8" y1="109.0" x2="864.8" y2="102.0" stroke="#111827" stroke-width="1.3"/><line x1="851.8" y1="109.0" x2="864.8" y2="109.0" stroke="#111827" stroke-width="1.3"/><circle cx="846.3" cy="109.0" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="683.8" y1="117.4" x2="683.8" y2="129.4" stroke="#111827" stroke-width="1.3"/><line x1="688.8" y1="117.4" x2="688.8" y2="129.4" stroke="#111827" stroke-width="1.3"/>
+<text x="698.8" y="269.2" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">approved_by</text>
+<text x="698.8" y="344.6" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">verified_by</text>
+<text x="415.6" y="231.5" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">jenis_surat_id</text>
+<text x="698.8" y="193.8" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+<text x="840.8" y="104.0" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">letter_id</text>
+</svg>

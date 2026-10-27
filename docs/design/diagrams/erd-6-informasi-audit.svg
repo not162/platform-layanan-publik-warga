@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 643" width="1320" height="643" role="img" aria-label="Informasi RT dan Audit">
+<rect width="1320" height="643" fill="#ffffff"/>
+<path d="M927.2 126.0 H1019.6 V74.7 H1130.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M940.0 369.5 H1035.0 V101.3 H1130.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<rect x="40.0" y="40.0" width="171.2" height="172.0" fill="#f3eef5" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="40.0" width="171.2" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
+<text x="125.6" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">announcements</text>
+<text x="52.0" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="52.0" y="103.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">title : varchar</text>
+<text x="52.0" y="120.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">category : varchar</text>
+<text x="52.0" y="137.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">content : text</text>
+<text x="52.0" y="154.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_pinned : boolean</text>
+<text x="52.0" y="171.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_published : boolean</text>
+<text x="52.0" y="188.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">published_at : datetime</text>
+<text x="52.0" y="205.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">version : int</text>
+<line x1="40.0" y1="88.0" x2="211.2" y2="88.0" stroke="#111827" stroke-width="1"/>
+<rect x="43.2" y="258.0" width="164.8" height="189.0" fill="#eef5ed" stroke="#111827" stroke-width="1.3"/>
+<rect x="43.2" y="258.0" width="164.8" height="28" fill="#d5e8d4" stroke="#111827" stroke-width="1.3"/>
+<text x="125.6" y="277" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">community_events</text>
+<text x="55.2" y="300.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="55.2" y="321.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">title : varchar</text>
+<text x="55.2" y="338.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">description : text</text>
+<text x="55.2" y="355.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">location : varchar</text>
+<text x="55.2" y="372.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">event_date : date</text>
+<text x="55.2" y="389.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">start_time : time</text>
+<text x="55.2" y="406.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">end_time : time</text>
+<text x="55.2" y="423.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_published : boolean</text>
+<text x="55.2" y="440.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">version : int</text>
+<line x1="43.2" y1="306.0" x2="208.0" y2="306.0" stroke="#111827" stroke-width="1"/>
+<rect x="408.6" y="40.0" width="150.0" height="155.0" fill="#f0f5fd" stroke="#111827" stroke-width="1.3"/>
+<rect x="408.6" y="40.0" width="150.0" height="28" fill="#dae8fc" stroke="#111827" stroke-width="1.3"/>
+<text x="483.6" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">rt_officers</text>
+<text x="420.6" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="420.6" y="103.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">name : varchar</text>
+<text x="420.6" y="120.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">position : varchar</text>
+<text x="420.6" y="137.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">phone : varchar</text>
+<text x="420.6" y="154.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">order_index : int</text>
+<text x="420.6" y="171.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">photo_url : varchar</text>
+<text x="420.6" y="188.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_active : boolean</text>
+<line x1="408.6" y1="88.0" x2="558.6" y2="88.0" stroke="#111827" stroke-width="1"/>
+<rect x="401.2" y="241.0" width="164.8" height="155.0" fill="#fff9ea" stroke="#111827" stroke-width="1.3"/>
+<rect x="401.2" y="241.0" width="164.8" height="28" fill="#fff2cc" stroke="#111827" stroke-width="1.3"/>
+<text x="483.6" y="260" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">emergency_contacts</text>
+<text x="413.2" y="283.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="413.2" y="304.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">name : varchar</text>
+<text x="413.2" y="321.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">category : varchar</text>
+<text x="413.2" y="338.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">phone_number : varchar</text>
+<text x="413.2" y="355.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">description : varchar</text>
+<text x="413.2" y="372.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">order_index : int</text>
+<text x="413.2" y="389.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_active : boolean</text>
+<line x1="401.2" y1="289.0" x2="566.0" y2="289.0" stroke="#111827" stroke-width="1"/>
+<rect x="401.2" y="442.0" width="164.8" height="155.0" fill="#fcebea" stroke="#111827" stroke-width="1.3"/>
+<rect x="401.2" y="442.0" width="164.8" height="28" fill="#f8cecc" stroke="#111827" stroke-width="1.3"/>
+<text x="483.6" y="461" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">round_schedules</text>
+<text x="413.2" y="484.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="413.2" y="505.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">day_of_week : varchar</text>
+<text x="413.2" y="522.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">shift_name : varchar</text>
+<text x="413.2" y="539.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">officer_names : text</text>
+<text x="413.2" y="556.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">pos_location : varchar</text>
+<text x="413.2" y="573.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">notes : text</text>
+<text x="413.2" y="590.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_active : boolean</text>
+<line x1="401.2" y1="490.0" x2="566.0" y2="490.0" stroke="#111827" stroke-width="1"/>
+<rect x="768.8" y="40.0" width="158.4" height="172.0" fill="#fff5ea" stroke="#111827" stroke-width="1.3"/>
+<rect x="768.8" y="40.0" width="158.4" height="28" fill="#ffe6cc" stroke="#111827" stroke-width="1.3"/>
+<text x="848.0" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">audit_logs</text>
+<text x="780.8" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="780.8" y="103.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">user_id : int</text>
+<text x="780.8" y="120.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">action : varchar</text>
+<text x="780.8" y="137.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">entity_type : varchar</text>
+<text x="780.8" y="154.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">entity_id : int</text>
+<text x="780.8" y="171.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">old_values : text</text>
+<text x="780.8" y="188.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">new_values : text</text>
+<text x="780.8" y="205.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">ip_address : varchar</text>
+<line x1="768.8" y1="88.0" x2="927.2" y2="88.0" stroke="#111827" stroke-width="1"/>
+<rect x="756.0" y="258.0" width="184.0" height="223.0" fill="#e1f6ef" stroke="#111827" stroke-width="1.3"/>
+<rect x="756.0" y="258.0" width="184.0" height="28" fill="#b5ead7" stroke="#111827" stroke-width="1.3"/>
+<text x="848.0" y="277" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">download_audits</text>
+<text x="768.0" y="300.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : varchar</text>
+<text x="768.0" y="321.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">actor_user_id : int</text>
+<text x="768.0" y="338.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">resource_type : varchar</text>
+<text x="768.0" y="355.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">resource_id : varchar</text>
+<text x="768.0" y="372.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">file_type : varchar</text>
+<text x="768.0" y="389.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">period_year : int</text>
+<text x="768.0" y="406.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">period_quarter : int</text>
+<text x="768.0" y="423.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">action : varchar</text>
+<text x="768.0" y="440.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">result : varchar</text>
+<text x="768.0" y="457.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">ip_hash : varchar</text>
+<text x="768.0" y="474.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">user_agent_hash : varchar</text>
+<line x1="756.0" y1="306.0" x2="940.0" y2="306.0" stroke="#111827" stroke-width="1"/>
+<rect x="1130.0" y="40.0" width="150.0" height="96.0" fill="#f4f5f7" stroke="#111827" stroke-width="1.3"/>
+<rect x="1130.0" y="40.0" width="150.0" height="28" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
+<text x="1205.0" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">users</text>
+<text x="1142.0" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<line x1="940.2" y1="126.0" x2="927.2" y2="119.0" stroke="#111827" stroke-width="1.3"/><line x1="940.2" y1="126.0" x2="927.2" y2="133.0" stroke="#111827" stroke-width="1.3"/><line x1="940.2" y1="126.0" x2="927.2" y2="126.0" stroke="#111827" stroke-width="1.3"/><circle cx="945.7" cy="126.0" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="1122.0" y1="80.7" x2="1122.0" y2="68.7" stroke="#111827" stroke-width="1.3"/><circle cx="1115.5" cy="74.7" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="953.0" y1="369.5" x2="940.0" y2="362.5" stroke="#111827" stroke-width="1.3"/><line x1="953.0" y1="369.5" x2="940.0" y2="376.5" stroke="#111827" stroke-width="1.3"/><line x1="953.0" y1="369.5" x2="940.0" y2="369.5" stroke="#111827" stroke-width="1.3"/><circle cx="958.5" cy="369.5" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="1122.0" y1="107.3" x2="1122.0" y2="95.3" stroke="#111827" stroke-width="1.3"/><circle cx="1115.5" cy="101.3" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<text x="951.2" y="121.0" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">user_id</text>
+<text x="964.0" y="364.5" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">actor_user_id</text>
+</svg>

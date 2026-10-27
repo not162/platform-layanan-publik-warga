@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 963 731" width="963" height="731" role="img" aria-label="Pengaduan dan Keamanan">
+<rect width="963" height="731" fill="#ffffff"/>
+<path d="M583.2 139.7 H669.2 V64.0 H773.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M583.2 231.3 H678.2 V80.0 H773.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M380.0 185.5 H294.0 V74.7 H190.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M583.2 482.3 H669.2 V96.0 H773.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M583.2 579.7 H678.2 V112.0 H773.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M380.0 531.0 H294.0 V101.3 H190.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<rect x="380.0" y="40.0" width="203.2" height="291.0" fill="#f3eef5" stroke="#111827" stroke-width="1.3"/>
+<rect x="380.0" y="40.0" width="203.2" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
+<text x="481.6" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">complaints</text>
+<text x="392.0" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="392.0" y="103.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">ticket_number : varchar {UK}</text>
+<text x="392.0" y="120.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">citizen_id : int</text>
+<text x="392.0" y="137.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">user_id : int</text>
+<text x="392.0" y="154.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">kategori : varchar</text>
+<text x="392.0" y="171.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">title : varchar</text>
+<text x="392.0" y="188.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">description : text</text>
+<text x="392.0" y="205.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">lokasi : varchar</text>
+<text x="392.0" y="222.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_anonymous : boolean</text>
+<text x="392.0" y="239.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">status : varchar</text>
+<text x="392.0" y="256.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">priority : varchar</text>
+<text x="392.0" y="273.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">assigned_admin_id : int</text>
+<text x="392.0" y="290.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">admin_response : text</text>
+<text x="392.0" y="307.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">attachment_path : varchar</text>
+<text x="392.0" y="324.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">version : int</text>
+<line x1="380.0" y1="88.0" x2="583.2" y2="88.0" stroke="#111827" stroke-width="1"/>
+<rect x="380.0" y="377.0" width="203.2" height="308.0" fill="#eef5ed" stroke="#111827" stroke-width="1.3"/>
+<rect x="380.0" y="377.0" width="203.2" height="28" fill="#d5e8d4" stroke="#111827" stroke-width="1.3"/>
+<text x="481.6" y="396" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">security_reports</text>
+<text x="392.0" y="419.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<text x="392.0" y="440.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">ticket_number : varchar {UK}</text>
+<text x="392.0" y="457.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">citizen_id : int</text>
+<text x="392.0" y="474.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">reporter_user_id : int</text>
+<text x="392.0" y="491.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">category : varchar</text>
+<text x="392.0" y="508.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">severity : varchar</text>
+<text x="392.0" y="525.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">title : varchar</text>
+<text x="392.0" y="542.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">description : text</text>
+<text x="392.0" y="559.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">location : varchar</text>
+<text x="392.0" y="576.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">incident_at : datetime</text>
+<text x="392.0" y="593.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_anonymous : boolean</text>
+<text x="392.0" y="610.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">status : varchar</text>
+<text x="392.0" y="627.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">assigned_to : int</text>
+<text x="392.0" y="644.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">resolution : text</text>
+<text x="392.0" y="661.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">resolved_at : datetime</text>
+<text x="392.0" y="678.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">version : int</text>
+<line x1="380.0" y1="425.0" x2="583.2" y2="425.0" stroke="#111827" stroke-width="1"/>
+<rect x="40.0" y="40.0" width="150.0" height="96.0" fill="#f4f5f7" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="40.0" width="150.0" height="28" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
+<text x="115.0" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">citizens</text>
+<text x="52.0" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<rect x="773.2" y="40.0" width="150.0" height="96.0" fill="#f4f5f7" stroke="#111827" stroke-width="1.3"/>
+<rect x="773.2" y="40.0" width="150.0" height="28" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
+<text x="848.2" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">users</text>
+<text x="785.2" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold">+id : int</text>
+<line x1="596.2" y1="139.7" x2="583.2" y2="132.7" stroke="#111827" stroke-width="1.3"/><line x1="596.2" y1="139.7" x2="583.2" y2="146.7" stroke="#111827" stroke-width="1.3"/><line x1="596.2" y1="139.7" x2="583.2" y2="139.7" stroke="#111827" stroke-width="1.3"/><circle cx="601.7" cy="139.7" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="765.2" y1="70.0" x2="765.2" y2="58.0" stroke="#111827" stroke-width="1.3"/><circle cx="758.7" cy="64.0" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="596.2" y1="231.3" x2="583.2" y2="224.3" stroke="#111827" stroke-width="1.3"/><line x1="596.2" y1="231.3" x2="583.2" y2="238.3" stroke="#111827" stroke-width="1.3"/><line x1="596.2" y1="231.3" x2="583.2" y2="231.3" stroke="#111827" stroke-width="1.3"/><circle cx="601.7" cy="231.3" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="765.2" y1="86.0" x2="765.2" y2="74.0" stroke="#111827" stroke-width="1.3"/><circle cx="758.7" cy="80.0" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="367.0" y1="185.5" x2="380.0" y2="192.5" stroke="#111827" stroke-width="1.3"/><line x1="367.0" y1="185.5" x2="380.0" y2="178.5" stroke="#111827" stroke-width="1.3"/><line x1="367.0" y1="185.5" x2="380.0" y2="185.5" stroke="#111827" stroke-width="1.3"/><circle cx="361.5" cy="185.5" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="198.0" y1="68.7" x2="198.0" y2="80.7" stroke="#111827" stroke-width="1.3"/><circle cx="204.5" cy="74.7" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="596.2" y1="482.3" x2="583.2" y2="475.3" stroke="#111827" stroke-width="1.3"/><line x1="596.2" y1="482.3" x2="583.2" y2="489.3" stroke="#111827" stroke-width="1.3"/><line x1="596.2" y1="482.3" x2="583.2" y2="482.3" stroke="#111827" stroke-width="1.3"/><circle cx="601.7" cy="482.3" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="765.2" y1="102.0" x2="765.2" y2="90.0" stroke="#111827" stroke-width="1.3"/><circle cx="758.7" cy="96.0" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="596.2" y1="579.7" x2="583.2" y2="572.7" stroke="#111827" stroke-width="1.3"/><line x1="596.2" y1="579.7" x2="583.2" y2="586.7" stroke="#111827" stroke-width="1.3"/><line x1="596.2" y1="579.7" x2="583.2" y2="579.7" stroke="#111827" stroke-width="1.3"/><circle cx="601.7" cy="579.7" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="765.2" y1="118.0" x2="765.2" y2="106.0" stroke="#111827" stroke-width="1.3"/><circle cx="758.7" cy="112.0" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="367.0" y1="531.0" x2="380.0" y2="538.0" stroke="#111827" stroke-width="1.3"/><line x1="367.0" y1="531.0" x2="380.0" y2="524.0" stroke="#111827" stroke-width="1.3"/><line x1="367.0" y1="531.0" x2="380.0" y2="531.0" stroke="#111827" stroke-width="1.3"/><circle cx="361.5" cy="531.0" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="198.0" y1="95.3" x2="198.0" y2="107.3" stroke="#111827" stroke-width="1.3"/><circle cx="204.5" cy="101.3" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<text x="607.2" y="134.7" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">assigned_admin_id</text>
+<text x="607.2" y="226.3" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">user_id</text>
+<text x="356.0" y="180.5" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+<text x="607.2" y="477.3" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">assigned_to</text>
+<text x="607.2" y="574.7" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">reporter_user_id</text>
+<text x="356.0" y="526.0" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+</svg>
