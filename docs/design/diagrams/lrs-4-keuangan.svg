@@ -111,32 +111,32 @@
 <text x="848.4" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold" text-decoration="underline">id</text>
 <text x="120.1" y="162.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="120.1" y="136.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="120.1" y="134.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+<text x="120.1" y="134.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">ditagih</text>
 <text x="602.4" y="174.3" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="786.4" y="312.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="696.7" y="248.2" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">finance_transaction_id</text>
+<text x="696.7" y="248.2" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mencatat pembayaran</text>
 <text x="380.2" y="142.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="196.2" y="248.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="292.2" y="200.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">resident_due_id</text>
+<text x="292.2" y="200.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">dibayar lewat</text>
 <text x="602.4" y="109.7" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="828.4" y="65.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="710.7" y="92.3" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">received_by</text>
+<text x="710.7" y="92.3" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">menerima pembayaran</text>
 <text x="1016.4" y="201.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="1016.4" y="225.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="1070.4" y="222.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif">original_transaction_id</text>
+<text x="1070.4" y="222.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif">membalik</text>
 <text x="907.4" y="162.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="907.4" y="136.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="907.4" y="148.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">created_by</text>
+<text x="907.4" y="148.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mencatat transaksi</text>
 <text x="1200.4" y="104.3" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="974.4" y="75.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="1094.9" y="94.7" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">created_by</text>
+<text x="1094.9" y="94.7" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mencatat pembelian</text>
 <text x="1200.4" y="163.7" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="1016.4" y="243.5" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="1108.9" y="208.6" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">finance_transaction_id</text>
+<text x="1108.9" y="208.6" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">dibukukan sebagai</text>
 <text x="1317.5" y="280.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="1317.5" y="254.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="1317.5" y="259.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">purchase_id</text>
+<text x="1317.5" y="259.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">terdiri dari</text>
 <text x="592.2" y="470.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="828.4" y="85.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="724.7" y="282.5" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">published_by</text>
+<text x="724.7" y="282.5" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">menerbitkan laporan</text>
 </svg>

@@ -54,8 +54,8 @@
 <text x="728.0" y="597" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Tolak dengan</text>
 <text x="728.0" y="611" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">alasan</text>
 <rect x="814.0" y="570.0" width="116" height="60" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
-<text x="872.0" y="590" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Verifikasi</text>
-<text x="872.0" y="604" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">berkas (status</text>
+<text x="872.0" y="590" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Nyatakan berkas</text>
+<text x="872.0" y="604" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">valid (status</text>
 <text x="872.0" y="618" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">verified)</text>
 <rect x="400.0" y="663.0" width="160" height="46" rx="14" fill="#a8e6cf" stroke="#2f8f6f" stroke-width="1.5"/>
 <text x="480.0" y="683" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Simpan status rejected,</text>

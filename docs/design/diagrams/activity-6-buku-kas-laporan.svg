@@ -46,18 +46,18 @@
 <text x="125.0" y="439" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">draft</text>
 <circle cx="125.0" cy="514" r="12" fill="#fff" stroke="#111827" stroke-width="1.4"/><circle cx="125.0" cy="514" r="7" fill="#111827"/>
 <rect x="425.0" y="398.0" width="170" height="60" rx="14" fill="#a8e6cf" stroke="#2f8f6f" stroke-width="1.5"/>
-<text x="510.0" y="418" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Status published,</text>
-<text x="510.0" y="432" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">bersihkan cache kas</text>
-<text x="510.0" y="446" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">publik</text>
+<text x="510.0" y="418" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Terbitkan transaksi</text>
+<text x="510.0" y="432" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">(published), bersihkan</text>
+<text x="510.0" y="446" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">cache kas publik</text>
 <polygon points="510.0,500.0 524.0,514 510.0,528.0 496.0,514" fill="#f4b266" stroke="#b8741a" stroke-width="1.4"/>
 <text x="492.0" y="504" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">Ada kesalahan?</text>
 <rect x="100.0" y="577.0" width="140" height="46" rx="14" fill="#ffd699" stroke="#c27a1a" stroke-width="1.5"/>
 <text x="170.0" y="597" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Ajukan koreksi +</text>
 <text x="170.0" y="611" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">alasan</text>
 <rect x="425.0" y="570.0" width="170" height="60" rx="14" fill="#a8e6cf" stroke="#2f8f6f" stroke-width="1.5"/>
-<text x="510.0" y="590" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Reversal: transaksi asli</text>
-<text x="510.0" y="604" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">reversed, transaksi lawan</text>
-<text x="510.0" y="618" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">dibuat</text>
+<text x="510.0" y="590" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Balik transaksi asli</text>
+<text x="510.0" y="604" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">(reversed), buat</text>
+<text x="510.0" y="618" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">transaksi lawan</text>
 <polygon points="630.0,675.0 641.0,686 630.0,697.0 619.0,686" fill="#f4b266" stroke="#b8741a" stroke-width="1.4"/>
 <rect x="90.0" y="749.0" width="160" height="46" rx="14" fill="#ffd699" stroke="#c27a1a" stroke-width="1.5"/>
 <text x="170.0" y="769" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Susun laporan triwulan</text>

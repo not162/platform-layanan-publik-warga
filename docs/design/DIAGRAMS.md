@@ -4,6 +4,8 @@ Kumpulan diagram (ERD, use case, activity, UML; LRS ada di dokumen terpisah) yan
 
 > ERD dan LRS dibangkitkan dari migrasi. Penelusuran diagram ke fase Waterfall, kode, dan tes ada di [SYSTEM_MODELING_5_ELEMENTS.md](SYSTEM_MODELING_5_ELEMENTS.md). Jika skema berubah, perbarui ERD, LRS, dan README bersama-sama.
 
+> **Konvensi penamaan:** nama use case, aksi pada activity diagram, pesan pada sequence diagram, dan label relasi pada ERD, LRS, dan class diagram ditulis sebagai kalimat kata kerja (contoh: *Mengajukan Permohonan Surat*, *Periksa berkas surat*, *memiliki izin*). Objek data pada activity diagram (contoh: *Surat [approved]*) dan nama operasi yang sama dengan nama method di kode (contoh: `citizen()`) tetap berupa kata benda.
+
 ### 1. Entity Relationship Diagram (ERD)
 
 Dibangkitkan dari skema hasil migrasi (`php artisan migrate`), 27 tabel domain dipecah menjadi enam modul agar terbaca. Kolom `created_at` dan `updated_at` ada di semua tabel dan tidak digambar. Tabel framework (`cache`, `jobs`, `sessions`) tidak ditampilkan.

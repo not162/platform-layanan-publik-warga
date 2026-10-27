@@ -68,20 +68,20 @@
 <text x="758.3" y="602.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold" text-decoration="underline">id</text>
 <text x="540.2" y="104.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="747.4" y="75.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="644.6" y="94.5" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">user_id</text>
+<text x="644.6" y="94.5" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">terhubung ke warga</text>
 <text x="370.8" y="222.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="186.8" y="150.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="282.8" y="191.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">family_card_id</text>
+<text x="282.8" y="191.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">beranggotakan</text>
 <text x="747.4" y="205.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="540.2" y="163.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="658.6" y="189.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+<text x="658.6" y="189.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mengajukan</text>
 <text x="747.4" y="335.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="540.2" y="222.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="672.6" y="283.5" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+<text x="672.6" y="283.5" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mengadukan</text>
 <text x="724.2" y="465.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="540.2" y="281.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="630.6" y="378.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+<text x="630.6" y="378.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">melaporkan</text>
 <text x="738.3" y="595.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
 <text x="540.2" y="340.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
-<text x="616.6" y="472.5" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+<text x="616.6" y="472.5" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">ditagih</text>
 </svg>

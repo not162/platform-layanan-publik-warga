@@ -79,10 +79,10 @@
 <line x1="625.2" y1="293.3" x2="625.2" y2="305.3" stroke="#111827" stroke-width="1.3"/><circle cx="631.7" cy="299.3" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
 <line x1="795.2" y1="656.0" x2="808.2" y2="663.0" stroke="#111827" stroke-width="1.3"/><line x1="795.2" y1="656.0" x2="808.2" y2="649.0" stroke="#111827" stroke-width="1.3"/><line x1="795.2" y1="656.0" x2="808.2" y2="656.0" stroke="#111827" stroke-width="1.3"/><circle cx="789.7" cy="656.0" r="4.2" fill="#fff" stroke="#111827" stroke-width="1.3"/>
 <line x1="626.2" y1="356.2" x2="626.2" y2="368.2" stroke="#111827" stroke-width="1.3"/><line x1="631.2" y1="356.2" x2="631.2" y2="368.2" stroke="#111827" stroke-width="1.3"/>
-<text x="641.2" y="105.8" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">user_id</text>
-<text x="390.0" y="231.5" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">family_card_id</text>
-<text x="784.2" y="225.0" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
-<text x="784.2" y="367.0" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
-<text x="783.2" y="509.0" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
-<text x="784.2" y="651.0" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+<text x="641.2" y="105.8" text-anchor="start" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">terhubung ke warga</text>
+<text x="390.0" y="231.5" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">beranggotakan</text>
+<text x="784.2" y="225.0" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mengajukan</text>
+<text x="784.2" y="367.0" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mengadukan</text>
+<text x="783.2" y="509.0" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">melaporkan</text>
+<text x="784.2" y="651.0" text-anchor="end" font-size="10.5" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">ditagih</text>
 </svg>

@@ -16,6 +16,7 @@ Seluruh isi dokumen ini dibangkitkan dari skema hasil `php artisan migrate` (39 
 | kolom (UK) | Kolom dengan indeks unik |
 | Kotak berkepala abu-abu, hanya berisi PK | Tabel dari modul lain, ditampilkan agar relasinya terlihat |
 | Panah ke tabel induk | Relasi FK → PK. `N` di sisi anak, `1` di sisi induk |
+| Teks miring di garis | Kalimat kata kerja dari sisi induk, contoh `memiliki izin` (users → admin_permissions) |
 | Garis menyilang dengan busur kecil | Dua garis saling melintas tanpa terhubung |
 
 Kolom `created_at` dan `updated_at` ada di semua tabel dan tidak digambar. Tabel framework (`cache`, `jobs`, `sessions`) tidak ditampilkan.

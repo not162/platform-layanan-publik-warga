@@ -22,10 +22,10 @@
 <path d="M964.0 600.0 H1030.0 V663.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
 <path d="M805.0 686.0 H570.0 V537.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
 <path d="M1030.0 709.0 V758.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
-<path d="M1016.0 772.0 H930.0 V839.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
-<path d="M1044.0 772.0 H1050.0 V839.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
-<path d="M930.0 877.0 V944.0 H979.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
-<path d="M1050.0 877.0 V944.0 H1001.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M1016.0 772.0 H930.0 V835.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M1044.0 772.0 H1050.0 V835.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M930.0 881.0 V944.0 H979.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M1050.0 881.0 V944.0 H1001.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
 <path d="M990.0 955.0 V1030.0 H1045.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
 <path d="M950.0 1060.0 V1116.0 H645.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
 <path d="M570.0 1133.0 V1202.0 H270.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
@@ -62,10 +62,12 @@
 <polygon points="1030.0,758.0 1044.0,772 1030.0,786.0 1016.0,772" fill="#f4b266" stroke="#b8741a" stroke-width="1.4"/>
 <text x="1012.0" y="749" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">Total bayar mencapai</text>
 <text x="1012.0" y="762" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">tagihan?</text>
-<rect x="880.0" y="839.0" width="100" height="38" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
-<text x="930.0" y="862" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Status PAID</text>
-<rect x="1000.0" y="839.0" width="100" height="38" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
-<text x="1050.0" y="862" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Status PARTIAL</text>
+<rect x="880.0" y="835.0" width="100" height="46" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="930.0" y="855" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Tandai tagihan</text>
+<text x="930.0" y="869" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">PAID</text>
+<rect x="1000.0" y="835.0" width="100" height="46" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="1050.0" y="855" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Tandai tagihan</text>
+<text x="1050.0" y="869" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">PARTIAL</text>
 <polygon points="990.0,933.0 1001.0,944 990.0,955.0 979.0,944" fill="#f4b266" stroke="#b8741a" stroke-width="1.4"/>
 <rect x="855.0" y="1000.0" width="190" height="60" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
 <text x="950.0" y="1020" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Buat transaksi kas income</text>
