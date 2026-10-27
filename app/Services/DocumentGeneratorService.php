@@ -59,12 +59,14 @@ class DocumentGeneratorService
                 'gender' => $citizen?->gender ?? '—',
                 'religion' => $citizen?->religion ?? '—',
                 'occupation' => $citizen?->occupation ?? '—',
-                'address' => $familyCard?->address ?? ($citizen?->address ?? 'RT 01 RW 05'),
+                'address' => $familyCard?->address ?? ($citizen?->address ?? ('RT '.config('rt.rt').' RW '.config('rt.rw'))),
             ],
             'officer' => [
-                'name' => $letter->approvedBy?->name ?? 'Ketua RT 01',
-                'role' => 'Ketua RT 01 / RW 05',
+                'name' => config('rt.officers.ketua'),
+                'role' => 'Ketua RT '.config('rt.rt').' / RW '.config('rt.rw'),
             ],
+            'verifier_name' => config('rt.officers.sekretaris'),
+            'approved_by_name' => $letter->approvedBy?->name,
             'issued_at' => ($letter->approved_at ?? now())->translatedFormat('d F Y'),
             'verification_token' => $token,
             'verification_url' => url('/api/v1/public/letter/verify/'.$token),
@@ -120,9 +122,9 @@ class DocumentGeneratorService
             'status' => $report->status,
             'resolution' => $report->resolution,
             'resolved_at' => $report->resolved_at?->translatedFormat('d F Y, H:i'),
-            'reporter_name' => $report->reporter?->name ?? ($report->citizen?->full_name ?? 'Warga RT 01'),
+            'reporter_name' => $report->reporter?->name ?? ($report->citizen?->full_name ?? 'Warga RT '.config('rt.rt')),
             'officer_name' => $report->assignee?->name ?? 'Petugas Keamanan RT',
-            'ketua_rt_name' => 'Ketua RT 01',
+            'ketua_rt_name' => config('rt.officers.ketua'),
         ];
 
         $renderedHtml = view('documents.templates.laporan-keamanan', $payload)->render();

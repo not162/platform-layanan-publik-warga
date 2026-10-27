@@ -40,7 +40,9 @@ class RoleAndAuthorizationTest extends TestCase
         // Lacks other scopes
         $this->assertFalse($admin->hasPermission('letter.approve'));
         $this->assertFalse($admin->hasPermission('finance.manage'));
-        $this->assertFalse($admin->hasPermission('citizen.manage'));
+        // Admin kini memegang izin bawaan manajemen pengguna & kependudukan
+        $this->assertTrue($admin->hasPermission('user.manage'));
+        $this->assertTrue($admin->hasPermission('citizen.manage'));
     }
 
     public function test_warga_cannot_have_admin_permissions(): void

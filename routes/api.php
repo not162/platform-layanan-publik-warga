@@ -1,17 +1,23 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\Api\V1\AccountController;
 use App\Http\Controllers\Api\V1\Admin\CitizenController;
 use App\Http\Controllers\Api\V1\Admin\FamilyCardController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Citizen\ProfileController;
 use App\Http\Controllers\Api\V1\DashboardApiController;
+use App\Http\Controllers\Api\V1\FileController;
 use App\Http\Controllers\Api\V1\FinancialReportController;
 use App\Http\Controllers\Api\V1\LetterTypeController;
+use App\Http\Controllers\Api\V1\ManageController;
+use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\PortalController;
 use App\Http\Controllers\Api\V1\PurchaseController;
 use App\Http\Controllers\Api\V1\PushSubscriptionController;
 use App\Http\Controllers\Api\V1\ResidentDueController;
 use App\Http\Controllers\Api\V1\SecurityReportController;
+use App\Http\Controllers\Api\V1\SummaryController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\FinanceTransactionController;
 use App\Http\Controllers\LetterController;
@@ -22,9 +28,14 @@ Route::prefix('v1')->group(function () {
     // -------------------------------------------------------------
     // Public Endpoints (No Authentication Required)
     // -------------------------------------------------------------
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/auth/check-citizen', [AuthController::class, 'checkCitizen']);
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:10,1');
+    Route::post('/auth/check-citizen', [AuthController::class, 'checkCitizen'])->middleware('throttle:90,1');
+    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:6,1');
+    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:10,1');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:20,1');
+
+    // Beranda publik (real-time, tanpa cache)
+    Route::get('/portal', [PortalController::class, 'index']);
 
     // Public letter tracking and verification
     Route::get('/public/services', [LetterTypeController::class, 'index']);
@@ -62,6 +73,36 @@ Route::prefix('v1')->group(function () {
         Route::get('/me', [ProfileController::class, 'show']);
         Route::patch('/me', [ProfileController::class, 'update']);
         Route::get('/me/export', [ProfileController::class, 'export']);
+
+        Route::get('/files/letter-attachments/{id}', [FileController::class, 'letterAttachment'])->whereNumber('id');
+        Route::get('/files/complaints/{id}', [FileController::class, 'complaintPhoto'])->whereNumber('id');
+        Route::get('/files/ktp/{id}', [FileController::class, 'ktp'])->whereNumber('id');
+
+        Route::get('/files/avatar/{id}', [FileController::class, 'avatar'])->whereNumber('id');
+        Route::post('/me/photo', [AccountController::class, 'photo']);
+        Route::delete('/me/photo', [AccountController::class, 'removePhoto']);
+        Route::patch('/me/account', [AccountController::class, 'update']);
+        Route::post('/me/password', [AccountController::class, 'password']);
+
+        // Ringkasan dashboard & notifikasi (di-poll UI untuk data real-time)
+        Route::get('/dashboard/summary', [SummaryController::class, 'dashboard']);
+        Route::get('/roles', [SummaryController::class, 'roles']);
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);
+        Route::delete('/notifications', [NotificationController::class, 'clear']);
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'read']);
+        Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+
+        // CRUD real-time ke MySQL: GET list/detail, POST create, PATCH|PUT update, DELETE destroy
+        Route::prefix('manage/{resource}')->where(['resource' => '[a-z\-]+'])->group(function () {
+            Route::get('/', [ManageController::class, 'index']);
+            Route::get('/export', [ManageController::class, 'export']);
+            Route::post('/', [ManageController::class, 'store']);
+            Route::get('/{id}', [ManageController::class, 'show'])->whereNumber('id');
+            Route::match(['PUT', 'PATCH'], '/{id}', [ManageController::class, 'update'])->whereNumber('id');
+            Route::delete('/{id}', [ManageController::class, 'destroy'])->whereNumber('id');
+            Route::post('/{id}/{action}', [ManageController::class, 'action'])->whereNumber('id');
+        });
 
         // Letters management
         Route::get('/letters', [LetterController::class, 'index']);

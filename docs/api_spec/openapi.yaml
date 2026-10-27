@@ -44,6 +44,10 @@ tags:
     description: Pengaduan warga (aspirasi publik maupun laporan anonim)
   - name: Finance Transactions
     description: Transparansi kas RT dan pencatatan buku kas (Bendahara)
+  - name: Realtime
+    description: Ringkasan dashboard dan notifikasi (di-poll UI)
+  - name: Manage CRUD
+    description: CRUD generik ke MySQL untuk seluruh modul (users, warga, surat, kas, konten, dll.)
   - name: Push Notifications
     description: Registrasi langganan Web Push Notification (PWA)
 
@@ -892,6 +896,223 @@ paths:
       responses:
         '201':
           description: Transaksi kas tercatat
+
+  /auth/check-citizen:
+    post:
+      tags: [Authentication]
+      summary: Validasi real-time NIK, No. KK, nama, dan username (nama warga disamarkan)
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nik: { type: string, minLength: 16, maxLength: 16 }
+                no_kk: { type: string, minLength: 16, maxLength: 16 }
+                name: { type: string }
+                username: { type: string }
+      responses:
+        '200': { description: "Status per field: checks.nik / checks.no_kk / checks.name / checks.username" }
+  /auth/forgot-password:
+    post:
+      tags: [Authentication]
+      summary: Verifikasi identitas (username + NIK + No. KK) dan terbitkan tautan reset 20 menit
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, nik, no_kk]
+              properties:
+                username: { type: string }
+                nik: { type: string }
+                no_kk: { type: string }
+      responses:
+        '200': { description: "reset_url sekali pakai" }
+        '422': { description: Data tidak cocok }
+  /auth/reset-password:
+    post:
+      tags: [Authentication]
+      summary: Atur password baru memakai token reset
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password, password_confirmation]
+              properties:
+                token: { type: string }
+                password: { type: string, minLength: 8 }
+                password_confirmation: { type: string }
+      responses:
+        '200': { description: Password diubah }
+        '422': { description: Token tidak valid / kedaluwarsa }
+  /portal:
+    get:
+      tags: [Public Catalog & Information]
+      summary: Data beranda publik real-time (pengumuman, agenda, ringkasan kas, pengurus, kontak, ronda)
+      security: []
+      responses:
+        '200': { description: OK (dilengkapi ETag) }
+  /dashboard/summary:
+    get:
+      tags: [Realtime]
+      summary: Kartu ringkasan dashboard sesuai peran
+      responses:
+        '200': { description: OK }
+  /notifications:
+    get:
+      tags: [Realtime]
+      summary: Daftar notifikasi pengguna + jumlah belum dibaca
+      responses:
+        '200': { description: OK }
+    delete:
+      tags: [Realtime]
+      summary: Hapus semua notifikasi
+      responses:
+        '200': { description: OK }
+  /notifications/read-all:
+    post:
+      tags: [Realtime]
+      summary: Tandai semua notifikasi dibaca
+      responses:
+        '200': { description: OK }
+  /notifications/{id}/read:
+    post:
+      tags: [Realtime]
+      summary: Tandai satu notifikasi dibaca
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        '200': { description: OK }
+  /me/account:
+    patch:
+      tags: [Citizen Profile]
+      summary: Ubah nama, username, email, dan telepon sendiri
+      responses:
+        '200': { description: OK }
+        '422': { description: Validasi gagal }
+  /me/password:
+    post:
+      tags: [Citizen Profile]
+      summary: Ganti password (butuh password saat ini)
+      responses:
+        '200': { description: OK }
+        '422': { description: Validasi gagal }
+  /manage/{resource}/export:
+    get:
+      tags: [Manage CRUD]
+      summary: Ekspor CSV (filter sama dengan daftar; maks. 5.000 baris)
+      parameters: [{ name: resource, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: "text/csv UTF-8 (BOM)" }
+        '403': { description: Peran tidak berwenang }
+  /me/photo:
+    post:
+      tags: [Citizen Profile]
+      summary: Unggah foto profil (JPG/PNG/WebP maks. 2 MB, multipart field photo)
+      responses:
+        '200': { description: OK }
+    delete:
+      tags: [Citizen Profile]
+      summary: Hapus foto profil
+      responses:
+        '200': { description: OK }
+  /files/avatar/{id}:
+    get:
+      tags: [Manage CRUD]
+      summary: Foto profil pengguna (wajib login)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: Gambar }
+  /files/letter-attachments/{id}:
+    get:
+      tags: [Manage CRUD]
+      summary: Unduh lampiran surat (pemilik atau pengurus surat)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: Berkas }
+        '403': { description: Bukan pemilik/pengurus }
+  /files/complaints/{id}:
+    get:
+      tags: [Manage CRUD]
+      summary: Foto bukti pengaduan (pelapor atau pengurus)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: Berkas }
+        '403': { description: Tidak berwenang }
+  /files/ktp/{id}:
+    get:
+      tags: [Manage CRUD]
+      summary: Berkas KTP warga (pemilik atau pengurus kependudukan)
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: Berkas }
+        '403': { description: Tidak berwenang }
+  /manage/{resource}:
+    parameters:
+      - name: resource
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [users, citizens, announcements, events, officers, schedules, contacts, letters, complaints, security-reports, finance, dues, audit-logs]
+    get:
+      tags: [Manage CRUD]
+      summary: Daftar data (q, page, per_page, status, mine, updated_since)
+      responses:
+        '200': { description: "{ data: [], meta: { current_page, per_page, total, last_page, server_time } }" }
+        '403': { description: Peran tidak berwenang }
+    post:
+      tags: [Manage CRUD]
+      summary: Tambah data (disimpan ke MySQL + audit log + notifikasi terkait)
+      responses:
+        '201': { description: Dibuat }
+        '422': { description: Validasi gagal }
+  /manage/{resource}/{id}:
+    parameters:
+      - name: resource
+        in: path
+        required: true
+        schema: { type: string }
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [Manage CRUD]
+      summary: Detail data (warga hanya data sendiri)
+      responses:
+        '200': { description: OK }
+        '404': { description: Tidak ditemukan / bukan milik Anda }
+    patch:
+      tags: [Manage CRUD]
+      summary: Ubah data (kirim version; basi = 409)
+      responses:
+        '200': { description: OK }
+        '409': { description: Konflik versi }
+    delete:
+      tags: [Manage CRUD]
+      summary: Hapus data
+      responses:
+        '200': { description: OK }
+        '409': { description: Masih dipakai data lain / status tidak boleh dihapus }
+  /manage/{resource}/{id}/{action}:
+    post:
+      tags: [Manage CRUD]
+      summary: "Aksi alur kerja. letters: submit, verify, approve, complete, reject(reason). finance: publish, reverse(reason). dues: pay(amount, payment_method). citizens: verify, reject(reason)"
+      parameters:
+        - { name: resource, in: path, required: true, schema: { type: string } }
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: action, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+        '403': { description: Peran tidak berwenang }
+        '409': { description: Transisi tidak sah / versi basi }
 
 components:
   securitySchemes:

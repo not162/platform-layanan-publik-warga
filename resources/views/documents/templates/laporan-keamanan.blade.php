@@ -28,11 +28,7 @@
 </head>
 <body>
 
-    <div class="kop">
-        <h2>Seksi Keamanan & Ketertiban Warga</h2>
-        <h3>Rukun Tetangga 01 / Rukun Warga 05</h3>
-        <p>Sekretariat Pos Ronda & Balai Warga RT 01 RW 05, Kontak Darurat: 112 / 110</p>
-    </div>
+    @include('documents.partials.kop', ['kop_title' => 'Seksi Keamanan & Ketertiban Warga'])
 
     <div class="judul-surat">
         <h4>BERITA ACARA LAPORAN KEAMANAN & KETERTIBAN</h4>
@@ -62,7 +58,7 @@
         <tr>
             <td class="label">Lokasi Tempat Kejadian (TKP)</td>
             <td class="separator">:</td>
-            <td>{{ $location ?? 'Lingkungan RT 01' }}</td>
+            <td>{{ $location ?? 'Lingkungan RT '.config('rt.rt').'' }}</td>
         </tr>
         <tr>
             <td class="label">Status Penanganan</td>
@@ -76,7 +72,7 @@
                 @if(!empty($is_anonymous))
                     <em>(Dirahasiakan / Anonim atas permintaan pelapor)</em>
                 @else
-                    {{ $reporter_name ?? 'Warga RT 01' }}
+                    {{ $reporter_name ?? 'Warga RT '.config('rt.rt').'' }}
                 @endif
             </td>
         </tr>
@@ -105,7 +101,7 @@
             </td>
             <td>
                 Mengetahui,<br>
-                Ketua RT 01 RW 05,
+                Ketua RT {{ config('rt.rt') }} RW {{ config('rt.rw') }},
                 <div class="ttd-space"></div>
                 <strong>( {{ $ketua_rt_name ?? 'Ketua RT' }} )</strong>
             </td>

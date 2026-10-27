@@ -47,7 +47,7 @@ class CitizenModuleTest extends TestCase
 
     public function test_admin_without_scope_cannot_create_citizen(): void
     {
-        $adminWithoutScope = User::factory()->admin(['finance.manage'])->create();
+        $adminWithoutScope = User::factory()->bendahara()->create();
         $familyCard = FamilyCard::factory()->create();
 
         $response = $this->actingAs($adminWithoutScope)->postJson('/api/v1/admin/citizens', [

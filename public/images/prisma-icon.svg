@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PRISMA RT 04">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#g)"/>
+  <path d="M256 70 L420 128 V260 C420 358 350 418 256 452 C162 418 92 358 92 260 V128 Z" fill="#fff"/>
+  <path d="M256 160 L346 326 H166 Z" fill="url(#g)"/>
+  <path d="M256 222 L296 296 H216 Z" fill="#fff"/>
+</svg>

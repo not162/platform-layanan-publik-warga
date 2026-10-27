@@ -293,7 +293,7 @@ class LetterService
         $padded = str_pad((string) $sequence->last_number, 4, '0', STR_PAD_LEFT);
         $monthStr = str_pad((string) $month, 2, '0', STR_PAD_LEFT);
 
-        $format = $letter->letterType?->format_penomoran ?? 'SK/{nomor}/RT01/{bulan}/{tahun}';
+        $format = $letter->letterType?->format_penomoran ?? 'SK/{nomor}/RT04/{bulan}/{tahun}';
 
         return str_replace(
             ['{nomor}', '{bulan}', '{tahun}'],

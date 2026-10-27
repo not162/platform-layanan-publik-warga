@@ -1,26 +1,72 @@
 {
-  "name": "Layanan Publik Warga",
-  "short_name": "Portal Warga",
-  "description": "Portal Layanan Publik RT & Administrasi Warga Mandiri",
-  "start_url": "/",
+  "id": "/",
+  "name": "PRISMA RT 04 — Layanan Warga",
+  "short_name": "PRISMA RT 04",
+  "description": "Urus surat, cek kas, lapor masalah — semua dari HP. Layanan warga RT 04 / RW 09 Kemayoran.",
+  "lang": "id",
+  "start_url": "/dashboard?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F8FAFC",
-  "theme_color": "#1B365D",
-  "categories": ["government", "productivity", "utilities"],
+  "background_color": "#070b16",
+  "theme_color": "#070b16",
+  "categories": [
+    "government",
+    "productivity",
+    "utilities"
+  ],
   "icons": [
     {
-      "src": "/images/favicon.svg",
-      "sizes": "48x48 72x72 96x96 128x128 192x192 256x256 512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/images/logo-symbol.svg",
-      "sizes": "192x192 512x512",
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/images/prisma-icon.svg",
+      "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Surat Saya",
+      "url": "/app/my-letters",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Lapor Masalah",
+      "url": "/app/my-complaints",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "prefer_related_applications": false,
+  "dir": "ltr"
 }

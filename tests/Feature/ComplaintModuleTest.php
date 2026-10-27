@@ -126,7 +126,7 @@ class ComplaintModuleTest extends TestCase
 
     public function test_admin_without_scope_cannot_update_complaint(): void
     {
-        $adminWithoutScope = User::factory()->admin(['finance.manage'])->create();
+        $adminWithoutScope = User::factory()->bendahara()->create();
         $complaint = Complaint::create([
             'ticket_number' => 'ADU-202610-002',
             'title' => 'Test',

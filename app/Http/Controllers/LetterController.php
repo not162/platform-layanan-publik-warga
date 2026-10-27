@@ -525,7 +525,7 @@ class LetterController extends Controller
                 'status' => $letter->status,
                 'recipient_name' => $letter->citizen?->full_name,
                 'approved_at' => $letter->approved_at?->toIso8601String(),
-                'issued_by' => 'Pengurus RT 01',
+                'issued_by' => 'Pengurus RT '.config('rt.rt'),
             ],
             'message' => 'Dokumen sah dan terverifikasi secara resmi.',
         ]);

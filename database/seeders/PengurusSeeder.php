@@ -3,15 +3,16 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRole;
+use App\Models\Citizen;
+use App\Models\FamilyCard;
 use App\Models\RtOfficer;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class PengurusSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Akun demo (khusus lingkungan lokal/testing). Password semua akun: "password".
      */
     public function run(): void
     {
@@ -19,116 +20,55 @@ class PengurusSeeder extends Seeder
             return;
         }
 
-        $password = Hash::make('password');
+        $accounts = [
+            ['superadmin', 'Super Administrator', UserRole::SUPERADMIN, 'superadmin@warga.local', null],
+            ['admin', 'Administrator RT', UserRole::ADMIN, 'admin@warga.local', null],
+            ['ketua_rt', config('rt.officers.ketua'), UserRole::KETUA_RT, 'ketua_rt@warga.local', 'Ketua RT '.config('rt.rt').' / RW '.config('rt.rw')],
+            ['sekretaris', config('rt.officers.sekretaris'), UserRole::SEKRETARIS, 'sekretaris@warga.local', 'Sekretaris RT '.config('rt.rt')],
+            ['bendahara', config('rt.officers.bendahara'), UserRole::BENDAHARA, 'bendahara@warga.local', 'Bendahara RT '.config('rt.rt')],
+            ['keamanan', 'Bapak Petugas Keamanan', UserRole::PETUGAS_KEAMANAN, 'keamanan@warga.local', 'Seksi Keamanan & Ketertiban'],
+        ];
 
-        User::updateOrCreate(
-            ['email' => 'superadmin@warga.local'],
+        foreach ($accounts as $i => [$username, $name, $role, $email, $position]) {
+            User::updateOrCreate(
+                ['username' => $username],
+                ['name' => $name, 'email' => $email, 'password' => 'password', 'role' => $role, 'is_active' => true]
+            );
+
+            if ($position) {
+                RtOfficer::updateOrCreate(
+                    ['name' => $name],
+                    ['position' => $position, 'phone' => '08123456789'.$i, 'order_index' => $i, 'is_active' => true]
+                );
+            }
+        }
+
+        // Warga demo yang sudah punya akun
+        $card = FamilyCard::query()->firstOrCreate(
+            ['no_kk_hash' => hash('sha256', '3171040409950001')],
+            ['no_kk' => '3171040409950001', 'address' => 'Gg. Bugis No. 95, RT 04 / RW 09, Kemayoran', 'rt' => '004', 'rw' => '009', 'city' => 'Jakarta Pusat', 'district' => 'Kemayoran', 'version' => 1]
+        );
+
+        $citizen = Citizen::query()->firstOrCreate(
+            ['nik_hash' => hash('sha256', '3171041203900001')],
             [
-                'name' => 'Super Administrator',
-                'password' => $password,
-                'role' => UserRole::SUPERADMIN,
-                'is_active' => true,
+                'family_card_id' => $card->id, 'nik' => '3171041203900001', 'full_name' => 'Budi Santoso', 'gender' => 'Laki-laki',
+                'place_of_birth' => 'Jakarta', 'date_of_birth' => '1990-03-12', 'phone' => '081200000001', 'status_warga' => 'tetap', 'version' => 1,
             ]
         );
 
-        User::updateOrCreate(
-            ['email' => 'ketua_rt@warga.local'],
-            [
-                'name' => 'Bapak Ketua RT',
-                'password' => $password,
-                'role' => UserRole::KETUA_RT,
-                'is_active' => true,
-            ]
+        $warga = User::updateOrCreate(
+            ['username' => 'warga'],
+            ['name' => 'Budi Santoso', 'email' => 'warga@warga.local', 'password' => 'password', 'role' => UserRole::WARGA, 'is_active' => true, 'warga_id' => $citizen->id]
         );
+        $citizen->update(['user_id' => $warga->id]);
 
-        User::updateOrCreate(
-            ['email' => 'bendahara@warga.local'],
+        // Warga master RT yang belum punya akun — dipakai untuk mencoba aktivasi akun lewat halaman Daftar
+        Citizen::query()->firstOrCreate(
+            ['nik_hash' => hash('sha256', '3171045505920002')],
             [
-                'name' => 'Bapak Bendahara',
-                'password' => $password,
-                'role' => UserRole::BENDAHARA,
-                'is_active' => true,
-            ]
-        );
-
-        User::updateOrCreate(
-            ['email' => 'sekretaris@warga.local'],
-            [
-                'name' => 'Bapak Sekretaris',
-                'password' => $password,
-                'role' => UserRole::SEKRETARIS,
-                'is_active' => true,
-            ]
-        );
-
-        User::updateOrCreate(
-            ['email' => 'keamanan@warga.local'],
-            [
-                'name' => 'Bapak Petugas Keamanan',
-                'password' => $password,
-                'role' => UserRole::PETUGAS_KEAMANAN,
-                'is_active' => true,
-            ]
-        );
-
-        User::updateOrCreate(
-            ['email' => 'admin@warga.local'],
-            [
-                'name' => 'Administrator RT',
-                'password' => $password,
-                'role' => UserRole::ADMIN,
-                'is_active' => true,
-            ]
-        );
-
-        User::updateOrCreate(
-            ['email' => 'warga@warga.local'],
-            [
-                'name' => 'Bapak Warga Teladan',
-                'password' => $password,
-                'role' => UserRole::WARGA,
-                'is_active' => true,
-            ]
-        );
-
-        // Sinkronisasi Data Pejabat RT (RtOfficer)
-        RtOfficer::updateOrCreate(
-            ['name' => 'Bapak Ketua RT'],
-            [
-                'position' => 'Ketua RT 01 / RW 05',
-                'phone' => '081234567891',
-                'order_index' => 1,
-                'is_active' => true,
-            ]
-        );
-
-        RtOfficer::updateOrCreate(
-            ['name' => 'Bapak Sekretaris'],
-            [
-                'position' => 'Sekretaris RT 01',
-                'phone' => '081234567892',
-                'order_index' => 2,
-                'is_active' => true,
-            ]
-        );
-
-        RtOfficer::updateOrCreate(
-            ['name' => 'Bapak Bendahara'],
-            [
-                'position' => 'Bendahara RT 01',
-                'phone' => '081234567893',
-                'order_index' => 3,
-                'is_active' => true,
-            ]
-        );
-
-        RtOfficer::updateOrCreate(
-            ['name' => 'Bapak Petugas Keamanan'],
-            [
-                'position' => 'Seksi Keamanan & Ketertiban',
-                'phone' => '081234567894',
-                'order_index' => 4,
-                'is_active' => true,
+                'family_card_id' => $card->id, 'nik' => '3171045505920002', 'full_name' => 'Siti Aminah', 'gender' => 'Perempuan',
+                'place_of_birth' => 'Bandung', 'date_of_birth' => '1992-05-15', 'status_warga' => 'tetap', 'version' => 1,
             ]
         );
     }

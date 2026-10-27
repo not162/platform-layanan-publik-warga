@@ -18,7 +18,7 @@ class LetterSeeder extends Seeder
                 'nama_surat' => 'Surat Keterangan Umum',
                 'template_key' => 'surat-keterangan',
                 'template_version' => 1,
-                'format_penomoran' => 'SK/{nomor}/RT01/{bulan}/{tahun}',
+                'format_penomoran' => 'SK/{nomor}/RT04/{bulan}/{tahun}',
                 'syarat_dokumen' => [
                     'Scan KTP Pemohon',
                     'Scan Kartu Keluarga (KK)',
@@ -52,7 +52,7 @@ class LetterSeeder extends Seeder
                 'nama_surat' => 'Surat Keterangan Kematian',
                 'template_key' => 'surat-kematian',
                 'template_version' => 1,
-                'format_penomoran' => 'SKK/{nomor}/RT01/{bulan}/{tahun}',
+                'format_penomoran' => 'SKK/{nomor}/RT04/{bulan}/{tahun}',
                 'syarat_dokumen' => [
                     'Scan KTP Pelapor',
                     'Scan Kartu Keluarga Jenazah',
@@ -79,7 +79,7 @@ class LetterSeeder extends Seeder
                 'nama_surat' => 'Surat Pengantar Pindah Domisili',
                 'template_key' => 'surat-pindah',
                 'template_version' => 1,
-                'format_penomoran' => 'SKP/{nomor}/RT01/{bulan}/{tahun}',
+                'format_penomoran' => 'SKP/{nomor}/RT04/{bulan}/{tahun}',
                 'syarat_dokumen' => [
                     'Scan KTP Kepala Keluarga',
                     'Scan Kartu Keluarga Asli',
@@ -105,7 +105,7 @@ class LetterSeeder extends Seeder
                 'nama_surat' => 'Surat Keterangan Tidak Mampu (SKTM)',
                 'template_key' => 'surat-keterangan-tidak-mampu',
                 'template_version' => 1,
-                'format_penomoran' => 'SKTM/{nomor}/RT01/{bulan}/{tahun}',
+                'format_penomoran' => 'SKTM/{nomor}/RT04/{bulan}/{tahun}',
                 'syarat_dokumen' => [
                     'Scan KTP Pemohon',
                     'Scan Kartu Keluarga (KK)',

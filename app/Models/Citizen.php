@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\CitizenFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,7 @@ class Citizen extends Model
         'nik',
         'nik_hash',
         'full_name',
+        'full_name_key',
         'place_of_birth',
         'date_of_birth',
         'gender',
@@ -40,6 +42,24 @@ class Citizen extends Model
         'is_active' => true,
         'version' => 1,
     ];
+
+    /**
+     * full_name_key dijaga lewat mutator (bukan event model) agar tetap terisi saat seeding/WithoutModelEvents.
+     *
+     * @return Attribute<string, string>
+     */
+    protected function fullName(): Attribute
+    {
+        return Attribute::set(fn (string $value): array => [
+            'full_name' => $value,
+            'full_name_key' => self::nameKey($value),
+        ]);
+    }
+
+    public static function nameKey(string $name): string
+    {
+        return mb_strtolower(trim((string) preg_replace('/\s+/', ' ', $name)));
+    }
 
     protected function casts(): array
     {
