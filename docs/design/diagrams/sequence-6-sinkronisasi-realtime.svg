@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 855 1074" width="855" height="1074" role="img" aria-label="Pembaruan Dashboard Real-Time (Polling)">
+<defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#111827"/></marker><marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#111827" stroke-width="1.3"/></marker></defs>
+<rect width="855" height="1074" fill="#ffffff"/>
+<rect x="286" y="595" width="283" height="78" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="264" y="358" width="530" height="325" fill="none" stroke="#111827" stroke-width="1.2"/>
+<line x1="264" y1="424" x2="794" y2="424" stroke="#111827" stroke-width="1" stroke-dasharray="6 4"/>
+<rect x="286" y="679" width="283" height="78" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="242" y="340" width="574" height="427" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="286" y="938" width="283" height="78" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="264" y="763" width="530" height="263" fill="none" stroke="#111827" stroke-width="1.2"/>
+<line x1="105" y1="86" x2="105" y2="1060" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<g stroke="#111827" stroke-width="1.4" fill="none"><circle cx="105" cy="26" r="8" fill="#f8cecc"/><line x1="105" y1="34" x2="105" y2="56"/><line x1="90" y1="42" x2="120" y2="42"/><line x1="105" y1="56" x2="94" y2="72"/><line x1="105" y1="56" x2="116" y2="72"/></g>
+
+<line x1="320" y1="86" x2="320" y2="1060" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="253.0" y="36" width="134" height="40" fill="#dae8fc" stroke="#111827" stroke-width="1.2"/>
+<text x="320.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:PWA (prisma.js)</text>
+<line x1="535" y1="86" x2="535" y2="1060" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="476.0" y="36" width="118" height="40" fill="#fff2cc" stroke="#111827" stroke-width="1.2"/>
+<text x="535.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:API /api/v1</text>
+<line x1="750" y1="86" x2="750" y2="1060" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="691.0" y="36" width="118" height="40" fill="#d5e8d4" stroke="#111827" stroke-width="1.2"/>
+<text x="750.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:MySQL</text>
+<rect x="745" y="189" width="10" height="58" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="530" y="140" width="10" height="156" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="745" y="490" width="10" height="58" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="530" y="454" width="10" height="143" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="745" y="846" width="10" height="58" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="530" y="797" width="10" height="143" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="315" y="104" width="10" height="920" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<line x1="110" y1="110" x2="314" y2="110" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="119.0" y="104.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">buka dashboard</text>
+<line x1="325" y1="146" x2="529" y2="146" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="334.0" y="140.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">GET /dashboard/summary</text>
+<line x1="540" y1="195" x2="744" y2="195" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="549.0" y="176.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">hitung kartu per peran +</text>
+<text x="549.0" y="189.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">aktivitas terbaru</text>
+<line x1="745" y1="231" x2="541" y2="231" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="550.0" y="225.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">angka dan daftar</text>
+<line x1="530" y1="280" x2="326" y2="280" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="335.0" y="261.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">cards, recent,</text>
+<text x="335.0" y="274.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">unread_notifications</text>
+<path d="M325 310 H363 V330 H331" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="369.0" y="321.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">render kartu dan aktivitas</text>
+<path d="M325 392 H363 V412 H331" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="369.0" y="403.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">lewati siklus polling</text>
+<line x1="325" y1="460" x2="529" y2="460" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="334.0" y="454.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">GET /dashboard/summary</text>
+<line x1="540" y1="496" x2="744" y2="496" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="549.0" y="490.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">hitung ulang ringkasan</text>
+<line x1="745" y1="532" x2="541" y2="532" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="550.0" y="526.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">data terbaru</text>
+<line x1="530" y1="581" x2="326" y2="581" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="335.0" y="562.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">cards, recent,</text>
+<text x="335.0" y="575.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">unread_notifications</text>
+<path d="M325 629 H363 V649 H331" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="369.0" y="640.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">render ulang kartu</text>
+<path d="M325 713 H363 V733 H331" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="369.0" y="724.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">arahkan ke /login</text>
+<line x1="325" y1="803" x2="529" y2="803" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="334.0" y="797.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">GET /notifications?limit=30</text>
+<line x1="540" y1="852" x2="744" y2="852" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="549.0" y="833.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">SELECT notifications milik</text>
+<text x="549.0" y="846.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">pengguna</text>
+<line x1="745" y1="888" x2="541" y2="888" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="550.0" y="882.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">daftar notifikasi</text>
+<line x1="530" y1="924" x2="326" y2="924" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="335.0" y="918.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">notifikasi + unread_count</text>
+<path d="M325 972 H363 V992 H331" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="369.0" y="983.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">perbarui lencana, muat ulang kartu</text>
+<path d="M286 595 h40 v14 l-7 7 h-33 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="292.0" y="609.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">opt</text>
+<text x="334.0" y="612.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[data berbeda dari render terakhir]</text>
+<path d="M264 358 h40 v14 l-7 7 h-33 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="270.0" y="372.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">alt</text>
+<text x="312.0" y="375.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[tab sedang tersembunyi]</text>
+<text x="272.0" y="436.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[tab aktif]</text>
+<path d="M286 679 h40 v14 l-7 7 h-33 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="292.0" y="693.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">opt</text>
+<text x="334.0" y="696.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[respons 401: sesi berakhir]</text>
+<path d="M242 340 h48 v14 l-7 7 h-41 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="248.0" y="354.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">loop</text>
+<text x="298.0" y="357.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[setiap 8 detik]</text>
+<path d="M286 938 h40 v14 l-7 7 h-33 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="292.0" y="952.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">opt</text>
+<text x="334.0" y="955.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[ada notifikasi baru]</text>
+<path d="M264 763 h48 v14 l-7 7 h-41 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="270.0" y="777.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">loop</text>
+<text x="320.0" y="780.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[setiap 10 detik]</text>
+<text x="105.0" y="84.0" text-anchor="middle" font-size="12" font-family="Arial, Helvetica, sans-serif" fill="#111827">Pengguna</text>
+</svg>

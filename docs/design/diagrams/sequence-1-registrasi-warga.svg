@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1030 957" width="1030" height="957" role="img" aria-label="Registrasi Mandiri Warga">
+<defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#111827"/></marker><marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#111827" stroke-width="1.3"/></marker></defs>
+<rect width="1030" height="957" fill="#ffffff"/>
+<rect x="481" y="462" width="273" height="159" fill="none" stroke="#111827" stroke-width="1.2"/>
+<line x1="481" y1="531" x2="754" y2="531" stroke="#111827" stroke-width="1" stroke-dasharray="6 4"/>
+<rect x="266" y="356" width="703" height="504" fill="none" stroke="#111827" stroke-width="1.2"/>
+<line x1="266" y1="412" x2="969" y2="412" stroke="#111827" stroke-width="1" stroke-dasharray="6 4"/>
+<line x1="105" y1="86" x2="105" y2="943" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<g stroke="#111827" stroke-width="1.4" fill="none"><circle cx="105" cy="26" r="8" fill="#f8cecc"/><line x1="105" y1="34" x2="105" y2="56"/><line x1="90" y1="42" x2="120" y2="42"/><line x1="105" y1="56" x2="94" y2="72"/><line x1="105" y1="56" x2="116" y2="72"/></g>
+
+<line x1="310" y1="86" x2="310" y2="943" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="251.0" y="36" width="118" height="40" fill="#dae8fc" stroke="#111827" stroke-width="1.2"/>
+<text x="310.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:PWA PRISMA</text>
+<line x1="515" y1="86" x2="515" y2="943" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="451.5" y="36" width="127" height="40" fill="#fff2cc" stroke="#111827" stroke-width="1.2"/>
+<text x="515.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:AuthController</text>
+<line x1="720" y1="86" x2="720" y2="943" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="661.0" y="36" width="118" height="40" fill="#d5e8d4" stroke="#111827" stroke-width="1.2"/>
+<text x="720.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:MySQL</text>
+<line x1="925" y1="86" x2="925" y2="943" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="865.0" y="36" width="120" height="40" fill="#e1d5e7" stroke="#111827" stroke-width="1.2"/>
+<text x="925.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:NotifyService</text>
+<rect x="715" y="202" width="10" height="58" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="510" y="153" width="10" height="156" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="715" y="442" width="10" height="213" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="920" y="705" width="10" height="58" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="510" y="336" width="10" height="522" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="305" y="117" width="10" height="790" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<line x1="110" y1="123" x2="304" y2="123" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="119.0" y="104.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">isi NIK, No. KK, nama,</text>
+<text x="119.0" y="117.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">username, kata sandi</text>
+<line x1="315" y1="159" x2="509" y2="159" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="324.0" y="153.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">POST /auth/check-citizen</text>
+<line x1="520" y1="208" x2="714" y2="208" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="189.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">cari NIK (nik_hash) dan</text>
+<text x="529.0" y="202.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">username</text>
+<line x1="715" y1="244" x2="521" y2="244" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="530.0" y="238.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">data warga / kosong</text>
+<line x1="510" y1="293" x2="316" y2="293" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="325.0" y="274.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">status NIK + hasil validasi</text>
+<text x="325.0" y="287.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">per kolom</text>
+<line x1="315" y1="342" x2="509" y2="342" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="324.0" y="323.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">POST /register (data + berkas</text>
+<text x="324.0" y="336.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">KTP)</text>
+<line x1="510" y1="396" x2="316" y2="396" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="325.0" y="390.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">422 pesan kesalahan per kolom</text>
+<line x1="520" y1="448" x2="714" y2="448" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="442.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">BEGIN</text>
+<line x1="520" y1="515" x2="714" y2="515" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="496.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">tautkan citizens.user_id, buat</text>
+<text x="529.0" y="509.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">users</text>
+<line x1="520" y1="593" x2="714" y2="593" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="561.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">simpan family_cards, citizens</text>
+<text x="529.0" y="574.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">(pending_verification), KTP,</text>
+<text x="529.0" y="587.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">users</text>
+<line x1="715" y1="639" x2="521" y2="639" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="530.0" y="633.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">COMMIT</text>
+<line x1="520" y1="675" x2="714" y2="675" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="669.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">audit_logs: auth.registered</text>
+<line x1="520" y1="711" x2="919" y2="711" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="705.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">toRoles(Sekretaris, Admin, Ketua RT)</text>
+<line x1="920" y1="747" x2="726" y2="747" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="735.0" y="741.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">simpan notifikasi</text>
+<line x1="520" y1="783" x2="919" y2="783" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="777.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">to(pengguna): selamat datang</text>
+<line x1="510" y1="832" x2="316" y2="832" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="325.0" y="813.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">201 + token,</text>
+<text x="325.0" y="826.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">is_pending_verification</text>
+<line x1="305" y1="891" x2="111" y2="891" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="120.0" y="872.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">tampilkan dashboard (sesi</text>
+<text x="120.0" y="885.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">dibuat)</text>
+<path d="M481 462 h40 v14 l-7 7 h-33 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="487.0" y="476.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">alt</text>
+<text x="529.0" y="479.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[NIK sudah ada di sensus RT]</text>
+<text x="489.0" y="543.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[NIK belum terdata]</text>
+<path d="M266 356 h40 v14 l-7 7 h-33 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="272.0" y="370.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">alt</text>
+<text x="314.0" y="373.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[validasi gagal: format salah, NIK atau username sudah dipakai]</text>
+<text x="274.0" y="424.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[data valid]</text>
+<text x="105.0" y="84.0" text-anchor="middle" font-size="12" font-family="Arial, Helvetica, sans-serif" fill="#111827">Pengunjung</text>
+</svg>

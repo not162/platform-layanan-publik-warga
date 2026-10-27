@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1030 826" width="1030" height="826" role="img" aria-label="Login dan Penguncian Percobaan">
+<defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#111827"/></marker><marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#111827" stroke-width="1.3"/></marker></defs>
+<rect width="1030" height="826" fill="#ffffff"/>
+<rect x="276" y="413" width="683" height="306" fill="none" stroke="#111827" stroke-width="1.2"/>
+<line x1="276" y1="518" x2="959" y2="518" stroke="#111827" stroke-width="1" stroke-dasharray="6 4"/>
+<line x1="276" y1="570" x2="959" y2="570" stroke="#111827" stroke-width="1" stroke-dasharray="6 4"/>
+<rect x="254" y="271" width="727" height="458" fill="none" stroke="#111827" stroke-width="1.2"/>
+<line x1="254" y1="327" x2="981" y2="327" stroke="#111827" stroke-width="1" stroke-dasharray="6 4"/>
+<line x1="105" y1="86" x2="105" y2="812" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<g stroke="#111827" stroke-width="1.4" fill="none"><circle cx="105" cy="26" r="8" fill="#f8cecc"/><line x1="105" y1="34" x2="105" y2="56"/><line x1="90" y1="42" x2="120" y2="42"/><line x1="105" y1="56" x2="94" y2="72"/><line x1="105" y1="56" x2="116" y2="72"/></g>
+
+<line x1="310" y1="86" x2="310" y2="812" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="251.0" y="36" width="118" height="40" fill="#dae8fc" stroke="#111827" stroke-width="1.2"/>
+<text x="310.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:PWA PRISMA</text>
+<line x1="515" y1="86" x2="515" y2="812" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="451.5" y="36" width="127" height="40" fill="#fff2cc" stroke="#111827" stroke-width="1.2"/>
+<text x="515.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:AuthController</text>
+<line x1="720" y1="86" x2="720" y2="812" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="661.0" y="36" width="118" height="40" fill="#ffe6cc" stroke="#111827" stroke-width="1.2"/>
+<text x="720.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:RateLimiter</text>
+<line x1="925" y1="86" x2="925" y2="812" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="866.0" y="36" width="118" height="40" fill="#d5e8d4" stroke="#111827" stroke-width="1.2"/>
+<text x="925.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:MySQL</text>
+<rect x="715" y="215" width="10" height="58" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="920" y="357" width="10" height="58" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="510" y="153" width="10" height="574" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="305" y="117" width="10" height="659" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<line x1="110" y1="123" x2="304" y2="123" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="119.0" y="104.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">isi username/email/telepon/NIK</text>
+<text x="119.0" y="117.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">+ kata sandi</text>
+<line x1="315" y1="159" x2="509" y2="159" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="324.0" y="153.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">POST /login</text>
+<line x1="520" y1="221" x2="714" y2="221" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="189.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke"></text>
+<text x="529.0" y="202.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">tooManyAttempts(login:username,</text>
+<text x="529.0" y="215.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">5)</text>
+<line x1="715" y1="257" x2="521" y2="257" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="530.0" y="251.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">boleh / terkunci</text>
+<line x1="510" y1="311" x2="316" y2="311" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="325.0" y="305.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">422 coba lagi dalam N detik</text>
+<line x1="520" y1="363" x2="919" y2="363" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="357.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">findByLogin(username/email/telepon/NIK)</text>
+<line x1="920" y1="399" x2="521" y2="399" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="530.0" y="393.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">pengguna</text>
+<line x1="520" y1="453" x2="714" y2="453" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="447.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">hit(login, 300 detik)</text>
+<line x1="510" y1="502" x2="316" y2="502" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="325.0" y="483.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">422 username atau password</text>
+<text x="325.0" y="496.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">salah</text>
+<line x1="510" y1="554" x2="316" y2="554" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="325.0" y="548.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">422 akun dinonaktifkan</text>
+<line x1="520" y1="606" x2="714" y2="606" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="600.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">clear(login)</text>
+<line x1="520" y1="642" x2="919" y2="642" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="529.0" y="636.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">UPDATE users.last_login_at</text>
+<line x1="510" y1="691" x2="316" y2="691" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="325.0" y="672.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">sesi dibuat, redirect</text>
+<text x="325.0" y="685.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">/dashboard</text>
+<line x1="305" y1="760" x2="111" y2="760" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="120.0" y="741.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">tampilkan dashboard sesuai</text>
+<text x="120.0" y="754.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">peran</text>
+<path d="M276 413 h40 v14 l-7 7 h-33 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="282.0" y="427.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">alt</text>
+<text x="324.0" y="430.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[pengguna tidak ada / kata sandi salah]</text>
+<text x="284.0" y="530.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[akun nonaktif]</text>
+<text x="284.0" y="582.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[kredensial valid]</text>
+<path d="M254 271 h40 v14 l-7 7 h-33 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="260.0" y="285.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">alt</text>
+<text x="302.0" y="288.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[5 kali gagal dalam 5 menit]</text>
+<text x="262.0" y="339.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[belum terkunci]</text>
+<text x="105.0" y="84.0" text-anchor="middle" font-size="12" font-family="Arial, Helvetica, sans-serif" fill="#111827">Warga</text>
+</svg>

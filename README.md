@@ -922,54 +922,35 @@ classDiagram
     FinancialReport ..> FinanceTransaction : agregasi
 ```
 
-#### 5.2. UML Sequence: Optimistic Concurrency Control (Pengesahan Surat)
-```mermaid
-sequenceDiagram
-    actor K as Ketua RT
-    participant UI as PWA PRISMA
-    participant C as LetterController
-    participant S as LetterService
-    participant DB as MySQL
-    K->>UI: Buka surat berstatus verified
-    UI->>C: GET /api/v1/letters/{id}
-    C->>DB: SELECT letter (version = N)
-    DB-->>UI: JSON + version N
-    K->>UI: Sahkan surat
-    UI->>C: POST approve {version: N}
-    C->>S: approve(letter, user, N)
-    S->>DB: BEGIN, SELECT ... FOR UPDATE
-    alt status verified dan version cocok
-        S->>DB: UPDATE status approved, nomor surat, hash, token QR, version N+1
-        S->>DB: INSERT audit_logs + notifikasi ke warga
-        S->>DB: COMMIT
-        C-->>UI: 200 OK
-    else version berbeda atau status tidak sah
-        S->>DB: ROLLBACK
-        C-->>UI: 409 Conflict (data diubah pihak lain)
-        UI-->>K: Muat ulang data terbaru
-    end
-```
+#### 5.2. UML Sequence Diagram
 
-#### 5.3. UML Sequence: Sinkronisasi Real-Time & Notifikasi
-```mermaid
-sequenceDiagram
-    participant U as Browser / PWA
-    participant SW as Service Worker
-    participant A as API /api/v1
-    participant D as MySQL
-    U->>A: POST / PATCH / DELETE (sesi + CSRF)
-    A->>D: Simpan (transaksi, version, audit log)
-    A->>D: Buat notifikasi untuk pihak terkait
-    A-->>U: 200 OK
-    loop tiap 8 detik saat tab aktif
-        U->>A: GET /dashboard/summary dan /notifications
-        A-->>U: cards, recent, unread_notifications
-    end
-    A-->>SW: Web Push ke push_subscriptions
-    SW-->>U: Tampilkan notifikasi sistem
-    U->>A: GET /sync (sinkron inkremental setelah offline)
-    A-->>U: Perubahan sejak sinkron terakhir
-```
+Notasi mengikuti template UML: kotak peserta berwarna, garis hidup putus-putus, bar aktivasi, panah penuh untuk pemanggilan, panah putus-putus untuk balasan, serta fragmen `alt`, `opt`, dan `loop` dengan kondisi penjaga. Urutan pesan ditulis dari kode (`AuthController`, `LetterService`, `ResidentDueService`, `prisma.js`), bukan dari rancangan awal.
+
+**5.2.1. Registrasi Mandiri Warga**
+
+![Sequence registrasi mandiri warga](docs/design/diagrams/sequence-1-registrasi-warga.svg)
+
+**5.2.2. Login dan Penguncian Percobaan**
+
+![Sequence login](docs/design/diagrams/sequence-2-login.svg)
+
+**5.2.3. Lupa dan Atur Ulang Kata Sandi**
+
+![Sequence lupa password](docs/design/diagrams/sequence-3-lupa-password.svg)
+
+**5.2.4. Pengesahan Surat dengan Optimistic Locking**
+
+![Sequence pengesahan surat](docs/design/diagrams/sequence-4-pengesahan-surat.svg)
+
+**5.2.5. Pencatatan Pembayaran Iuran ke Buku Kas**
+
+![Sequence pembayaran iuran](docs/design/diagrams/sequence-5-pembayaran-iuran.svg)
+
+**5.2.6. Pembaruan Dashboard Real-Time (Polling)**
+
+![Sequence pembaruan dashboard real-time](docs/design/diagrams/sequence-6-sinkronisasi-realtime.svg)
+
+Dashboard memakai polling 8 detik (dashboard) dan 10 detik (notifikasi) yang berhenti saat tab tersembunyi. Endpoint `GET /api/v1/sync` untuk sinkronisasi inkremental disediakan bagi klien lain (mis. aplikasi Android) dan tidak dipanggil oleh PWA web.
 
 ---
 

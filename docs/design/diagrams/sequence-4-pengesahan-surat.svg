@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1135 1127" width="1135" height="1127" role="img" aria-label="Pengesahan Surat dengan Optimistic Locking">
+<defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#111827"/></marker><marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#111827" stroke-width="1.3"/></marker></defs>
+<rect width="1135" height="1127" fill="#ffffff"/>
+<rect x="256" y="534" width="808" height="486" fill="none" stroke="#111827" stroke-width="1.2"/>
+<line x1="256" y1="639" x2="1064" y2="639" stroke="#111827" stroke-width="1" stroke-dasharray="6 4"/>
+<line x1="256" y1="727" x2="1064" y2="727" stroke="#111827" stroke-width="1" stroke-dasharray="6 4"/>
+<rect x="234" y="415" width="852" height="615" fill="none" stroke="#111827" stroke-width="1.2"/>
+<line x1="234" y1="471" x2="1086" y2="471" stroke="#111827" stroke-width="1" stroke-dasharray="6 4"/>
+<line x1="105" y1="86" x2="105" y2="1113" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<g stroke="#111827" stroke-width="1.4" fill="none"><circle cx="105" cy="26" r="8" fill="#f8cecc"/><line x1="105" y1="34" x2="105" y2="56"/><line x1="90" y1="42" x2="120" y2="42"/><line x1="105" y1="56" x2="94" y2="72"/><line x1="105" y1="56" x2="116" y2="72"/></g>
+
+<line x1="290" y1="86" x2="290" y2="1113" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="231.0" y="36" width="118" height="40" fill="#dae8fc" stroke="#111827" stroke-width="1.2"/>
+<text x="290.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:PWA PRISMA</text>
+<line x1="475" y1="86" x2="475" y2="1113" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="404.5" y="36" width="141" height="40" fill="#fff2cc" stroke="#111827" stroke-width="1.2"/>
+<text x="475.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:LetterController</text>
+<line x1="660" y1="86" x2="660" y2="1113" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="600.0" y="36" width="120" height="40" fill="#d5e8d4" stroke="#111827" stroke-width="1.2"/>
+<text x="660.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:LetterService</text>
+<line x1="845" y1="86" x2="845" y2="1113" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="786.0" y="36" width="118" height="40" fill="#e1d5e7" stroke="#111827" stroke-width="1.2"/>
+<text x="845.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:MySQL</text>
+<line x1="1030" y1="86" x2="1030" y2="1113" stroke="#555" stroke-width="1" stroke-dasharray="6 5"/>
+<rect x="971.0" y="36" width="118" height="40" fill="#ffe6cc" stroke="#111827" stroke-width="1.2"/>
+<text x="1030.0" y="61.0" text-anchor="middle" font-size="12.5" font-family="Arial, Helvetica, sans-serif" fill="#111827">:Broadcast</text>
+<rect x="840" y="189" width="10" height="58" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="470" y="153" width="10" height="130" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="840" y="514" width="10" height="504" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="655" y="395" width="10" height="633" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="470" y="359" width="10" height="669" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<rect x="285" y="117" width="10" height="960" fill="#6cb4e4" stroke="#111827" stroke-width="1"/>
+<line x1="110" y1="123" x2="284" y2="123" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="119.0" y="104.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">buka surat berstatus</text>
+<text x="119.0" y="117.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">verified</text>
+<line x1="295" y1="159" x2="469" y2="159" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="304.0" y="153.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">GET /letters/{id}</text>
+<line x1="480" y1="195" x2="839" y2="195" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="489.0" y="189.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">SELECT letters</text>
+<line x1="840" y1="231" x2="481" y2="231" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="490.0" y="225.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">surat (version = N)</text>
+<line x1="470" y1="267" x2="296" y2="267" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="305.0" y="261.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">JSON surat + version N</text>
+<line x1="110" y1="303" x2="284" y2="303" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="119.0" y="297.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">klik Sahkan</text>
+<line x1="295" y1="365" x2="469" y2="365" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="304.0" y="333.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">POST</text>
+<text x="304.0" y="346.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">/admin/letters/{id}/approve</text>
+<text x="304.0" y="359.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">{version: N}</text>
+<line x1="480" y1="401" x2="654" y2="401" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="489.0" y="395.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">approve(surat, pengguna, N)</text>
+<line x1="655" y1="455" x2="481" y2="455" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="490.0" y="449.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">403 akses ditolak</text>
+<line x1="665" y1="520" x2="839" y2="520" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="674.0" y="501.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">BEGIN, SELECT ... FOR</text>
+<text x="674.0" y="514.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">UPDATE</text>
+<line x1="665" y1="574" x2="839" y2="574" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="674.0" y="568.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">ROLLBACK</text>
+<line x1="470" y1="623" x2="296" y2="623" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="305.0" y="604.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">409 konflik data, muat</text>
+<text x="305.0" y="617.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">ulang</text>
+<line x1="665" y1="675" x2="839" y2="675" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="674.0" y="669.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">ROLLBACK</text>
+<line x1="470" y1="711" x2="296" y2="711" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="305.0" y="705.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">409 transisi tidak sah</text>
+<line x1="665" y1="789" x2="839" y2="789" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="674.0" y="757.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">UPDATE status=approved,</text>
+<text x="674.0" y="770.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">nomor surat, token QR,</text>
+<text x="674.0" y="783.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">version N+1</text>
+<path d="M665 819 H703 V839 H671" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="709.0" y="830.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">buat dokumen + hash SHA-256</text>
+<line x1="665" y1="884" x2="839" y2="884" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="674.0" y="865.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">INSERT audit_logs:</text>
+<text x="674.0" y="878.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">letter.approved</text>
+<line x1="665" y1="920" x2="1024" y2="920" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="674.0" y="914.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">LetterStatusUpdated(approved)</text>
+<line x1="665" y1="956" x2="839" y2="956" stroke="#111827" stroke-width="1.2" marker-end="url(#f)"/>
+<text x="674.0" y="950.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">COMMIT</text>
+<line x1="470" y1="992" x2="296" y2="992" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="305.0" y="986.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">200 LetterResource</text>
+<line x1="285" y1="1061" x2="111" y2="1061" stroke="#111827" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#o)"/>
+<text x="120.0" y="1042.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">tampilkan surat berstatus</text>
+<text x="120.0" y="1055.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">approved</text>
+<path d="M256 534 h40 v14 l-7 7 h-33 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="262.0" y="548.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">alt</text>
+<text x="304.0" y="551.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[version berbeda dari N]</text>
+<text x="264.0" y="651.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[status bukan verified]</text>
+<text x="264.0" y="739.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[version cocok dan status verified]</text>
+<path d="M234 415 h40 v14 l-7 7 h-33 Z" fill="#ffffff" stroke="#111827" stroke-width="1.2"/>
+<text x="240.0" y="429.0" text-anchor="start" font-size="12" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="#111827">alt</text>
+<text x="282.0" y="432.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[tanpa izin letter.approve]</text>
+<text x="242.0" y="483.0" text-anchor="start" font-size="11.5" font-family="Arial, Helvetica, sans-serif" fill="#111827" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">[memiliki izin]</text>
+<text x="105.0" y="84.0" text-anchor="middle" font-size="12" font-family="Arial, Helvetica, sans-serif" fill="#111827">Ketua RT</text>
+</svg>
