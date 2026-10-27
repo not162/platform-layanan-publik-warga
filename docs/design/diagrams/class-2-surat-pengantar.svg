@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1115 611" width="1115" height="611" role="img">
+<rect width="1115" height="611" fill="#ffffff"/>
+<path d="M204.6 121.5 H281.6 V106.0 H374.6" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M197.3 293.0 H286.0 V164.0 H374.6" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M197.3 409.0 H294.0 V222.0 H374.6" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M475.8 288.0 V312.0 H475.8 V352.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M747.0 148.5 H662.0 V164.0 H577.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M911.2 257.0 V297.0 H911.2 V321.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M911.2 402.0 V426.0 H911.2 V466.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<rect x="40.0" y="40.0" width="164.6" height="163.0" fill="#f4f0f6" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="40.0" width="164.6" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
+<text x="122.3" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">LetterType</text>
+<text x="49.0" y="83.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-kode_surat : string</text>
+<text x="49.0" y="100.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-nama_surat : string</text>
+<text x="49.0" y="117.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-template_key : string</text>
+<text x="49.0" y="134.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-form_schema : json</text>
+<text x="49.0" y="151.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-approval_flow : json</text>
+<text x="49.0" y="168.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-is_active : bool</text>
+<line x1="40.0" y1="178.0" x2="204.6" y2="178.0" stroke="#111827" stroke-width="1.1"/>
+<text x="49.0" y="193.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+letters() : HasMany</text>
+<rect x="47.3" y="267.0" width="150.0" height="52.0" fill="#f5f6f8" stroke="#111827" stroke-width="1.3"/>
+<rect x="47.3" y="267.0" width="150.0" height="28" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
+<text x="122.3" y="286" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Citizen</text>
+<rect x="47.3" y="383.0" width="150.0" height="52.0" fill="#f5f6f8" stroke="#111827" stroke-width="1.3"/>
+<rect x="47.3" y="383.0" width="150.0" height="28" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
+<text x="122.3" y="402" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">User</text>
+<rect x="374.6" y="40.0" width="202.4" height="248.0" fill="#f0f6ef" stroke="#111827" stroke-width="1.3"/>
+<rect x="374.6" y="40.0" width="202.4" height="28" fill="#d5e8d4" stroke="#111827" stroke-width="1.3"/>
+<text x="475.8" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Letter</text>
+<text x="383.6" y="83.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-ticket_number : string</text>
+<text x="383.6" y="100.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-letter_number : string</text>
+<text x="383.6" y="117.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-status : string</text>
+<text x="383.6" y="134.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-keperluan : string</text>
+<text x="383.6" y="151.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-verification_token : string</text>
+<text x="383.6" y="168.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-document_hash : string</text>
+<text x="383.6" y="185.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-version : int</text>
+<line x1="374.6" y1="195.0" x2="577.0" y2="195.0" stroke="#111827" stroke-width="1.1"/>
+<text x="383.6" y="210.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+citizen() : BelongsTo</text>
+<text x="383.6" y="227.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+letterType() : BelongsTo</text>
+<text x="383.6" y="244.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+verifiedBy() : BelongsTo</text>
+<text x="383.6" y="261.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+approvedBy() : BelongsTo</text>
+<text x="383.6" y="278.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+attachments() : HasMany</text>
+<rect x="387.2" y="352.0" width="177.2" height="129.0" fill="#f2f6fd" stroke="#111827" stroke-width="1.3"/>
+<rect x="387.2" y="352.0" width="177.2" height="28" fill="#dae8fc" stroke="#111827" stroke-width="1.3"/>
+<text x="475.8" y="371" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">LetterAttachment</text>
+<text x="396.2" y="395.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-judul_lampiran : string</text>
+<text x="396.2" y="412.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-file_path : string</text>
+<text x="396.2" y="429.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-mime_type : string</text>
+<text x="396.2" y="446.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-file_size : int</text>
+<line x1="387.2" y1="456.0" x2="564.4" y2="456.0" stroke="#111827" stroke-width="1.1"/>
+<text x="396.2" y="471.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+letter() : BelongsTo</text>
+<rect x="747.0" y="40.0" width="328.4" height="217.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
+<rect x="747.0" y="40.0" width="328.4" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
+<text x="911.2" y="54" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
+<text x="911.2" y="73" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">LetterService</text>
+<line x1="747.0" y1="96.0" x2="1075.4" y2="96.0" stroke="#111827" stroke-width="1.1"/>
+<text x="756.0" y="111.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+create(data, user) : Letter</text>
+<text x="756.0" y="128.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+submit(letter, user, version) : Letter</text>
+<text x="756.0" y="145.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+verify(letter, user, version, notes) : Letter</text>
+<text x="756.0" y="162.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+approve(letter, user, version, number) : Letter</text>
+<text x="756.0" y="179.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+complete(letter, user, version) : Letter</text>
+<text x="756.0" y="196.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+reject(letter, user, version, reason) : Letter</text>
+<text x="756.0" y="213.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+generateTicketNumber() : string</text>
+<text x="756.0" y="230.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+findByToken(token) : Letter</text>
+<text x="756.0" y="247.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+findByTicket(ticket) : Letter</text>
+<rect x="750.1" y="321.0" width="322.1" height="81.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
+<rect x="750.1" y="321.0" width="322.1" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
+<text x="911.2" y="335" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
+<text x="911.2" y="354" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">DocumentGeneratorService</text>
+<line x1="750.1" y1="377.0" x2="1072.2" y2="377.0" stroke="#111827" stroke-width="1.1"/>
+<text x="759.1" y="392.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+generateLetterDocument(letter, force) : string</text>
+<rect x="791.1" y="466.0" width="240.2" height="81.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
+<rect x="791.1" y="466.0" width="240.2" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
+<text x="911.2" y="480" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
+<text x="911.2" y="499" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">AuditService</text>
+<line x1="791.1" y1="522.0" x2="1031.3" y2="522.0" stroke="#111827" stroke-width="1.1"/>
+<text x="800.1" y="537.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+log(action, entity, id, old, new)</text>
+
+
+
+
+
+
+<polygon points="475.8,288.0 481.8,297.0 475.8,306.0 469.8,297.0" fill="#111827" stroke="#111827" stroke-width="1.3"/>
+
+
+<polyline points="588.0,158.0 577.0,164.0 588.0,170.0" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+<polyline points="905.2,310.0 911.2,321.0 917.2,310.0" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+<polyline points="905.2,455.0 911.2,466.0 917.2,455.0" fill="none" stroke="#111827" stroke-width="1.3"/>
+<text x="218.6" y="115.5" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="360.6" y="100.0" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="286.6" y="113.8" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">jenis</text>
+<text x="211.3" y="287.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="360.6" y="158.0" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="291.0" y="228.5" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mengajukan</text>
+<text x="211.3" y="403.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">0..1</text>
+<text x="360.6" y="216.0" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="299.0" y="315.5" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">verified_by / approved_by</text>
+<text x="483.8" y="306.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="483.8" y="338.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="483.8" y="324.0" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">lampiran</text>
+<text x="667.0" y="156.2" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mengelola</text>
+</svg>

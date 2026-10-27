@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1134 596" width="1134" height="596" role="img">
+<rect width="1134" height="596" fill="#ffffff"/>
+<path d="M156.9 186.0 V210.0 H156.9 V250.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M273.9 391.0 H358.9 V198.0 H443.9" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M734.5 148.0 H827.5 V154.0 H904.5" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M734.5 248.0 H821.0 V371.0 H923.4" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="77.8" y="40.0" width="158.3" height="146.0" fill="#f4f0f6" stroke="#111827" stroke-width="1.3"/>
+<rect x="77.8" y="40.0" width="158.3" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
+<text x="156.9" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">FamilyCard</text>
+<text x="86.8" y="83.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-no_kk_hash : string</text>
+<text x="86.8" y="100.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-address : string</text>
+<text x="86.8" y="117.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-rt : string</text>
+<text x="86.8" y="134.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-rw : string</text>
+<text x="86.8" y="151.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-version : int</text>
+<line x1="77.8" y1="161.0" x2="236.1" y2="161.0" stroke="#111827" stroke-width="1.1"/>
+<text x="86.8" y="176.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+citizens() : HasMany</text>
+<rect x="40.0" y="250.0" width="233.9" height="282.0" fill="#f0f6ef" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="250.0" width="233.9" height="28" fill="#d5e8d4" stroke="#111827" stroke-width="1.3"/>
+<text x="156.9" y="269" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Citizen</text>
+<text x="49.0" y="293.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-nik_hash : string</text>
+<text x="49.0" y="310.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-full_name : string</text>
+<text x="49.0" y="327.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-gender : string</text>
+<text x="49.0" y="344.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-date_of_birth : date</text>
+<text x="49.0" y="361.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-phone : string</text>
+<text x="49.0" y="378.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-status_warga : string</text>
+<text x="49.0" y="395.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-version : int</text>
+<line x1="40.0" y1="405.0" x2="273.9" y2="405.0" stroke="#111827" stroke-width="1.1"/>
+<text x="49.0" y="420.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+nameKey(name : string) : string</text>
+<text x="49.0" y="437.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+getNikMaskedAttribute() : string</text>
+<text x="49.0" y="454.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+familyCard() : BelongsTo</text>
+<text x="49.0" y="471.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+user() : BelongsTo</text>
+<text x="49.0" y="488.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+letters() : HasMany</text>
+<text x="49.0" y="505.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+complaints() : HasMany</text>
+<text x="49.0" y="522.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+dues() : HasMany</text>
+<rect x="443.9" y="40.0" width="290.6" height="316.0" fill="#f2f6fd" stroke="#111827" stroke-width="1.3"/>
+<rect x="443.9" y="40.0" width="290.6" height="28" fill="#dae8fc" stroke="#111827" stroke-width="1.3"/>
+<text x="589.2" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">User</text>
+<text x="452.9" y="83.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-name : string</text>
+<text x="452.9" y="100.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-username : string</text>
+<text x="452.9" y="117.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-email : string</text>
+<text x="452.9" y="134.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-role : UserRole</text>
+<text x="452.9" y="151.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-is_active : bool</text>
+<text x="452.9" y="168.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-last_login_at : datetime</text>
+<line x1="443.9" y1="178.0" x2="734.5" y2="178.0" stroke="#111827" stroke-width="1.1"/>
+<text x="452.9" y="193.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+tier() : string</text>
+<text x="452.9" y="210.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+hasPermission(permission : string) : bool</text>
+<text x="452.9" y="227.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+givePermission(permission : string)</text>
+<text x="452.9" y="244.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+revokePermission(permission : string)</text>
+<text x="452.9" y="261.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+syncPermissions(permissions : array)</text>
+<text x="452.9" y="278.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+isSuperadmin() : bool</text>
+<text x="452.9" y="295.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+isAdmin() : bool</text>
+<text x="452.9" y="312.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+isWarga() : bool</text>
+<text x="452.9" y="329.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+citizen() : HasOne</text>
+<text x="452.9" y="346.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+findByLogin(login : string) : User</text>
+<rect x="904.5" y="40.0" width="189.8" height="228.0" fill="#e5f7f1" stroke="#111827" stroke-width="1.3"/>
+<rect x="904.5" y="40.0" width="189.8" height="42" fill="#b5ead7" stroke="#111827" stroke-width="1.3"/>
+<text x="999.4" y="54" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«enumeration»</text>
+<text x="999.4" y="73" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">UserRole</text>
+<text x="913.5" y="97.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">SUPERADMIN</text>
+<text x="913.5" y="114.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">ADMIN</text>
+<text x="913.5" y="131.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">KETUA_RT</text>
+<text x="913.5" y="148.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">SEKRETARIS</text>
+<text x="913.5" y="165.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">BENDAHARA</text>
+<text x="913.5" y="182.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">PETUGAS_KEAMANAN</text>
+<text x="913.5" y="199.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">WARGA</text>
+<line x1="904.5" y1="209.0" x2="1094.3" y2="209.0" stroke="#111827" stroke-width="1.1"/>
+<text x="913.5" y="224.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+label() : string</text>
+<text x="913.5" y="241.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+tier() : string</text>
+<text x="913.5" y="258.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+assignableRoles() : array</text>
+<rect x="923.4" y="332.0" width="152.0" height="78.0" fill="#fffaed" stroke="#111827" stroke-width="1.3"/>
+<rect x="923.4" y="332.0" width="152.0" height="28" fill="#fff2cc" stroke="#111827" stroke-width="1.3"/>
+<text x="999.4" y="351" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">AdminPermission</text>
+<text x="932.4" y="375.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-permission : string</text>
+<line x1="923.4" y1="385.0" x2="1075.4" y2="385.0" stroke="#111827" stroke-width="1.1"/>
+<text x="932.4" y="400.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+user() : BelongsTo</text>
+<polygon points="156.9,186.0 162.9,195.0 156.9,204.0 150.9,195.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+
+
+
+<polyline points="893.5,160.0 904.5,154.0 893.5,148.0" fill="none" stroke="#111827" stroke-width="1.3"/>
+<polygon points="734.5,248.0 743.5,242.0 752.5,248.0 743.5,254.0" fill="#111827" stroke="#111827" stroke-width="1.3"/>
+
+<text x="164.9" y="204.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="164.9" y="236.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="164.9" y="222.0" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">anggota</text>
+<text x="287.9" y="385.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">0..1</text>
+<text x="429.9" y="192.0" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="363.9" y="294.5" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">akun (user_id)</text>
+<text x="748.5" y="142.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="890.5" y="148.0" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="819.5" y="142.0" text-anchor="middle" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">role</text>
+<text x="748.5" y="242.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="909.4" y="365.0" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="826.0" y="309.5" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">izin tambahan</text>
+</svg>

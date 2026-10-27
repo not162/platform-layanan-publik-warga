@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1494 579" width="1494" height="579" role="img">
+<rect width="1494" height="579" fill="#ffffff"/>
+<path d="M138.1 92.0 V116.0 H138.1 V156.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M236.1 246.0 H321.1 V130.0 H406.1" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M640.0 130.0 H733.0 V125.3 H810.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M621.1 399.5 H707.5 V202.7 H810.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M1050.2 74.0 H1104.2 V100.0 H1050.2" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M1220.2 121.5 H1143.2 V222.0 H1050.2" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M1337.2 203.0 V227.0 H1337.2 V267.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="63.0" y="40.0" width="150.0" height="52.0" fill="#f5f6f8" stroke="#111827" stroke-width="1.3"/>
+<rect x="63.0" y="40.0" width="150.0" height="28" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
+<text x="138.1" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Citizen</text>
+<rect x="40.0" y="156.0" width="196.1" height="180.0" fill="#f4f0f6" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="156.0" width="196.1" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
+<text x="138.1" y="175" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">ResidentDue</text>
+<text x="49.0" y="199.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-period_year : int</text>
+<text x="49.0" y="216.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-period_month : int</text>
+<text x="49.0" y="233.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-amount_due_idr : int</text>
+<text x="49.0" y="250.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-due_date : date</text>
+<text x="49.0" y="267.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-status : string</text>
+<line x1="40.0" y1="277.0" x2="236.1" y2="277.0" stroke="#111827" stroke-width="1.1"/>
+<text x="49.0" y="292.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+payments() : HasMany</text>
+<text x="49.0" y="309.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+getTotalPaidIdr() : int</text>
+<text x="49.0" y="326.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+getRemainingDueIdr() : int</text>
+<rect x="406.1" y="40.0" width="233.9" height="180.0" fill="#f0f6ef" stroke="#111827" stroke-width="1.3"/>
+<rect x="406.1" y="40.0" width="233.9" height="28" fill="#d5e8d4" stroke="#111827" stroke-width="1.3"/>
+<text x="523.1" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">DuePayment</text>
+<text x="415.1" y="83.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-amount_paid_idr : int</text>
+<text x="415.1" y="100.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-paid_at : datetime</text>
+<text x="415.1" y="117.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-payment_method : string</text>
+<text x="415.1" y="134.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-receipt_number : string</text>
+<text x="415.1" y="151.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-status : string</text>
+<line x1="406.1" y1="161.0" x2="640.0" y2="161.0" stroke="#111827" stroke-width="1.1"/>
+<text x="415.1" y="176.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+due() : BelongsTo</text>
+<text x="415.1" y="193.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+financeTransaction() : BelongsTo</text>
+<text x="415.1" y="210.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+receiver() : BelongsTo</text>
+<rect x="425.0" y="284.0" width="196.1" height="231.0" fill="#f2f6fd" stroke="#111827" stroke-width="1.3"/>
+<rect x="425.0" y="284.0" width="196.1" height="28" fill="#dae8fc" stroke="#111827" stroke-width="1.3"/>
+<text x="523.0" y="303" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">FinancialReport</text>
+<text x="434.0" y="327.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-year : int</text>
+<text x="434.0" y="344.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-quarter : int</text>
+<text x="434.0" y="361.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-revision : int</text>
+<text x="434.0" y="378.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-income_idr : int</text>
+<text x="434.0" y="395.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-expense_idr : int</text>
+<text x="434.0" y="412.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-closing_balance_idr : int</text>
+<text x="434.0" y="429.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-status : string</text>
+<text x="434.0" y="446.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-checksum_sha256 : string</text>
+<line x1="425.0" y1="456.0" x2="621.1" y2="456.0" stroke="#111827" stroke-width="1.1"/>
+<text x="434.0" y="471.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+isPublished() : bool</text>
+<text x="434.0" y="488.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+getQuarterLabel() : string</text>
+<text x="434.0" y="505.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+publisher() : BelongsTo</text>
+<rect x="810.0" y="40.0" width="240.2" height="248.0" fill="#fffaed" stroke="#111827" stroke-width="1.3"/>
+<rect x="810.0" y="40.0" width="240.2" height="28" fill="#fff2cc" stroke="#111827" stroke-width="1.3"/>
+<text x="930.1" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">FinanceTransaction</text>
+<text x="819.0" y="83.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-transaction_number : string</text>
+<text x="819.0" y="100.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-type : string</text>
+<text x="819.0" y="117.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-category : string</text>
+<text x="819.0" y="134.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-amount_idr : int</text>
+<text x="819.0" y="151.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-status : string</text>
+<text x="819.0" y="168.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-published_at : datetime</text>
+<text x="819.0" y="185.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-reversal_reason : string</text>
+<text x="819.0" y="202.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-version : int</text>
+<line x1="810.0" y1="212.0" x2="1050.2" y2="212.0" stroke="#111827" stroke-width="1.1"/>
+<text x="819.0" y="227.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+creator() : BelongsTo</text>
+<text x="819.0" y="244.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+originalTransaction() : BelongsTo</text>
+<text x="819.0" y="261.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+reversals() : HasMany</text>
+<text x="819.0" y="278.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+purchase() : HasOne</text>
+<rect x="1220.2" y="40.0" width="233.9" height="163.0" fill="#f4f0f6" stroke="#111827" stroke-width="1.3"/>
+<rect x="1220.2" y="40.0" width="233.9" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
+<text x="1337.2" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Purchase</text>
+<text x="1229.2" y="83.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-vendor_name : string</text>
+<text x="1229.2" y="100.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-purchase_date : date</text>
+<text x="1229.2" y="117.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-invoice_number : string</text>
+<text x="1229.2" y="134.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-purpose : string</text>
+<line x1="1220.2" y1="144.0" x2="1454.1" y2="144.0" stroke="#111827" stroke-width="1.1"/>
+<text x="1229.2" y="159.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+items() : HasMany</text>
+<text x="1229.2" y="176.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+calculateTotalIdr() : int</text>
+<text x="1229.2" y="193.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+financeTransaction() : BelongsTo</text>
+<rect x="1251.7" y="267.0" width="170.9" height="146.0" fill="#f0f6ef" stroke="#111827" stroke-width="1.3"/>
+<rect x="1251.7" y="267.0" width="170.9" height="28" fill="#d5e8d4" stroke="#111827" stroke-width="1.3"/>
+<text x="1337.2" y="286" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">PurchaseItem</text>
+<text x="1260.7" y="310.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-item_name : string</text>
+<text x="1260.7" y="327.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-quantity : int</text>
+<text x="1260.7" y="344.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-unit : string</text>
+<text x="1260.7" y="361.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-unit_price_idr : int</text>
+<text x="1260.7" y="378.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-subtotal_idr : int</text>
+<line x1="1251.7" y1="388.0" x2="1422.6" y2="388.0" stroke="#111827" stroke-width="1.1"/>
+<text x="1260.7" y="403.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+purchase() : BelongsTo</text>
+
+
+<polygon points="236.1,246.0 245.1,240.0 254.1,246.0 245.1,252.0" fill="#111827" stroke="#111827" stroke-width="1.3"/>
+
+
+
+
+<polyline points="799.0,208.7 810.0,202.7 799.0,196.7" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+
+
+
+<polygon points="1337.2,203.0 1343.2,212.0 1337.2,221.0 1331.2,212.0" fill="#111827" stroke="#111827" stroke-width="1.3"/>
+
+<text x="146.1" y="110.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="146.1" y="142.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="146.1" y="128.0" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">ditagih</text>
+<text x="250.1" y="240.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="392.1" y="124.0" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="326.1" y="188.0" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">pembayaran</text>
+<text x="654.0" y="124.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="796.0" y="119.3" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">0..1</text>
+<text x="725.0" y="124.0" text-anchor="middle" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">dicatat di kas</text>
+<text x="712.5" y="301.1" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">agregasi</text>
+<text x="1064.2" y="68.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="1064.2" y="94.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">0..1</text>
+<text x="1110.2" y="91.0" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">reversal</text>
+<text x="1206.2" y="115.5" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">0..1</text>
+<text x="1064.2" y="216.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">0..1</text>
+<text x="1148.2" y="171.8" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">dibukukan</text>
+<text x="1345.2" y="221.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="1345.2" y="253.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="1345.2" y="239.0" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">rincian</text>
+</svg>

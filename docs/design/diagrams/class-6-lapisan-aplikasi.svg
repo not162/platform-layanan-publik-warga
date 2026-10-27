@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1325 867" width="1325" height="867" role="img">
+<rect width="1325" height="867" fill="#ffffff"/>
+<path d="M229.8 92.3 H303.1 V106.0 H392.4" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M229.8 136.7 H320.5 V276.5 H411.3" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M239.2 327.5 H336.4 V430.0 H417.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M242.4 515.0 H326.7 V592.0 H427.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M229.8 677.0 H331.6 V754.0 H433.3" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M645.2 430.0 H740.8 V94.5 H820.4" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M635.8 592.0 H720.1 V267.5 H820.4" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M985.0 94.5 H1060.0 V66.0 H1135.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M985.0 267.5 H1068.0 V84.0 H1135.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<rect x="52.6" y="40.0" width="177.2" height="149.0" fill="#ecf2fc" stroke="#111827" stroke-width="1.3"/>
+<rect x="52.6" y="40.0" width="177.2" height="42" fill="#c9dcf7" stroke="#111827" stroke-width="1.3"/>
+<text x="141.2" y="54" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«controller»</text>
+<text x="141.2" y="73" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">AuthController</text>
+<line x1="52.6" y1="96.0" x2="229.8" y2="96.0" stroke="#111827" stroke-width="1.1"/>
+<text x="61.6" y="111.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+register(request)</text>
+<text x="61.6" y="128.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+login(request)</text>
+<text x="61.6" y="145.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+checkCitizen(request)</text>
+<text x="61.6" y="162.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+forgotPassword(request)</text>
+<text x="61.6" y="179.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+resetPassword(request)</text>
+<rect x="43.2" y="253.0" width="196.1" height="149.0" fill="#ecf2fc" stroke="#111827" stroke-width="1.3"/>
+<rect x="43.2" y="253.0" width="196.1" height="42" fill="#c9dcf7" stroke="#111827" stroke-width="1.3"/>
+<text x="141.2" y="267" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«controller»</text>
+<text x="141.2" y="286" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">LetterController</text>
+<line x1="43.2" y1="309.0" x2="239.2" y2="309.0" stroke="#111827" stroke-width="1.1"/>
+<text x="52.2" y="324.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+adminVerify(request, id)</text>
+<text x="52.2" y="341.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+adminApprove(request, id)</text>
+<text x="52.2" y="358.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+adminComplete(request, id)</text>
+<text x="52.2" y="375.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+verifyPublic(token)</text>
+<text x="52.2" y="392.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+trackPublic(ticket)</text>
+<rect x="40.0" y="466.0" width="202.4" height="98.0" fill="#ecf2fc" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="466.0" width="202.4" height="42" fill="#c9dcf7" stroke="#111827" stroke-width="1.3"/>
+<text x="141.2" y="480" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«controller»</text>
+<text x="141.2" y="499" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">ResidentDueController</text>
+<line x1="40.0" y1="522.0" x2="242.4" y2="522.0" stroke="#111827" stroke-width="1.1"/>
+<text x="49.0" y="537.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+adminRecordPayment(request)</text>
+<text x="49.0" y="554.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+mePayments(request)</text>
+<rect x="52.6" y="628.0" width="177.2" height="98.0" fill="#ecf2fc" stroke="#111827" stroke-width="1.3"/>
+<rect x="52.6" y="628.0" width="177.2" height="42" fill="#c9dcf7" stroke="#111827" stroke-width="1.3"/>
+<text x="141.2" y="642" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«controller»</text>
+<text x="141.2" y="661" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">DashboardApiController</text>
+<line x1="52.6" y1="684.0" x2="229.8" y2="684.0" stroke="#111827" stroke-width="1.1"/>
+<text x="61.6" y="699.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+summary(request)</text>
+<text x="61.6" y="716.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+sync(request)</text>
+<rect x="392.4" y="40.0" width="278.0" height="132.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
+<rect x="392.4" y="40.0" width="278.0" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
+<text x="531.4" y="54" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
+<text x="531.4" y="73" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">NotifyService</text>
+<line x1="392.4" y1="96.0" x2="670.4" y2="96.0" stroke="#111827" stroke-width="1.1"/>
+<text x="401.4" y="111.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+to(users, title, body, url, level)</text>
+<text x="401.4" y="128.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+toRoles(roles, title, body, url, level)</text>
+<text x="401.4" y="145.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+toStaff(title, body, url, level)</text>
+<text x="401.4" y="162.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+toEveryone(title, body, url, level)</text>
+<rect x="411.3" y="236.0" width="240.2" height="81.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
+<rect x="411.3" y="236.0" width="240.2" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
+<text x="531.4" y="250" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
+<text x="531.4" y="269" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">AuditService</text>
+<line x1="411.3" y1="292.0" x2="651.5" y2="292.0" stroke="#111827" stroke-width="1.1"/>
+<text x="420.3" y="307.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+log(action, entity, id, old, new)</text>
+<rect x="417.6" y="381.0" width="227.6" height="98.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
+<rect x="417.6" y="381.0" width="227.6" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
+<text x="531.4" y="395" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
+<text x="531.4" y="414" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">LetterService</text>
+<line x1="417.6" y1="437.0" x2="645.2" y2="437.0" stroke="#111827" stroke-width="1.1"/>
+<text x="426.6" y="452.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+submit() / verify() / approve()</text>
+<text x="426.6" y="469.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+complete() / reject()</text>
+<rect x="427.0" y="543.0" width="208.7" height="98.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
+<rect x="427.0" y="543.0" width="208.7" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
+<text x="531.4" y="557" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
+<text x="531.4" y="576" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">ResidentDueService</text>
+<line x1="427.0" y1="599.0" x2="635.8" y2="599.0" stroke="#111827" stroke-width="1.1"/>
+<text x="436.0" y="614.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+recordPayment() : DuePayment</text>
+<text x="436.0" y="631.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+getPersonalSummary() : array</text>
+<rect x="433.3" y="705.0" width="196.1" height="98.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
+<rect x="433.3" y="705.0" width="196.1" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
+<text x="531.4" y="719" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
+<text x="531.4" y="738" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">FinanceService</text>
+<line x1="433.3" y1="761.0" x2="629.4" y2="761.0" stroke="#111827" stroke-width="1.1"/>
+<text x="442.3" y="776.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+publish() / reverse()</text>
+<text x="442.3" y="793.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+getPublicSummary() : array</text>
+<rect x="820.4" y="40.0" width="164.6" height="109.0" fill="#fceded" stroke="#111827" stroke-width="1.3"/>
+<rect x="820.4" y="40.0" width="164.6" height="42" fill="#f8cecc" stroke="#111827" stroke-width="1.3"/>
+<text x="902.7" y="54" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«event»</text>
+<text x="902.7" y="73" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">LetterStatusUpdated</text>
+<text x="829.4" y="97.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-letter : Letter</text>
+<text x="829.4" y="114.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-status : string</text>
+<line x1="820.4" y1="124.0" x2="985.0" y2="124.0" stroke="#111827" stroke-width="1.1"/>
+<text x="829.4" y="139.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+broadcastOn() : array</text>
+<rect x="820.4" y="213.0" width="164.6" height="109.0" fill="#fceded" stroke="#111827" stroke-width="1.3"/>
+<rect x="820.4" y="213.0" width="164.6" height="42" fill="#f8cecc" stroke="#111827" stroke-width="1.3"/>
+<text x="902.7" y="227" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«event»</text>
+<text x="902.7" y="246" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">DuePaymentRecorded</text>
+<text x="829.4" y="270.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-payment : DuePayment</text>
+<text x="829.4" y="287.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-due : ResidentDue</text>
+<line x1="820.4" y1="297.0" x2="985.0" y2="297.0" stroke="#111827" stroke-width="1.1"/>
+<text x="829.4" y="312.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+broadcastOn() : array</text>
+<rect x="1135.0" y="40.0" width="150.0" height="70.0" fill="#e5f7f1" stroke="#111827" stroke-width="1.3"/>
+<rect x="1135.0" y="40.0" width="150.0" height="42" fill="#b5ead7" stroke="#111827" stroke-width="1.3"/>
+<text x="1210.0" y="54" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«interface»</text>
+<text x="1210.0" y="73" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">ShouldBroadcast</text>
+<line x1="1135.0" y1="96.0" x2="1285.0" y2="96.0" stroke="#111827" stroke-width="1.1"/>
+
+<polyline points="381.4,112.0 392.4,106.0 381.4,100.0" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+<polyline points="400.3,282.5 411.3,276.5 400.3,270.5" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+<polyline points="406.6,436.0 417.6,430.0 406.6,424.0" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+<polyline points="416.0,598.0 427.0,592.0 416.0,586.0" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+<polyline points="422.3,760.0 433.3,754.0 422.3,748.0" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+<polyline points="809.4,100.5 820.4,94.5 809.4,88.5" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+<polyline points="809.4,273.5 820.4,267.5 809.4,261.5" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="1135.0,66.0 1121.0,73.0 1121.0,59.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="1135.0,84.0 1121.0,91.0 1121.0,77.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<text x="745.8" y="262.2" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">menyiarkan</text>
+<text x="725.1" y="429.8" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">menyiarkan</text>
+</svg>

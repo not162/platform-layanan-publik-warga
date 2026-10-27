@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 961 1156" width="961" height="1156" role="img">
+<rect width="961" height="1156" fill="#ffffff"/>
+<path d="M115.0 190.0 V135.0 H297.5 V96.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M335.0 190.0 V143.0 H335.0 V96.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M565.5 190.0 V151.0 H372.5 V96.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M115.0 560.0 V511.0 H360.0 V478.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M348.6 560.0 V519.0 H390.0 V478.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M562.3 560.0 V527.0 H420.0 V478.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M785.0 560.0 V511.0 H450.0 V478.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M795.5 710.0 V670.0 H785.0 V630.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M119.1 1050.0 V1013.5 H362.9 V961.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M336.0 1050.0 V997.5 H395.8 V961.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M568.6 1050.0 V1005.5 H428.8 V961.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M785.0 1050.0 V1013.5 H461.7 V961.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<rect x="260.0" y="40.0" width="150.0" height="56.0" fill="#fff0db" stroke="#111827" stroke-width="1.3"/>
+<rect x="260.0" y="40.0" width="150.0" height="28" fill="#ffd699" stroke="#111827" stroke-width="1.3"/>
+<text x="335.0" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">Controller</text>
+<line x1="260.0" y1="82.0" x2="410.0" y2="82.0" stroke="#111827" stroke-width="1.1"/>
+<rect x="40.0" y="190.0" width="150.0" height="84.0" fill="#ecf2fc" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="190.0" width="150.0" height="28" fill="#c9dcf7" stroke="#111827" stroke-width="1.3"/>
+<text x="115.0" y="209" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">AuthController</text>
+<line x1="40.0" y1="232.0" x2="190.0" y2="232.0" stroke="#111827" stroke-width="1.1"/>
+<text x="49.0" y="247.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+register()</text>
+<text x="49.0" y="264.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+login()</text>
+<rect x="260.0" y="190.0" width="150.0" height="67.0" fill="#ecf2fc" stroke="#111827" stroke-width="1.3"/>
+<rect x="260.0" y="190.0" width="150.0" height="28" fill="#c9dcf7" stroke="#111827" stroke-width="1.3"/>
+<text x="335.0" y="209" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">LetterController</text>
+<line x1="260.0" y1="232.0" x2="410.0" y2="232.0" stroke="#111827" stroke-width="1.1"/>
+<text x="269.0" y="247.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+adminApprove()</text>
+<rect x="480.0" y="190.0" width="170.9" height="67.0" fill="#ecf2fc" stroke="#111827" stroke-width="1.3"/>
+<rect x="480.0" y="190.0" width="170.9" height="28" fill="#c9dcf7" stroke="#111827" stroke-width="1.3"/>
+<text x="565.5" y="209" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">ResidentDueController</text>
+<line x1="480.0" y1="232.0" x2="650.9" y2="232.0" stroke="#111827" stroke-width="1.1"/>
+<text x="489.0" y="247.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+adminRecordPayment()</text>
+<rect x="330.0" y="380.0" width="150.0" height="98.0" fill="#fff0db" stroke="#111827" stroke-width="1.3"/>
+<rect x="330.0" y="380.0" width="150.0" height="42" fill="#ffd699" stroke="#111827" stroke-width="1.3"/>
+<text x="405.0" y="394" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«Eloquent»</text>
+<text x="405.0" y="413" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Model</text>
+<line x1="330.0" y1="436.0" x2="480.0" y2="436.0" stroke="#111827" stroke-width="1.1"/>
+<text x="339.0" y="451.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+save()</text>
+<text x="339.0" y="468.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+fill(attributes)</text>
+<rect x="40.0" y="560.0" width="150.0" height="67.0" fill="#f4f0f6" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="560.0" width="150.0" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
+<text x="115.0" y="579" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Citizen</text>
+<line x1="40.0" y1="602.0" x2="190.0" y2="602.0" stroke="#111827" stroke-width="1.1"/>
+<text x="49.0" y="617.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+nameKey() : string</text>
+<rect x="260.0" y="560.0" width="177.2" height="67.0" fill="#f0f6ef" stroke="#111827" stroke-width="1.3"/>
+<rect x="260.0" y="560.0" width="177.2" height="28" fill="#d5e8d4" stroke="#111827" stroke-width="1.3"/>
+<text x="348.6" y="579" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Letter</text>
+<line x1="260.0" y1="602.0" x2="437.2" y2="602.0" stroke="#111827" stroke-width="1.1"/>
+<text x="269.0" y="617.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+attachments() : HasMany</text>
+<rect x="480.0" y="560.0" width="164.6" height="67.0" fill="#f2f6fd" stroke="#111827" stroke-width="1.3"/>
+<rect x="480.0" y="560.0" width="164.6" height="28" fill="#dae8fc" stroke="#111827" stroke-width="1.3"/>
+<text x="562.3" y="579" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">FinanceTransaction</text>
+<line x1="480.0" y1="602.0" x2="644.6" y2="602.0" stroke="#111827" stroke-width="1.1"/>
+<text x="489.0" y="617.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+reversals() : HasMany</text>
+<rect x="710.0" y="560.0" width="150.0" height="70.0" fill="#fff0db" stroke="#111827" stroke-width="1.3"/>
+<rect x="710.0" y="560.0" width="150.0" height="42" fill="#ffd699" stroke="#111827" stroke-width="1.3"/>
+<text x="785.0" y="574" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«Illuminate»</text>
+<text x="785.0" y="593" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Authenticatable</text>
+<line x1="710.0" y1="616.0" x2="860.0" y2="616.0" stroke="#111827" stroke-width="1.1"/>
+<rect x="710.0" y="710.0" width="170.9" height="67.0" fill="#fffaed" stroke="#111827" stroke-width="1.3"/>
+<rect x="710.0" y="710.0" width="170.9" height="28" fill="#fff2cc" stroke="#111827" stroke-width="1.3"/>
+<text x="795.5" y="729" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">User</text>
+<line x1="710.0" y1="752.0" x2="880.9" y2="752.0" stroke="#111827" stroke-width="1.1"/>
+<text x="719.0" y="767.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+hasPermission() : bool</text>
+<rect x="330.0" y="880.0" width="164.6" height="81.0" fill="#e5f7f1" stroke="#111827" stroke-width="1.3"/>
+<rect x="330.0" y="880.0" width="164.6" height="42" fill="#b5ead7" stroke="#111827" stroke-width="1.3"/>
+<text x="412.3" y="894" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«interface»</text>
+<text x="412.3" y="913" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">ShouldBroadcast</text>
+<line x1="330.0" y1="936.0" x2="494.6" y2="936.0" stroke="#111827" stroke-width="1.1"/>
+<text x="339.0" y="951.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+broadcastOn() : array</text>
+<rect x="40.0" y="1050.0" width="158.3" height="56.0" fill="#fceded" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="1050.0" width="158.3" height="28" fill="#f8cecc" stroke="#111827" stroke-width="1.3"/>
+<text x="119.1" y="1069" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">LetterStatusUpdated</text>
+<line x1="40.0" y1="1092.0" x2="198.3" y2="1092.0" stroke="#111827" stroke-width="1.1"/>
+<rect x="260.0" y="1050.0" width="152.0" height="56.0" fill="#fceded" stroke="#111827" stroke-width="1.3"/>
+<rect x="260.0" y="1050.0" width="152.0" height="28" fill="#f8cecc" stroke="#111827" stroke-width="1.3"/>
+<text x="336.0" y="1069" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">DuePaymentRecorded</text>
+<line x1="260.0" y1="1092.0" x2="412.0" y2="1092.0" stroke="#111827" stroke-width="1.1"/>
+<rect x="480.0" y="1050.0" width="177.2" height="56.0" fill="#fceded" stroke="#111827" stroke-width="1.3"/>
+<rect x="480.0" y="1050.0" width="177.2" height="28" fill="#f8cecc" stroke="#111827" stroke-width="1.3"/>
+<text x="568.6" y="1069" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">ComplaintStatusUpdated</text>
+<line x1="480.0" y1="1092.0" x2="657.2" y2="1092.0" stroke="#111827" stroke-width="1.1"/>
+<rect x="710.0" y="1050.0" width="150.0" height="56.0" fill="#fceded" stroke="#111827" stroke-width="1.3"/>
+<rect x="710.0" y="1050.0" width="150.0" height="28" fill="#f8cecc" stroke="#111827" stroke-width="1.3"/>
+<text x="785.0" y="1069" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">CitizenRegistered</text>
+<line x1="710.0" y1="1092.0" x2="860.0" y2="1092.0" stroke="#111827" stroke-width="1.1"/>
+
+<polygon points="297.5,96.0 304.5,110.0 290.5,110.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="335.0,96.0 342.0,110.0 328.0,110.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="372.5,96.0 379.5,110.0 365.5,110.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="360.0,478.0 367.0,492.0 353.0,492.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="390.0,478.0 397.0,492.0 383.0,492.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="420.0,478.0 427.0,492.0 413.0,492.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="450.0,478.0 457.0,492.0 443.0,492.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="785.0,630.0 792.0,644.0 778.0,644.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="362.9,961.0 369.9,975.0 355.9,975.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="395.8,961.0 402.8,975.0 388.8,975.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="428.8,961.0 435.8,975.0 421.8,975.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+
+<polygon points="461.7,961.0 468.7,975.0 454.7,975.0" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+</svg>

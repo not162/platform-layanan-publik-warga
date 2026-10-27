@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1465 602" width="1465" height="602" role="img">
+<rect width="1465" height="602" fill="#ffffff"/>
+<path d="M190.0 136.0 H297.0 V192.5 H420.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M800.0 136.0 H711.2 V192.5 H622.4" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M950.0 136.0 H1028.0 V192.5 H1090.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M115.0 110.0 V18.0 H1175.5 V60.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M422.5 420.0 V372.5 H521.2 V325.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M1132.4 420.0 V380.5 H1175.5 V325.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<rect x="40.0" y="110.0" width="150.0" height="52.0" fill="#f5f6f8" stroke="#111827" stroke-width="1.3"/>
+<rect x="40.0" y="110.0" width="150.0" height="28" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
+<text x="115.0" y="129" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">User</text>
+<rect x="800.0" y="110.0" width="150.0" height="52.0" fill="#f5f6f8" stroke="#111827" stroke-width="1.3"/>
+<rect x="800.0" y="110.0" width="150.0" height="28" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
+<text x="875.0" y="129" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Citizen</text>
+<rect x="420.0" y="60.0" width="202.4" height="265.0" fill="#f4f0f6" stroke="#111827" stroke-width="1.3"/>
+<rect x="420.0" y="60.0" width="202.4" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
+<text x="521.2" y="79" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Complaint</text>
+<text x="429.0" y="103.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-ticket_number : string</text>
+<text x="429.0" y="120.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-kategori : string</text>
+<text x="429.0" y="137.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-title : string</text>
+<text x="429.0" y="154.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-description : text</text>
+<text x="429.0" y="171.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-lokasi : string</text>
+<text x="429.0" y="188.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-is_anonymous : bool</text>
+<text x="429.0" y="205.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-status : string</text>
+<text x="429.0" y="222.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-priority : string</text>
+<text x="429.0" y="239.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-admin_response : text</text>
+<text x="429.0" y="256.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-version : int</text>
+<line x1="420.0" y1="266.0" x2="622.4" y2="266.0" stroke="#111827" stroke-width="1.1"/>
+<text x="429.0" y="281.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+user() : BelongsTo</text>
+<text x="429.0" y="298.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+citizen() : BelongsTo</text>
+<text x="429.0" y="315.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+assignedAdmin() : BelongsTo</text>
+<rect x="1090.0" y="60.0" width="170.9" height="265.0" fill="#f0f6ef" stroke="#111827" stroke-width="1.3"/>
+<rect x="1090.0" y="60.0" width="170.9" height="28" fill="#d5e8d4" stroke="#111827" stroke-width="1.3"/>
+<text x="1175.5" y="79" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">SecurityReport</text>
+<text x="1099.0" y="103.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-ticket_number : string</text>
+<text x="1099.0" y="120.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-category : string</text>
+<text x="1099.0" y="137.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-severity : string</text>
+<text x="1099.0" y="154.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-title : string</text>
+<text x="1099.0" y="171.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-location : string</text>
+<text x="1099.0" y="188.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-incident_at : datetime</text>
+<text x="1099.0" y="205.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-is_anonymous : bool</text>
+<text x="1099.0" y="222.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-status : string</text>
+<text x="1099.0" y="239.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-resolution : text</text>
+<text x="1099.0" y="256.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">-version : int</text>
+<line x1="1090.0" y1="266.0" x2="1260.9" y2="266.0" stroke="#111827" stroke-width="1.1"/>
+<text x="1099.0" y="281.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+citizen() : BelongsTo</text>
+<text x="1099.0" y="298.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+reporter() : BelongsTo</text>
+<text x="1099.0" y="315.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+assignee() : BelongsTo</text>
+<rect x="230.0" y="420.0" width="385.1" height="132.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
+<rect x="230.0" y="420.0" width="385.1" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
+<text x="422.5" y="434" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
+<text x="422.5" y="453" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">ComplaintService</text>
+<line x1="230.0" y1="476.0" x2="615.1" y2="476.0" stroke="#111827" stroke-width="1.1"/>
+<text x="239.0" y="491.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+create(data, user) : Complaint</text>
+<text x="239.0" y="508.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+updateStatus(complaint, status, data, admin) : Complaint</text>
+<text x="239.0" y="525.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+generateTicketNumber() : string</text>
+<text x="239.0" y="542.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+findByTicket(ticket) : Complaint</text>
+<rect x="880.0" y="420.0" width="504.8" height="132.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
+<rect x="880.0" y="420.0" width="504.8" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
+<text x="1132.4" y="434" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
+<text x="1132.4" y="453" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">SecurityReportService</text>
+<line x1="880.0" y1="476.0" x2="1384.8" y2="476.0" stroke="#111827" stroke-width="1.1"/>
+<text x="889.0" y="491.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+create(data, reporter) : SecurityReport</text>
+<text x="889.0" y="508.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+assign(report, officer, version, assigneeId) : SecurityReport</text>
+<text x="889.0" y="525.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+updateStatus(report, officer, version, status, resolution) : SecurityReport</text>
+<text x="889.0" y="542.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">+generateTicketNumber() : string</text>
+
+
+
+
+
+
+
+
+
+<polyline points="527.2,336.0 521.2,325.0 515.2,336.0" fill="none" stroke="#111827" stroke-width="1.3"/>
+
+<polyline points="1181.5,336.0 1175.5,325.0 1169.5,336.0" fill="none" stroke="#111827" stroke-width="1.3"/>
+<text x="204.0" y="130.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">0..1</text>
+<text x="406.0" y="186.5" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="302.0" y="164.2" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">user_id / assigned_admin_id</text>
+<text x="786.0" y="130.0" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">0..1</text>
+<text x="636.4" y="186.5" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="716.2" y="164.2" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+<text x="964.0" y="130.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">0..1</text>
+<text x="1076.0" y="186.5" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="1033.0" y="164.2" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">citizen_id</text>
+<text x="123.0" y="96.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">0..1</text>
+<text x="1183.5" y="46.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
+<text x="645.2" y="13.0" text-anchor="middle" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">reporter / assigned_to</text>
+<text x="471.9" y="367.5" text-anchor="middle" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mengelola</text>
+<text x="1153.9" y="375.5" text-anchor="middle" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mengelola</text>
+</svg>

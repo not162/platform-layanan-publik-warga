@@ -380,139 +380,36 @@ Setiap diagram memakai swimlane per pelaku. Notasi: lingkaran hitam adalah awal,
 ### 5. Unified Modeling Language (UML) Diagrams
 
 #### 5.1. UML Class Diagram
-```mermaid
-classDiagram
-    class User {
-        +int id
-        +string name
-        +string username
-        +string email
-        +UserRole role
-        +bool is_active
-        +tier() string
-        +hasPermission(string) bool
-        +isWarga() bool
-        +citizen() Citizen
-        +complaints() HasMany
-        +findByLogin(string)$ User
-    }
-    class UserRole {
-        <<enumeration>>
-        SUPERADMIN
-        ADMIN
-        KETUA_RT
-        SEKRETARIS
-        BENDAHARA
-        PETUGAS_KEAMANAN
-        WARGA
-        +tier() string
-        +assignableRoles() array
-    }
-    class FamilyCard {
-        +string no_kk_hash
-        +string address
-        +string rt
-        +string rw
-    }
-    class Citizen {
-        +string nik_hash
-        +string full_name
-        +string status_warga
-        +int version
-        +familyCard() FamilyCard
-        +user() User
-        +letters() HasMany
-    }
-    class LetterType {
-        +string kode_surat
-        +string nama_surat
-        +json form_schema
-        +json approval_flow
-    }
-    class Letter {
-        +string ticket_number
-        +string letter_number
-        +string status
-        +string verification_token
-        +string document_hash
-        +int version
-    }
-    class Complaint {
-        +string ticket_number
-        +string status
-        +string priority
-        +bool is_anonymous
-    }
-    class SecurityReport {
-        +string ticket_number
-        +string severity
-        +string status
-    }
-    class FinanceTransaction {
-        +string type
-        +int amount_idr
-        +string status
-        +int original_transaction_id
-    }
-    class ResidentDue {
-        +int period_year
-        +int period_month
-        +int amount_due_idr
-        +string status
-    }
-    class DuePayment {
-        +int amount_paid_idr
-        +string receipt_number
-    }
-    class FinancialReport {
-        +int year
-        +int quarter
-        +int revision
-        +string checksum_sha256
-    }
-    class LetterService {
-        +create() Letter
-        +submit() Letter
-        +verify() Letter
-        +approve() Letter
-        +complete() Letter
-        +reject() Letter
-    }
-    class FinanceService {
-        +create() FinanceTransaction
-        +publish() FinanceTransaction
-        +reverse() FinanceTransaction
-        +getPublicSummary() array
-    }
-    class ResidentDueService {
-        +generateMonthlyDues()
-        +recordPayment() DuePayment
-        +getPersonalSummary() array
-    }
-    class AuditService {
-        +log() AuditLog
-    }
-    class NotifyService
-    User --> UserRole : role
-    User "1" -- "0..1" Citizen : akun-warga
-    FamilyCard "1" o-- "*" Citizen : anggota
-    Citizen "1" --> "*" Letter : mengajukan
-    LetterType "1" --> "*" Letter : jenis
-    User "1" --> "*" Complaint : melapor
-    User "1" --> "*" SecurityReport : melapor
-    Citizen "1" --> "*" ResidentDue : ditagih
-    ResidentDue "1" --> "*" DuePayment : dibayar
-    DuePayment "*" --> "0..1" FinanceTransaction : dicatat
-    FinanceTransaction "0..1" --> "0..1" FinanceTransaction : reversal
-    LetterService ..> Letter
-    LetterService ..> AuditService
-    LetterService ..> NotifyService
-    FinanceService ..> FinanceTransaction
-    FinanceService ..> AuditService
-    ResidentDueService ..> DuePayment
-    ResidentDueService ..> AuditService
-    FinancialReport ..> FinanceTransaction : agregasi
-```
+
+Notasi mengikuti template UML: tiga kompartemen (nama, atribut, operasi), `-` atribut/kolom, `+` operasi publik, panah segitiga kosong untuk pewarisan atau realisasi, belah ketupat penuh untuk komposisi, belah ketupat kosong untuk agregasi, garis putus-putus untuk dependensi. Atribut dan operasi diambil dari model dan service di `app/`; atribut yang ditampilkan adalah kolom utama (daftar lengkap ada di ERD), dan `created_at`/`updated_at` tidak digambar. Kotak abu-abu hanyalah penanda kelas dari diagram lain.
+
+**5.1.1. Akun dan Kependudukan**
+
+![Class diagram akun dan kependudukan](docs/design/diagrams/class-1-akun-kependudukan.svg)
+
+**5.1.2. Surat Pengantar**
+
+![Class diagram surat pengantar](docs/design/diagrams/class-2-surat-pengantar.svg)
+
+**5.1.3. Model Keuangan**
+
+![Class diagram model keuangan](docs/design/diagrams/class-3-model-keuangan.svg)
+
+**5.1.4. Layanan Keuangan**
+
+![Class diagram layanan keuangan](docs/design/diagrams/class-4-layanan-keuangan.svg)
+
+**5.1.5. Pengaduan dan Keamanan**
+
+![Class diagram pengaduan dan keamanan](docs/design/diagrams/class-5-pengaduan-keamanan.svg)
+
+**5.1.6. Lapisan Aplikasi (Controller, Service, Event)**
+
+![Class diagram lapisan aplikasi](docs/design/diagrams/class-6-lapisan-aplikasi.svg)
+
+**5.1.7. Hierarki Kelas Dasar**
+
+![Class diagram hierarki kelas](docs/design/diagrams/class-7-hierarki-kelas.svg)
 
 #### 5.2. UML Sequence Diagram
 
