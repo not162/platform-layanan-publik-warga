@@ -119,104 +119,35 @@ Use case dipecah per modul agar terbaca. Notasi mengikuti UML: aktor di luar bat
 
 ### 4. Activity Diagram
 
-#### 4.1. Registrasi Mandiri & Verifikasi Warga
-```mermaid
-flowchart TD
-    A([Mulai: buka /register]) --> B[Isi NIK, No. KK, Nama, Username, Password]
-    B --> C[POST /api/v1/auth/check-citizen: validasi langsung]
-    C --> D{NIK, nama + KK, username belum dipakai?}
-    D -- Tidak --> E[Tampilkan pesan kesalahan per kolom] --> B
-    D -- Ya --> F[POST /api/v1/register]
-    F --> G{NIK sudah ada di data sensus RT?}
-    G -- Ya --> H[Tautkan akun ke data warga: status aktif]
-    G -- Tidak --> I[Buat warga baru + KK: status pending_verification]
-    I --> J[Notifikasi ke Sekretaris]
-    J --> K{Sekretaris periksa data}
-    K -- Setuju --> L[Status warga aktif]
-    K -- Tolak --> M[Pendaftaran ditolak + catatan]
-    H --> N([Masuk ke dashboard])
-    L --> N
-    M --> O([Selesai])
-```
+Setiap diagram memakai swimlane per pelaku. Notasi: lingkaran hitam adalah awal, lingkaran bertanda target adalah akhir, belah ketupat oranye adalah keputusan atau penggabungan, bar hitam adalah fork/join (aksi paralel), dan kotak hijau adalah objek data. Alur ditulis dari kode (`AuthController`, `LetterService`, `ResidentDueService`, `FinanceService`, `ComplaintController`).
 
-#### 4.2. Login, Penguncian & Lupa Password
-```mermaid
-flowchart TD
-    A([Buka /login]) --> B[Isi username / email / telepon / NIK + password]
-    B --> C{Terlalu banyak gagal? 5x dalam 5 menit}
-    C -- Ya --> D[Tolak: coba lagi dalam N detik]
-    C -- Tidak --> E{Kredensial valid?}
-    E -- Tidak --> F[Catat percobaan gagal] --> B
-    E -- Ya --> G{Akun aktif?}
-    G -- Tidak --> H[Tolak: hubungi pengurus RT]
-    G -- Ya --> I[Sesi dibuat + last_login_at] --> J([Dashboard sesuai peran])
-    B -. Lupa password .-> K[Isi username + NIK + No. KK]
-    K --> L{Cocok dengan database?}
-    L -- Tidak --> M[Data tidak cocok]
-    L -- Ya --> N[Buat token sekali pakai 20 menit, simpan hash di password_reset_requests]
-    N --> O{Akun punya email dan SMTP aktif?}
-    O -- Ya --> P[Kirim tautan lewat email]
-    O -- Tidak --> Q[Tampilkan tautan di layar]
-    P --> R[Buka /reset-password/token, isi password baru]
-    Q --> R
-    R --> S[Token ditandai terpakai] --> A
-```
+**4.1. Registrasi Mandiri & Verifikasi Warga**
 
-#### 4.3. Birokrasi Surat Pengantar 2-Tier
-```mermaid
-stateDiagram-v2
-    [*] --> draft: Warga pilih jenis surat, isi formulir, unggah lampiran
-    draft --> submitted: Ajukan (notifikasi ke Sekretaris)
-    submitted --> verified: Sekretaris verifikasi berkas (notifikasi ke Ketua RT)
-    submitted --> rejected: Sekretaris tolak + alasan
-    verified --> approved: Ketua RT sahkan (nomor surat RT 04, hash SHA-256, token QR)
-    verified --> rejected: Ketua RT tolak + alasan
-    approved --> completed: Dokumen PDF diterbitkan dan diunduh
-    completed --> [*]
-    rejected --> [*]
-    note right of approved
-        Semua transisi memakai kunci baris
-        dan optimistic locking (kolom version)
-    end note
-```
+![Activity registrasi mandiri warga](diagrams/activity-1-registrasi-warga.svg)
 
-#### 4.4. Iuran Warga ke Buku Kas Transparan
-```mermaid
-flowchart TD
-    A([Awal bulan]) --> B[Bendahara generate tagihan resident_dues: status UNPAID]
-    B --> C[Warga melihat Iuran Saya + notifikasi]
-    C --> D[Warga bayar: tunai / transfer]
-    D --> E[Bendahara catat due_payments + bukti + nomor kuitansi]
-    E --> F[Transaksi kas income langsung status published, terhubung ke pembayaran]
-    E --> G{Total bayar mencapai tagihan?}
-    G -- Belum --> H[Status PARTIAL] --> D
-    G -- Ya --> I[Status PAID]
-    F --> J[Ringkasan kas publik + cache dibersihkan]
-    K[Transaksi manual: pembelian, pengeluaran, pemasukan lain] --> L[Status draft]
-    L --> M{Terbitkan?}
-    M -- Ya --> N[Status published: tampil di kas publik] --> J
-    N --> O{Perlu koreksi?}
-    O -- Ya --> P[Reversal: transaksi lawan dibuat, asli ditandai reversed, alasan dicatat] --> J
-    N --> Q[Laporan triwulan: revisi, checksum SHA-256, diterbitkan]
-```
+**4.2. Login & Penguncian Percobaan**
 
-#### 4.5. Pengaduan & Laporan Keamanan
-```mermaid
-stateDiagram-v2
-    [*] --> submitted: Warga kirim (opsional anonim), tiket dibuat
-    submitted --> reviewed: Pengurus tinjau, prioritas ditetapkan
-    reviewed --> processing: Ditugaskan ke pengurus / petugas
-    processing --> resolved: Ditangani + tanggapan admin
-    resolved --> closed: Ditutup
-    submitted --> rejected: Tidak layak
-    reviewed --> rejected
-    closed --> [*]
-    rejected --> [*]
-    note right of submitted
-        Identitas pelapor anonim tidak
-        ditampilkan ke pengurus
-    end note
-```
+![Activity login](diagrams/activity-2-login.svg)
+
+**4.3. Lupa & Atur Ulang Kata Sandi**
+
+![Activity lupa kata sandi](diagrams/activity-3-lupa-password.svg)
+
+**4.4. Birokrasi Surat Pengantar 2-Tier**
+
+![Activity surat pengantar](diagrams/activity-4-surat-pengantar.svg)
+
+**4.5. Pembayaran Iuran ke Buku Kas**
+
+![Activity pembayaran iuran](diagrams/activity-5-pembayaran-iuran.svg)
+
+**4.6. Transaksi Kas, Koreksi, & Laporan Triwulan**
+
+![Activity buku kas dan laporan triwulan](diagrams/activity-6-buku-kas-laporan.svg)
+
+**4.7. Pengaduan Lingkungan**
+
+![Activity pengaduan](diagrams/activity-7-pengaduan.svg)
 
 ---
 

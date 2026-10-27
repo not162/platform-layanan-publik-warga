@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 990 1186" width="990" height="1186" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#374151"/></marker></defs>
+<rect width="990" height="1186" fill="#ffffff"/>
+<rect x="0" y="0" width="330" height="38" fill="#f3f4f6" stroke="#111827" stroke-width="1.2"/>
+<text x="165.0" y="24.0" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Warga</text>
+<rect x="0" y="38" width="330" height="1148" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="330" y="0" width="330" height="38" fill="#f3f4f6" stroke="#111827" stroke-width="1.2"/>
+<text x="495.0" y="24.0" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Sistem PRISMA</text>
+<rect x="330" y="38" width="330" height="1148" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="660" y="0" width="330" height="38" fill="#f3f4f6" stroke="#111827" stroke-width="1.2"/>
+<text x="825.0" y="24.0" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Pengurus RT</text>
+<rect x="660" y="38" width="330" height="1148" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M165.0 93.0 L165.0 140.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M165.0 200.0 L165.0 242.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M151.0 256.0 L105.0 256.0 L105.0 319.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M179.0 256.0 L240.0 256.0 L240.0 319.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M105.0 365.0 L105.0 428.0 L154.0 428.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M240.0 365.0 L240.0 428.0 L176.0 428.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M165.0 439.0 L165.0 495.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M245.0 514.0 L330.0 514.0 L330.0 514.0 L415.0 514.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M575.0 514.0 L825.0 514.0 L825.0 577.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M825.0 623.0 L825.0 672.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M811.0 686.0 L755.0 686.0 L755.0 749.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M839.0 686.0 L900.0 686.0 L900.0 742.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M900.0 802.0 L900.0 828.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M755.0 795.0 L755.0 944.0 L575.0 944.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M900.0 888.0 L900.0 944.0 L575.0 944.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M495.0 974.0 L495.0 1030.0 L245.0 1030.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M165.0 1053.0 L165.0 1104.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<circle cx="165.0" cy="84" r="9" fill="#111827"/>
+<rect x="85.0" y="140.0" width="160" height="60" rx="14" fill="#ffd699" stroke="#c27a1a" stroke-width="1.5"/>
+<text x="165.0" y="160" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Isi pengaduan: judul,</text>
+<text x="165.0" y="174" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">kategori, lokasi,</text>
+<text x="165.0" y="188" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">deskripsi, foto</text>
+<polygon points="165.0,242.0 179.0,256 165.0,270.0 151.0,256" fill="#f4b266" stroke="#b8741a" stroke-width="1.4"/>
+<text x="183.0" y="246" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">Kirim anonim?</text>
+<rect x="50.0" y="319.0" width="110" height="46" rx="14" fill="#ffd699" stroke="#c27a1a" stroke-width="1.5"/>
+<text x="105.0" y="339" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Tandai</text>
+<text x="105.0" y="353" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_anonymous</text>
+<rect x="190.0" y="319.0" width="100" height="46" rx="14" fill="#ffd699" stroke="#c27a1a" stroke-width="1.5"/>
+<text x="240.0" y="339" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Kirim dengan</text>
+<text x="240.0" y="353" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">identitas</text>
+<polygon points="165.0,417.0 176.0,428 165.0,439.0 154.0,428" fill="#f4b266" stroke="#b8741a" stroke-width="1.4"/>
+<rect x="85.0" y="495.0" width="160" height="38" rx="14" fill="#ffd699" stroke="#c27a1a" stroke-width="1.5"/>
+<text x="165.0" y="518" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Kirim pengaduan</text>
+<rect x="415.0" y="491.0" width="160" height="46" rx="14" fill="#a8e6cf" stroke="#2f8f6f" stroke-width="1.5"/>
+<text x="495.0" y="511" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Buat nomor tiket,</text>
+<text x="495.0" y="525" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">simpan status submitted</text>
+<rect x="745.0" y="577.0" width="160" height="46" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="825.0" y="597" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Tinjau pengaduan,</text>
+<text x="825.0" y="611" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">tetapkan prioritas</text>
+<polygon points="825.0,672.0 839.0,686 825.0,700.0 811.0,686" fill="#f4b266" stroke="#b8741a" stroke-width="1.4"/>
+<text x="807.0" y="676" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">Layak ditangani?</text>
+<rect x="695.0" y="749.0" width="120" height="46" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="755.0" y="769" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Tolak dengan</text>
+<text x="755.0" y="783" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">alasan (rejected)</text>
+<rect x="845.0" y="742.0" width="110" height="60" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="900.0" y="762" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Proses</text>
+<text x="900.0" y="776" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">pengaduan</text>
+<text x="900.0" y="790" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">(processing)</text>
+<rect x="835.0" y="828.0" width="130" height="60" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="900.0" y="848" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Beri tanggapan</text>
+<text x="900.0" y="862" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">(resolved), lalu</text>
+<text x="900.0" y="876" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">tutup (closed)</text>
+<rect x="415.0" y="914.0" width="160" height="60" rx="14" fill="#a8e6cf" stroke="#2f8f6f" stroke-width="1.5"/>
+<text x="495.0" y="934" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Simpan status baru (cek</text>
+<text x="495.0" y="948" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">version), siarkan</text>
+<text x="495.0" y="962" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">pembaruan</text>
+<rect x="85.0" y="1007.0" width="160" height="46" rx="14" fill="#ffd699" stroke="#c27a1a" stroke-width="1.5"/>
+<text x="165.0" y="1027" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Lihat tanggapan di</text>
+<text x="165.0" y="1041" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Pengaduan Saya</text>
+<circle cx="165.0" cy="1116" r="12" fill="#fff" stroke="#111827" stroke-width="1.4"/><circle cx="165.0" cy="1116" r="7" fill="#111827"/>
+<text x="143.0" y="271.0" text-anchor="end" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">[ya]</text>
+<text x="187.0" y="271.0" text-anchor="start" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">[tidak]</text>
+<text x="803.0" y="701.0" text-anchor="end" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">[tidak]</text>
+<text x="847.0" y="701.0" text-anchor="start" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">[ya]</text>
+</svg>

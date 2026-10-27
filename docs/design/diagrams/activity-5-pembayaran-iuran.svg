@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1140 1358" width="1140" height="1358" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#374151"/></marker></defs>
+<rect width="1140" height="1358" fill="#ffffff"/>
+<rect x="0" y="0" width="380" height="38" fill="#f3f4f6" stroke="#111827" stroke-width="1.2"/>
+<text x="190.0" y="24.0" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Warga</text>
+<rect x="0" y="38" width="380" height="1320" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="380" y="0" width="380" height="38" fill="#f3f4f6" stroke="#111827" stroke-width="1.2"/>
+<text x="570.0" y="24.0" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Bendahara RT</text>
+<rect x="380" y="38" width="380" height="1320" fill="none" stroke="#111827" stroke-width="1.2"/>
+<rect x="760" y="0" width="380" height="38" fill="#f3f4f6" stroke="#111827" stroke-width="1.2"/>
+<text x="950.0" y="24.0" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Sistem PRISMA</text>
+<rect x="760" y="38" width="380" height="1320" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M570.0 93.0 L570.0 147.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M650.0 170.0 L760.0 170.0 L760.0 170.0 L870.0 170.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M950.0 193.0 L950.0 239.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M875.0 256.0 L190.0 256.0 L190.0 323.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M190.0 361.0 L190.0 405.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M270.0 428.0 L570.0 428.0 L570.0 491.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M650.0 514.0 L760.0 514.0 L760.0 514.0 L870.0 514.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M950.0 537.0 L950.0 586.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M936.0 600.0 L870.0 600.0 L870.0 663.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M964.0 600.0 L1030.0 600.0 L1030.0 663.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M805.0 686.0 L570.0 686.0 L570.0 537.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M1030.0 709.0 L1030.0 758.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M1016.0 772.0 L930.0 772.0 L930.0 839.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M1044.0 772.0 L1050.0 772.0 L1050.0 839.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M930.0 877.0 L930.0 944.0 L979.0 944.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M1050.0 877.0 L1050.0 944.0 L1001.0 944.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M990.0 955.0 L990.0 1030.0 L1045.0 1030.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M950.0 1060.0 L950.0 1116.0 L645.0 1116.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M570.0 1133.0 L570.0 1202.0 L270.0 1202.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<path d="M190.0 1225.0 L190.0 1276.0" fill="none" stroke="#374151" stroke-width="1.2" marker-end="url(#a)"/>
+<circle cx="570.0" cy="84" r="9" fill="#111827"/>
+<rect x="490.0" y="147.0" width="160" height="46" rx="14" fill="#a8e6cf" stroke="#2f8f6f" stroke-width="1.5"/>
+<text x="570.0" y="167" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Buat tagihan iuran</text>
+<text x="570.0" y="181" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">bulanan</text>
+<rect x="870.0" y="147.0" width="160" height="46" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="950.0" y="167" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Buat resident_dues per</text>
+<text x="950.0" y="181" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">warga (status UNPAID)</text>
+<rect x="875.0" y="239.0" width="150" height="34" fill="#d5e8d4" stroke="#82b366" stroke-width="1.4"/>
+<text x="950.0" y="260" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Tagihan [UNPAID]</text>
+<rect x="110.0" y="323.0" width="160" height="38" rx="14" fill="#ffd699" stroke="#c27a1a" stroke-width="1.5"/>
+<text x="190.0" y="346" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Lihat Iuran Saya</text>
+<rect x="110.0" y="405.0" width="160" height="46" rx="14" fill="#ffd699" stroke="#c27a1a" stroke-width="1.5"/>
+<text x="190.0" y="425" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Bayar iuran (tunai /</text>
+<text x="190.0" y="439" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">transfer)</text>
+<rect x="490.0" y="491.0" width="160" height="46" rx="14" fill="#a8e6cf" stroke="#2f8f6f" stroke-width="1.5"/>
+<text x="570.0" y="511" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Catat pembayaran:</text>
+<text x="570.0" y="525" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">nominal, metode, bukti</text>
+<rect x="870.0" y="491.0" width="160" height="46" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="950.0" y="511" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Kunci tagihan, hitung</text>
+<text x="950.0" y="525" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">sisa</text>
+<polygon points="950.0,586.0 964.0,600 950.0,614.0 936.0,600" fill="#f4b266" stroke="#b8741a" stroke-width="1.4"/>
+<text x="932.0" y="577" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">Nominal valid dan belum</text>
+<text x="932.0" y="590" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">lunas?</text>
+<rect x="805.0" y="663.0" width="130" height="46" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="870.0" y="683" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Tolak (422),</text>
+<text x="870.0" y="697" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">batalkan transaksi</text>
+<rect x="965.0" y="663.0" width="130" height="46" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="1030.0" y="683" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Simpan pembayaran +</text>
+<text x="1030.0" y="697" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">nomor kuitansi</text>
+<polygon points="1030.0,758.0 1044.0,772 1030.0,786.0 1016.0,772" fill="#f4b266" stroke="#b8741a" stroke-width="1.4"/>
+<text x="1012.0" y="749" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">Total bayar mencapai</text>
+<text x="1012.0" y="762" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">tagihan?</text>
+<rect x="880.0" y="839.0" width="100" height="38" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="930.0" y="862" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Status PAID</text>
+<rect x="1000.0" y="839.0" width="100" height="38" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="1050.0" y="862" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Status PARTIAL</text>
+<polygon points="990.0,933.0 1001.0,944 990.0,955.0 979.0,944" fill="#f4b266" stroke="#b8741a" stroke-width="1.4"/>
+<rect x="855.0" y="1000.0" width="190" height="60" rx="14" fill="#c3d3f5" stroke="#3b5ba5" stroke-width="1.5"/>
+<text x="950.0" y="1020" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Buat transaksi kas income</text>
+<text x="950.0" y="1034" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">(published), siarkan</text>
+<text x="950.0" y="1048" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">DuePaymentRecorded</text>
+<rect x="495.0" y="1099.0" width="150" height="34" fill="#d5e8d4" stroke="#82b366" stroke-width="1.4"/>
+<text x="570.0" y="1120" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Kuitansi RCP-...</text>
+<rect x="110.0" y="1179.0" width="160" height="46" rx="14" fill="#ffd699" stroke="#c27a1a" stroke-width="1.5"/>
+<text x="190.0" y="1199" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">Lihat riwayat</text>
+<text x="190.0" y="1213" text-anchor="middle" font-size="12" fill="#111827" font-family="Arial, Helvetica, sans-serif">pembayaran</text>
+<circle cx="190.0" cy="1288" r="12" fill="#fff" stroke="#111827" stroke-width="1.4"/><circle cx="190.0" cy="1288" r="7" fill="#111827"/>
+<text x="928.0" y="615.0" text-anchor="end" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">[tidak]</text>
+<text x="972.0" y="615.0" text-anchor="start" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">[ya]</text>
+<text x="1008.0" y="787.0" text-anchor="end" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">[ya]</text>
+<text x="1052.0" y="787.0" text-anchor="start" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">[tidak]</text>
+</svg>
