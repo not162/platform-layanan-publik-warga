@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1134 596" width="1134" height="596" role="img">
 <rect width="1134" height="596" fill="#ffffff"/>
-<path d="M156.9 186.0 V210.0 H156.9 V250.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M156.9 186.0 V218.0 V250.0" fill="none" stroke="#111827" stroke-width="1.2"/>
 <path d="M273.9 391.0 H358.9 V198.0 H443.9" fill="none" stroke="#111827" stroke-width="1.2"/>
-<path d="M734.5 148.0 H827.5 V154.0 H904.5" fill="none" stroke="#111827" stroke-width="1.2"/>
-<path d="M734.5 248.0 H821.0 V371.0 H923.4" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M734.5 148.0 H817.2 V154.0 H904.5" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M734.5 248.0 H831.2 V371.0 H923.4" fill="none" stroke="#111827" stroke-width="1.2"/>
 <rect x="77.8" y="40.0" width="158.3" height="146.0" fill="#f4f0f6" stroke="#111827" stroke-width="1.3"/>
 <rect x="77.8" y="40.0" width="158.3" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
 <text x="156.9" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">FamilyCard</text>
@@ -92,5 +92,5 @@
 <text x="819.5" y="142.0" text-anchor="middle" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">role</text>
 <text x="748.5" y="242.0" text-anchor="start" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
 <text x="909.4" y="365.0" text-anchor="end" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">*</text>
-<text x="826.0" y="309.5" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">izin tambahan</text>
+<text x="836.2" y="309.5" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">izin tambahan</text>
 </svg>

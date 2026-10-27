@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1095 570" width="1095" height="570" role="img">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#111827"/></marker></defs>
+<rect width="1095" height="570" fill="#ffffff"/>
+<path d="M254.0 83.0 H359.6 V102.5 H482.2" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#ar)"/>
+<path d="M282.2 243.0 H373.6 V155.0 H482.2" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#ar)"/>
+<path d="M258.7 435.0 H387.6 V207.5 H482.2" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#ar)"/>
+<path d="M873.8 480.0 H724.0 V207.5 H622.4" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#ar)"/>
+<path d="M864.7 107.0 H752.0 V102.5 H622.4" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#ar)"/>
+<path d="M822.4 307.0 H738.0 V155.0 H622.4" fill="none" stroke="#111827" stroke-width="1.2" marker-end="url(#ar)"/>
+<rect x="482.2" y="40.0" width="140.2" height="230.0" fill="#fdfdfe" stroke="#111827" stroke-width="1.4"/>
+<rect x="482.2" y="40.0" width="140.2" height="28" fill="#e8eef9" stroke="#111827" stroke-width="1.4"/>
+<text x="552.3" y="59" text-anchor="middle" font-size="13" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">USERS</text>
+<text x="494.2" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold" text-decoration="underline">id</text>
+<text x="494.2" y="98.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">warga_id (UK)</text>
+<text x="494.2" y="114.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">name</text>
+<text x="494.2" y="130.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">email (UK)</text>
+<text x="494.2" y="146.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">password</text>
+<text x="494.2" y="162.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">role</text>
+<text x="494.2" y="178.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">is_active</text>
+<text x="494.2" y="194.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">email_verified_at</text>
+<text x="494.2" y="210.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">last_login_at</text>
+<text x="494.2" y="226.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">remember_token</text>
+<text x="494.2" y="242.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">avatar_url</text>
+<text x="494.2" y="258.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">username (UK)</text>
+<rect x="68.2" y="40.0" width="185.8" height="86.0" fill="#fdfdfe" stroke="#111827" stroke-width="1.4"/>
+<rect x="68.2" y="40.0" width="185.8" height="28" fill="#e9f5ea" stroke="#111827" stroke-width="1.4"/>
+<text x="161.1" y="59" text-anchor="middle" font-size="13" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">ADMIN_PERMISSIONS</text>
+<text x="80.2" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold" text-decoration="underline">id</text>
+<text x="80.2" y="98.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">user_id (FK)</text>
+<text x="80.2" y="114.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">permission</text>
+<rect x="40.0" y="176.0" width="242.2" height="134.0" fill="#fdfdfe" stroke="#111827" stroke-width="1.4"/>
+<rect x="40.0" y="176.0" width="242.2" height="28" fill="#fdf3d6" stroke="#111827" stroke-width="1.4"/>
+<text x="161.1" y="195" text-anchor="middle" font-size="13" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">PASSWORD_RESET_REQUESTS</text>
+<text x="52.0" y="218.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold" text-decoration="underline">id</text>
+<text x="52.0" y="234.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">user_id (FK)</text>
+<text x="52.0" y="250.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">token_hash (UK)</text>
+<text x="52.0" y="266.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">ip_address</text>
+<text x="52.0" y="282.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">expires_at</text>
+<text x="52.0" y="298.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">used_at</text>
+<rect x="63.5" y="360.0" width="195.2" height="150.0" fill="#fdfdfe" stroke="#111827" stroke-width="1.4"/>
+<rect x="63.5" y="360.0" width="195.2" height="28" fill="#f6e9f0" stroke="#111827" stroke-width="1.4"/>
+<text x="161.1" y="379" text-anchor="middle" font-size="13" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">PUSH_SUBSCRIPTIONS</text>
+<text x="75.5" y="402.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold" text-decoration="underline">id</text>
+<text x="75.5" y="418.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-style="italic">user_id (FK)</text>
+<text x="75.5" y="434.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">endpoint</text>
+<text x="75.5" y="450.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">endpoint_hash</text>
+<text x="75.5" y="466.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">public_key</text>
+<text x="75.5" y="482.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">auth_token</text>
+<text x="75.5" y="498.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">content_encoding</text>
+<rect x="864.7" y="40.0" width="148.2" height="134.0" fill="#fdfdfe" stroke="#111827" stroke-width="1.4"/>
+<rect x="864.7" y="40.0" width="148.2" height="28" fill="#fde8d8" stroke="#111827" stroke-width="1.4"/>
+<text x="938.8" y="59" text-anchor="middle" font-size="13" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">NOTIFICATIONS</text>
+<text x="876.7" y="82.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold" text-decoration="underline">id</text>
+<text x="876.7" y="98.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">type</text>
+<text x="876.7" y="114.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">notifiable_type</text>
+<text x="876.7" y="130.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">notifiable_id</text>
+<text x="876.7" y="146.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">data</text>
+<text x="876.7" y="162.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">read_at</text>
+<rect x="822.4" y="224.0" width="232.8" height="166.0" fill="#fdfdfe" stroke="#111827" stroke-width="1.4"/>
+<rect x="822.4" y="224.0" width="232.8" height="28" fill="#e3f4f4" stroke="#111827" stroke-width="1.4"/>
+<text x="938.8" y="243" text-anchor="middle" font-size="13" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">PERSONAL_ACCESS_TOKENS</text>
+<text x="834.4" y="266.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold" text-decoration="underline">id</text>
+<text x="834.4" y="282.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">tokenable_type</text>
+<text x="834.4" y="298.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">tokenable_id</text>
+<text x="834.4" y="314.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">name</text>
+<text x="834.4" y="330.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">token (UK)</text>
+<text x="834.4" y="346.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">abilities</text>
+<text x="834.4" y="362.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">last_used_at</text>
+<text x="834.4" y="378.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">expires_at</text>
+<rect x="873.8" y="440.0" width="130.0" height="80.0" fill="#fdfdfe" stroke="#111827" stroke-width="1.4"/>
+<rect x="873.8" y="440.0" width="130.0" height="28" fill="#eceff1" stroke="#111827" stroke-width="1.4"/>
+<text x="938.8" y="459" text-anchor="middle" font-size="13" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">CITIZENS</text>
+<text x="885.8" y="482.0" font-size="11.5" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-weight="bold" text-decoration="underline">id</text>
+<text x="262.0" y="78.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
+<text x="474.2" y="97.5" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="363.6" y="65.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">user_id</text>
+<text x="290.2" y="238.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
+<text x="474.2" y="150.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="377.6" y="199.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">user_id</text>
+<text x="266.7" y="430.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
+<text x="474.2" y="202.5" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="391.6" y="321.2" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">user_id</text>
+<text x="865.8" y="475.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
+<text x="630.4" y="202.5" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="728.0" y="343.8" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">user_id</text>
+<text x="856.7" y="102.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
+<text x="630.4" y="97.5" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="756.0" y="89.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">notifiable_id (polimorfik)</text>
+<text x="814.4" y="302.0" text-anchor="end" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">N</text>
+<text x="630.4" y="150.0" text-anchor="start" font-size="11.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">1</text>
+<text x="742.0" y="231.0" font-size="10.5" font-style="italic" fill="#4b5563" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">tokenable_id (polimorfik)</text>
+</svg>

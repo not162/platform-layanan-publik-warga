@@ -1,77 +1,77 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 1005" width="820" height="1005" role="img" aria-label="Sistem PRISMA RT 04: Keuangan dan Iuran RT">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1065" width="1000" height="1065" role="img" aria-label="Sistem PRISMA RT 04: Keuangan dan Iuran RT">
 <defs><marker id="open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1f2937" stroke-width="1.4"/></marker><marker id="tri" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto"><path d="M1 1 L11 6 L1 11 Z" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/></marker></defs>
-<rect width="820" height="1005" fill="#ffffff"/>
-<rect x="245" y="20" width="330" height="965" fill="#cdeaf8" stroke="#1f2937" stroke-width="1.5"/>
-<text x="410" y="44" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Sistem PRISMA RT 04: Keuangan dan Iuran</text>
-<text x="410" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">RT</text>
-<line x1="410" y1="369" x2="410" y2="395" stroke="#1f2937" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#open)"/>
-<rect x="416" y="374.0" width="65.4" height="15" fill="#cdeaf8"/>
-<text x="419" y="386.0" font-size="11.5" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">«include»</text>
-<line x1="410" y1="641" x2="410" y2="615" stroke="#1f2937" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#open)"/>
-<rect x="416" y="620.0" width="58.8" height="15" fill="#cdeaf8"/>
-<text x="419" y="632.0" font-size="11.5" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">«extend»</text>
-<line x1="122" y1="85.0" x2="276.9" y2="90.4" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="122" y1="210.0" x2="347.8" y2="119.8" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="122" y1="210.0" x2="291.8" y2="190.5" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="495.0" x2="443.1" y2="286.1" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="495.0" x2="458.8" y2="367.1" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="495.0" x2="496.2" y2="444.5" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="495.0" x2="543.1" y2="500.4" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="495.0" x2="483.5" y2="563.5" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="495.0" x2="453.8" y2="642.5" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="495.0" x2="440.7" y2="723.7" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="864.0" x2="529.8" y2="845.9" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="864.0" x2="512.7" y2="896.8" stroke="#1f2937" stroke-width="1.1"/>
-<ellipse cx="410" cy="95" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="99" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Melihat Ringkasan Kas Publik</text>
-<ellipse cx="410" cy="177" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="174" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Melihat Tagihan dan Riwayat</text>
-<text x="410" y="188" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Iuran</text>
-<ellipse cx="410" cy="259" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="263" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Membuat Tagihan Iuran Bulanan</text>
-<ellipse cx="410" cy="341" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="345" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mencatat Pembayaran Iuran</text>
-<ellipse cx="410" cy="423" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="427" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mencatat Transaksi Kas</text>
-<ellipse cx="410" cy="505" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="509" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mencatat Pembelian dan Nota</text>
-<ellipse cx="410" cy="587" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="591" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Menerbitkan Transaksi Kas</text>
-<ellipse cx="410" cy="669" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="666" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengoreksi Transaksi</text>
-<text x="410" y="680" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">(Reversal)</text>
-<ellipse cx="410" cy="751" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="755" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Menyusun Laporan Triwulan</text>
-<ellipse cx="410" cy="833" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="837" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Menerbitkan Laporan Triwulan</text>
-<ellipse cx="410" cy="915" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="919" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Meninjau Audit Unduhan</text>
+<rect width="1000" height="1065" fill="#ffffff"/>
+<rect x="335" y="20" width="330" height="1025" fill="#cdeaf8" stroke="#1f2937" stroke-width="1.5"/>
+<text x="500" y="44" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Sistem PRISMA RT 04: Keuangan dan Iuran</text>
+<text x="500" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">RT</text>
+<line x1="500" y1="737" x2="500" y2="773" stroke="#1f2937" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#open)"/>
+<rect x="506" y="747.0" width="65.4" height="15" fill="#cdeaf8"/>
+<text x="509" y="759.0" font-size="11.5" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">«include»</text>
+<line x1="500" y1="385" x2="500" y2="421" stroke="#1f2937" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#open)"/>
+<rect x="506" y="395.0" width="58.8" height="15" fill="#cdeaf8"/>
+<text x="509" y="407.0" font-size="11.5" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">«extend»</text>
+<line x1="122" y1="173.0" x2="366.3" y2="179.5" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="129.0" x2="622.3" y2="106.0" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="129.0" x2="608.4" y2="167.5" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="565.0" x2="532.4" y2="296.2" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="565.0" x2="545.0" y2="383.5" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="565.0" x2="570.9" y2="469.1" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="565.0" x2="624.8" y2="544.9" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="565.0" x2="605.6" y2="606.8" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="565.0" x2="560.2" y2="687.7" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="565.0" x2="540.1" y2="774.2" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="122" y1="921.0" x2="377.7" y2="898.0" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="122" y1="921.0" x2="391.6" y2="959.5" stroke="#1f2937" stroke-width="1.1"/>
+<ellipse cx="500" cy="95" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="92" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Melihat Tagihan dan Riwayat</text>
+<text x="500" y="106" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Iuran</text>
+<ellipse cx="500" cy="183" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="187" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Melihat Ringkasan Kas Publik</text>
+<ellipse cx="500" cy="271" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="275" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Membuat Tagihan Iuran Bulanan</text>
+<ellipse cx="500" cy="359" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="356" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengoreksi Transaksi</text>
+<text x="500" y="370" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">(Reversal)</text>
+<ellipse cx="500" cy="447" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="451" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Menerbitkan Transaksi Kas</text>
+<ellipse cx="500" cy="535" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="539" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Menyusun Laporan Triwulan</text>
+<ellipse cx="500" cy="623" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="627" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mencatat Pembelian dan Nota</text>
+<ellipse cx="500" cy="711" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="715" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mencatat Pembayaran Iuran</text>
+<ellipse cx="500" cy="799" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="803" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mencatat Transaksi Kas</text>
+<ellipse cx="500" cy="887" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="891" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Menerbitkan Laporan Triwulan</text>
+<ellipse cx="500" cy="975" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="979" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Meninjau Audit Unduhan</text>
 <g stroke="#1f2937" stroke-width="1.6" fill="none">
-<circle cx="105" cy="65.0" r="10" fill="#ffffff"/>
-<line x1="105" y1="75.0" x2="105" y2="105.0"/>
-<line x1="88" y1="85.0" x2="122" y2="85.0"/>
-<line x1="105" y1="105.0" x2="91" y2="127.0"/>
-<line x1="105" y1="105.0" x2="119" y2="127.0"/></g>
-<text x="105" y="145.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Pengunjung</text>
+<circle cx="105" cy="153.0" r="10" fill="#ffffff"/>
+<line x1="105" y1="163.0" x2="105" y2="193.0"/>
+<line x1="88" y1="173.0" x2="122" y2="173.0"/>
+<line x1="105" y1="193.0" x2="91" y2="215.0"/>
+<line x1="105" y1="193.0" x2="119" y2="215.0"/></g>
+<text x="105" y="233.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Pengunjung</text>
 <g stroke="#1f2937" stroke-width="1.6" fill="none">
-<circle cx="105" cy="190.0" r="10" fill="#ffffff"/>
-<line x1="105" y1="200.0" x2="105" y2="230.0"/>
-<line x1="88" y1="210.0" x2="122" y2="210.0"/>
-<line x1="105" y1="230.0" x2="91" y2="252.0"/>
-<line x1="105" y1="230.0" x2="119" y2="252.0"/></g>
-<text x="105" y="270.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Warga</text>
+<circle cx="895" cy="109.0" r="10" fill="#ffffff"/>
+<line x1="895" y1="119.0" x2="895" y2="149.0"/>
+<line x1="878" y1="129.0" x2="912" y2="129.0"/>
+<line x1="895" y1="149.0" x2="881" y2="171.0"/>
+<line x1="895" y1="149.0" x2="909" y2="171.0"/></g>
+<text x="895" y="189.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Warga</text>
 <g stroke="#1f2937" stroke-width="1.6" fill="none">
-<circle cx="715" cy="475.0" r="10" fill="#ffffff"/>
-<line x1="715" y1="485.0" x2="715" y2="515.0"/>
-<line x1="698" y1="495.0" x2="732" y2="495.0"/>
-<line x1="715" y1="515.0" x2="701" y2="537.0"/>
-<line x1="715" y1="515.0" x2="729" y2="537.0"/></g>
-<text x="715" y="555.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Bendahara RT</text>
+<circle cx="895" cy="545.0" r="10" fill="#ffffff"/>
+<line x1="895" y1="555.0" x2="895" y2="585.0"/>
+<line x1="878" y1="565.0" x2="912" y2="565.0"/>
+<line x1="895" y1="585.0" x2="881" y2="607.0"/>
+<line x1="895" y1="585.0" x2="909" y2="607.0"/></g>
+<text x="895" y="625.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Bendahara RT</text>
 <g stroke="#1f2937" stroke-width="1.6" fill="none">
-<circle cx="715" cy="844.0" r="10" fill="#ffffff"/>
-<line x1="715" y1="854.0" x2="715" y2="884.0"/>
-<line x1="698" y1="864.0" x2="732" y2="864.0"/>
-<line x1="715" y1="884.0" x2="701" y2="906.0"/>
-<line x1="715" y1="884.0" x2="729" y2="906.0"/></g>
-<text x="715" y="924.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Ketua RT</text>
+<circle cx="105" cy="901.0" r="10" fill="#ffffff"/>
+<line x1="105" y1="911.0" x2="105" y2="941.0"/>
+<line x1="88" y1="921.0" x2="122" y2="921.0"/>
+<line x1="105" y1="941.0" x2="91" y2="963.0"/>
+<line x1="105" y1="941.0" x2="119" y2="963.0"/></g>
+<text x="105" y="981.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Ketua RT</text>
 </svg>

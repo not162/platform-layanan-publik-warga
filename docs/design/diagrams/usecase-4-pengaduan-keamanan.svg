@@ -1,75 +1,75 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 938.6666666666666" width="820" height="938.6666666666666" role="img" aria-label="Sistem PRISMA RT 04: Pengaduan dan Keamanan Lingkungan">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 977" width="1000" height="977" role="img" aria-label="Sistem PRISMA RT 04: Pengaduan dan Keamanan Lingkungan">
 <defs><marker id="open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1f2937" stroke-width="1.4"/></marker><marker id="tri" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto"><path d="M1 1 L11 6 L1 11 Z" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/></marker></defs>
-<rect width="820" height="938.6666666666666" fill="#ffffff"/>
-<rect x="245" y="20" width="330" height="898.6666666666666" fill="#cdeaf8" stroke="#1f2937" stroke-width="1.5"/>
-<text x="410" y="44" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Sistem PRISMA RT 04: Pengaduan dan</text>
-<text x="410" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Keamanan Lingkungan</text>
-<line x1="410" y1="123" x2="410" y2="149" stroke="#1f2937" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#open)"/>
-<rect x="416" y="128.0" width="58.8" height="15" fill="#cdeaf8"/>
-<text x="419" y="140.0" font-size="11.5" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">«extend»</text>
-<line x1="410" y1="231" x2="410" y2="205" stroke="#1f2937" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#open)"/>
-<rect x="416" y="210.0" width="58.8" height="15" fill="#cdeaf8"/>
-<text x="419" y="222.0" font-size="11.5" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">«extend»</text>
-<line x1="122" y1="495.0" x2="276.9" y2="500.4" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="122" y1="351.5" x2="366.3" y2="203.5" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="122" y1="351.5" x2="277.0" y2="345.8" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="122" y1="351.5" x2="323.4" y2="401.5" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="122" y1="351.5" x2="361.0" y2="478.9" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="713.6666666666666" x2="467.6" y2="612.3" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="713.6666666666666" x2="524.5" y2="736.2" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="713.6666666666666" x2="470.4" y2="808.0" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="838.6666666666666" x2="454.8" y2="695.4" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="838.6666666666666" x2="486.0" y2="774.1" stroke="#1f2937" stroke-width="1.1"/>
-<line x1="698" y1="838.6666666666666" x2="544.4" y2="835.6" stroke="#1f2937" stroke-width="1.1"/>
-<ellipse cx="410" cy="95" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="99" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Melampirkan Foto Bukti</text>
-<ellipse cx="410" cy="177" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="181" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengirim Pengaduan Lingkungan</text>
-<ellipse cx="410" cy="259" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="263" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengirim Secara Anonim</text>
-<ellipse cx="410" cy="341" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="345" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Memantau Status Pengaduan</text>
-<ellipse cx="410" cy="423" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="427" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengirim Laporan Keamanan</text>
-<ellipse cx="410" cy="505" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="502" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Melihat Jadwal Ronda dan</text>
-<text x="410" y="516" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Kontak Darurat</text>
-<ellipse cx="410" cy="587" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="584" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Menanggapi dan Memperbarui</text>
-<text x="410" y="598" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Status Pengaduan</text>
-<ellipse cx="410" cy="669" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="666" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Menindaklanjuti Laporan</text>
-<text x="410" y="680" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Keamanan</text>
-<ellipse cx="410" cy="751" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="755" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengelola Jadwal Ronda</text>
-<ellipse cx="410" cy="833" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
-<text x="410" y="837" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengelola Kontak Darurat</text>
+<rect width="1000" height="977" fill="#ffffff"/>
+<rect x="335" y="20" width="330" height="937" fill="#cdeaf8" stroke="#1f2937" stroke-width="1.5"/>
+<text x="500" y="44" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Sistem PRISMA RT 04: Pengaduan dan</text>
+<text x="500" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Keamanan Lingkungan</text>
+<line x1="500" y1="509" x2="500" y2="473" stroke="#1f2937" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#open)"/>
+<rect x="506" y="483.0" width="58.8" height="15" fill="#cdeaf8"/>
+<text x="509" y="495.0" font-size="11.5" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">«extend»</text>
+<line x1="500" y1="385" x2="500" y2="421" stroke="#1f2937" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#open)"/>
+<rect x="506" y="395.0" width="58.8" height="15" fill="#cdeaf8"/>
+<text x="509" y="407.0" font-size="11.5" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">«extend»</text>
+<line x1="878" y1="85.0" x2="633.7" y2="91.5" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="210.0" x2="572.2" y2="117.0" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="210.0" x2="626.6" y2="192.0" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="210.0" x2="603.5" y2="254.3" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="210.0" x2="539.6" y2="422.1" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="122" y1="701.0" x2="407.9" y2="642.0" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="122" y1="701.0" x2="366.3" y2="707.5" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="122" y1="701.0" x2="419.5" y2="778.1" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="789.0" x2="592.1" y2="730.0" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="789.0" x2="633.7" y2="795.5" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="878" y1="789.0" x2="580.5" y2="866.1" stroke="#1f2937" stroke-width="1.1"/>
+<ellipse cx="500" cy="95" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="92" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Melihat Jadwal Ronda dan</text>
+<text x="500" y="106" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Kontak Darurat</text>
+<ellipse cx="500" cy="183" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="187" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengirim Laporan Keamanan</text>
+<ellipse cx="500" cy="271" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="275" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Memantau Status Pengaduan</text>
+<ellipse cx="500" cy="359" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="363" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengirim Secara Anonim</text>
+<ellipse cx="500" cy="447" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="451" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengirim Pengaduan Lingkungan</text>
+<ellipse cx="500" cy="535" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="539" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Melampirkan Foto Bukti</text>
+<ellipse cx="500" cy="623" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="620" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Menanggapi dan Memperbarui</text>
+<text x="500" y="634" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Status Pengaduan</text>
+<ellipse cx="500" cy="711" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="715" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengelola Jadwal Ronda</text>
+<ellipse cx="500" cy="799" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="803" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengelola Kontak Darurat</text>
+<ellipse cx="500" cy="887" rx="135" ry="26" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="500" y="884" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Menindaklanjuti Laporan</text>
+<text x="500" y="898" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Keamanan</text>
 <g stroke="#1f2937" stroke-width="1.6" fill="none">
-<circle cx="105" cy="475.0" r="10" fill="#ffffff"/>
-<line x1="105" y1="485.0" x2="105" y2="515.0"/>
-<line x1="88" y1="495.0" x2="122" y2="495.0"/>
-<line x1="105" y1="515.0" x2="91" y2="537.0"/>
-<line x1="105" y1="515.0" x2="119" y2="537.0"/></g>
-<text x="105" y="555.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Pengunjung</text>
+<circle cx="895" cy="65.0" r="10" fill="#ffffff"/>
+<line x1="895" y1="75.0" x2="895" y2="105.0"/>
+<line x1="878" y1="85.0" x2="912" y2="85.0"/>
+<line x1="895" y1="105.0" x2="881" y2="127.0"/>
+<line x1="895" y1="105.0" x2="909" y2="127.0"/></g>
+<text x="895" y="145.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Pengunjung</text>
 <g stroke="#1f2937" stroke-width="1.6" fill="none">
-<circle cx="105" cy="331.5" r="10" fill="#ffffff"/>
-<line x1="105" y1="341.5" x2="105" y2="371.5"/>
-<line x1="88" y1="351.5" x2="122" y2="351.5"/>
-<line x1="105" y1="371.5" x2="91" y2="393.5"/>
-<line x1="105" y1="371.5" x2="119" y2="393.5"/></g>
-<text x="105" y="411.5" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Warga</text>
+<circle cx="895" cy="190.0" r="10" fill="#ffffff"/>
+<line x1="895" y1="200.0" x2="895" y2="230.0"/>
+<line x1="878" y1="210.0" x2="912" y2="210.0"/>
+<line x1="895" y1="230.0" x2="881" y2="252.0"/>
+<line x1="895" y1="230.0" x2="909" y2="252.0"/></g>
+<text x="895" y="270.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Warga</text>
 <g stroke="#1f2937" stroke-width="1.6" fill="none">
-<circle cx="715" cy="693.6666666666666" r="10" fill="#ffffff"/>
-<line x1="715" y1="703.6666666666666" x2="715" y2="733.6666666666666"/>
-<line x1="698" y1="713.6666666666666" x2="732" y2="713.6666666666666"/>
-<line x1="715" y1="733.6666666666666" x2="701" y2="755.6666666666666"/>
-<line x1="715" y1="733.6666666666666" x2="729" y2="755.6666666666666"/></g>
-<text x="715" y="773.6666666666666" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Pengurus RT</text>
+<circle cx="105" cy="681.0" r="10" fill="#ffffff"/>
+<line x1="105" y1="691.0" x2="105" y2="721.0"/>
+<line x1="88" y1="701.0" x2="122" y2="701.0"/>
+<line x1="105" y1="721.0" x2="91" y2="743.0"/>
+<line x1="105" y1="721.0" x2="119" y2="743.0"/></g>
+<text x="105" y="761.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Pengurus RT</text>
 <g stroke="#1f2937" stroke-width="1.6" fill="none">
-<circle cx="715" cy="818.6666666666666" r="10" fill="#ffffff"/>
-<line x1="715" y1="828.6666666666666" x2="715" y2="858.6666666666666"/>
-<line x1="698" y1="838.6666666666666" x2="732" y2="838.6666666666666"/>
-<line x1="715" y1="858.6666666666666" x2="701" y2="880.6666666666666"/>
-<line x1="715" y1="858.6666666666666" x2="729" y2="880.6666666666666"/></g>
-<text x="715" y="898.6666666666666" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Petugas Keamanan</text>
+<circle cx="895" cy="769.0" r="10" fill="#ffffff"/>
+<line x1="895" y1="779.0" x2="895" y2="809.0"/>
+<line x1="878" y1="789.0" x2="912" y2="789.0"/>
+<line x1="895" y1="809.0" x2="881" y2="831.0"/>
+<line x1="895" y1="809.0" x2="909" y2="831.0"/></g>
+<text x="895" y="849.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Petugas Keamanan</text>
 </svg>

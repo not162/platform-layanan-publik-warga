@@ -6,12 +6,13 @@ Subfolder ini memuat pemodelan arsitektur perangkat lunak, perancangan antarmuka
 
 ## Berkas Dokumentasi dalam Subfolder Ini
 
-1. **[SYSTEM_MODELING_5_ELEMENTS.md](SYSTEM_MODELING_5_ELEMENTS.md)** *(Master Rekayasa Perangkat Lunak)*:
-   - **Dokumentasi Lengkap 5 Unsur Pemodelan Sistem**: UML (Class, Sequence, Component), ERD Relasional, Logical Record Structure (LRS 3NF), Activity Diagram (Format Kotak Tabel Step-by-Step), dan Use Case Diagram dengan pemisahan tegas peran: **Superadmin & Admin di sisi kiri** dan **User & Warga di sisi kanan**.
-2. **[ERD.md](ERD.md)**:
-   - Entity Relationship Diagram database relasional MySQL 8.x yang memetakan seluruh entitas utama sistem.
+1. **[SYSTEM_MODELING_5_ELEMENTS.md](SYSTEM_MODELING_5_ELEMENTS.md)** *(dokumen induk)*:
+   - Pemetaan **5 unsur pemodelan** (ERD, LRS, Use Case, Activity, UML) ke fase **Waterfall** proyek, penelusuran ke kode Laravel dan tes, serta aturan pemeliharaan diagram.
+2. **[LRS.md](LRS.md)**:
+   - Logical Record Structure sebagai dokumen terpisah: diagram per modul, aturan transformasi ERD ke LRS, matriks FK beserta `ON DELETE`, daftar tabel, dan catatan normalisasi 3NF.
+   - Pasangannya, [ERD.md](ERD.md): Entity Relationship Diagram 27 tabel dalam enam modul.
 3. **[DIAGRAMS.md](DIAGRAMS.md)**:
-   - Diagram Sequence untuk penanganan *Optimistic Concurrency Control* dan State Machine Activity Diagram untuk alur persetujuan surat pengantar.
+   - Kumpulan diagram: ERD, use case, activity (swimlane), class, dan sequence. Berkas gambar ada di `diagrams/`.
 4. **[BRAND_GUIDE.md](BRAND_GUIDE.md)**:
    - Pedoman identitas visual resmi PRISMA RT 04 (warna primer Navy `#1B365D`, Teal `#3A9696`, aksen gradien Blue-Cyan, tipografi Plus Jakarta Sans, dan logo resmi).
 5. **[UI_PLAN.md](UI_PLAN.md)**:
@@ -23,12 +24,14 @@ Subfolder ini memuat pemodelan arsitektur perangkat lunak, perancangan antarmuka
 
 ---
 
-## 5 Unsur Pemodelan Rekayasa Perangkat Lunak Utama
+## 5 Unsur Pemodelan dan Fase Waterfall
 
-Seluruh rincian 5 unsur telah dikompilasi secara mendalam pada berkas **[SYSTEM_MODELING_5_ELEMENTS.md](SYSTEM_MODELING_5_ELEMENTS.md)**:
+| No | Unsur | Fase Waterfall | Dokumen |
+|---|---|---|---|
+| 1 | ERD | Perancangan | [ERD.md](ERD.md) |
+| 2 | LRS | Perancangan | [LRS.md](LRS.md) |
+| 3 | Use Case | Analisis kebutuhan | [DIAGRAMS.md](DIAGRAMS.md) bagian 3 |
+| 4 | Activity | Perancangan | [DIAGRAMS.md](DIAGRAMS.md) bagian 4 |
+| 5 | UML (Class, Sequence) | Perancangan | [DIAGRAMS.md](DIAGRAMS.md) bagian 5 |
 
-1. **Unified Modeling Language (UML)**: Class Diagram, Sequence Diagram (Birokrasi Persuratan 2-Tier & Concurrency Control), dan Component Architecture Diagram.
-2. **Entity Relationship Diagram (ERD)**: Relasi relasional 15+ entitas dengan foreign key terindeks dan integritas cascade.
-3. **Logical Record Structure (LRS)**: Representasi tabel ternormalisasi bentuk ketiga (3NF) dengan tipe data presisi moneter `DECIMAL(15,2)` dan pemetaan pointer PK-FK.
-4. **Activity Diagram (Format Kotak Tabel Step-by-Step)**: Alur aktivitas bisnis berpetak (Superadmin/Admin di sisi kiri, Sistem di tengah, User/Warga di sisi kanan).
-5. **Use Case Diagram & Spesifikasi Aktor**: Pemetaan interaksi antara Aktor Pengurus RT & Superadmin dengan Warga Lingkungan dan Instansi Publik.
+Penelusuran lengkap ke implementasi, pengujian, dan pemeliharaan: [SYSTEM_MODELING_5_ELEMENTS.md](SYSTEM_MODELING_5_ELEMENTS.md).

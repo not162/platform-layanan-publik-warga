@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 891 679" width="891" height="679" role="img">
 <rect width="891" height="679" fill="#ffffff"/>
-<path d="M450.3 81.2 H500.0 V66.0 H700.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M450.3 114.5 H530.0 V182.0 H700.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M450.3 147.8 H560.0 V289.0 H699.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M425.1 336.0 H590.0 V298.0 H699.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M469.2 568.3 H650.0 V414.0 H700.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M469.2 529.7 H620.0 V307.0 H699.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M450.3 81.2 H569.1 V66.0 H700.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M450.3 114.5 H583.1 V182.0 H700.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M450.3 147.8 H555.1 V289.0 H699.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M425.1 336.0 H541.1 V298.0 H699.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M469.2 568.3 H611.1 V414.0 H700.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M469.2 529.7 H597.1 V307.0 H699.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
 <rect x="58.9" y="40.0" width="391.4" height="149.0" fill="#fff4d6" stroke="#111827" stroke-width="1.3"/>
 <rect x="58.9" y="40.0" width="391.4" height="42" fill="#ffe08a" stroke="#111827" stroke-width="1.3"/>
 <text x="254.6" y="54" text-anchor="middle" font-size="11" fill="#111827" font-family="Arial, Helvetica, sans-serif">«service»</text>
@@ -60,10 +60,10 @@
 <polyline points="689.2,420.0 700.2,414.0 689.2,408.0" fill="none" stroke="#111827" stroke-width="1.3"/>
 
 <polyline points="688.2,313.0 699.2,307.0 688.2,301.0" fill="none" stroke="#111827" stroke-width="1.3"/>
-<text x="505.0" y="73.6" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">menagih</text>
-<text x="535.0" y="148.2" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">membuat pembayaran</text>
-<text x="565.0" y="218.4" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mencatat kas</text>
-<text x="595.0" y="317.0" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mengelola</text>
-<text x="655.0" y="491.2" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">membuat dan menerbitkan</text>
-<text x="625.0" y="418.3" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">menjumlah</text>
+<text x="574.1" y="73.6" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">menagih</text>
+<text x="588.1" y="148.2" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">membuat pembayaran</text>
+<text x="560.1" y="218.4" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mencatat kas</text>
+<text x="546.1" y="317.0" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">mengelola</text>
+<text x="616.1" y="491.2" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">membuat dan menerbitkan</text>
+<text x="602.1" y="418.3" text-anchor="start" font-size="11" font-style="italic" fill="#374151" font-family="Arial, Helvetica, sans-serif" stroke="#fff" stroke-width="3" paint-order="stroke">menjumlah</text>
 </svg>

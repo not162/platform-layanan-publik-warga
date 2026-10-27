@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1450 714" width="1450" height="714" role="img" aria-label="Keuangan dan Iuran">
 <rect width="1450" height="714" fill="#ffffff"/>
-<path d="M116.0 182.0 V150.0 H116.0 V136.0" fill="none" stroke="#111827" stroke-width="1.2"/>
-<path d="M591.6 186.0 H686.6 V336.0 H781.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M382.0 151.5 H296.0 V268.0 H192.0" fill="none" stroke="#111827" stroke-width="1.2"/>
-<path d="M591.6 117.0 H698.9 V74.7 H824.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M116.0 182.0 V152.0 V136.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M591.6 186.0 H685.2 V336.0 H707.7 A5.5 5.5 0 0 1 718.7 336.0 H781.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M382.0 151.5 H287.0 V268.0 H192.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M591.6 117.0 H699.2 V74.7 H824.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
 <path d="M1016.8 294.0 H1068.8 V392.0 H1016.8" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M899.2 182.0 V168.0 H899.2 V136.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M1206.8 111.3 H1081.5 V88.0 H974.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M1206.8 174.7 H1111.8 V263.0 H1016.8" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M1308.4 292.0 V278.0 H1308.4 V246.0" fill="none" stroke="#111827" stroke-width="1.2"/>
-<path d="M582.0 488.5 H694.1 V101.3 H824.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M899.2 182.0 V166.0 V136.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M1206.8 111.3 H1094.2 V88.0 H974.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M1206.8 174.7 H1108.2 V263.0 H1016.8" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M1308.4 292.0 V269.0 V246.0" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M582.0 488.5 H713.2 V101.3 H824.2" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
 <rect x="40.0" y="182.0" width="152.0" height="172.0" fill="#f3eef5" stroke="#111827" stroke-width="1.3"/>
 <rect x="40.0" y="182.0" width="152.0" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
 <text x="116.0" y="201" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">resident_dues</text>

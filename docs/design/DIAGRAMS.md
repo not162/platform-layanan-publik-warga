@@ -1,8 +1,8 @@
 # Diagram Sistem PRISMA RT 04
 
-Kumpulan diagram Mermaid (ERD, LRS, use case, activity, UML) yang selaras dengan kode dan skema database pada rilis redesign PWA. Ringkasan alur aplikasi ada di [README](../../README.md#alur-aplikasi).
+Kumpulan diagram (ERD, use case, activity, UML; LRS ada di dokumen terpisah) yang selaras dengan kode dan skema database pada rilis redesign PWA. Ringkasan alur aplikasi ada di [README](../../README.md#alur-aplikasi).
 
-> ERD dan LRS dibangkitkan dari migrasi. Jika skema berubah, perbarui bagian ini bersama README.
+> ERD dan LRS dibangkitkan dari migrasi. Penelusuran diagram ke fase Waterfall, kode, dan tes ada di [SYSTEM_MODELING_5_ELEMENTS.md](SYSTEM_MODELING_5_ELEMENTS.md). Jika skema berubah, perbarui ERD, LRS, dan README bersama-sama.
 
 ### 1. Entity Relationship Diagram (ERD)
 
@@ -40,39 +40,16 @@ Dibangkitkan dari skema hasil migrasi (`php artisan migrate`), 27 tabel domain d
 
 ### 2. Logical Record Structure (LRS)
 
-Format: `TABEL (kolom [PK | FK→tabel_induk | UK])`. Kolom `created_at` dan `updated_at` ada di semua tabel dan tidak ditulis ulang.
+LRS dibahas sebagai dokumen tersendiri: **[LRS.md](LRS.md)**. Isinya diagram LRS per modul (kotak tabel dengan PK bergaris bawah, FK miring, dan panah FK ke PK), aturan transformasi ERD ke LRS, matriks 28 relasi beserta aturan `ON DELETE`, daftar LRS dalam bentuk teks untuk 27 tabel, dan catatan normalisasi 3NF.
 
-```
-USERS (id [PK], warga_id [UK], name, email [UK], password, role, is_active, email_verified_at, last_login_at, remember_token, avatar_url, username [UK])
-ADMIN_PERMISSIONS (id [PK], user_id [FK→users], permission)
-PERSONAL_ACCESS_TOKENS (id [PK], tokenable_type, tokenable_id, name, token [UK], abilities, last_used_at, expires_at)
-PASSWORD_RESET_REQUESTS (id [PK], user_id [FK→users], token_hash [UK], ip_address, expires_at, used_at)
-NOTIFICATIONS (id [PK], type, notifiable_type, notifiable_id, data, read_at)
-PUSH_SUBSCRIPTIONS (id [PK], user_id [FK→users], endpoint, endpoint_hash, public_key, auth_token, content_encoding)
-FAMILY_CARDS (id [PK], no_kk, no_kk_hash [UK], address, rt, rw, province, city, district, village, postal_code, version)
-CITIZENS (id [PK], family_card_id [FK→family_cards], user_id [FK→users, UK], nik, nik_hash [UK], full_name, gender, place_of_birth, date_of_birth, religion, blood_type, occupation, phone, email, status_warga, is_active, version, phone_verified_at, ktp_file_path, verification_notes, full_name_key)
-JENIS_SURAT (id [PK], kode_surat [UK], nama_surat, format_penomoran, syarat_dokumen, is_active, template_key, template_version, form_schema, approval_flow, estimated_process_hours)
-LETTERS (id [PK], citizen_id [FK→citizens], jenis_surat_id [FK→jenis_surat], type, ticket_number [UK], keperluan, data_tambahan, status, letter_number [UK], catatan_admin, rejection_reason, verified_by [FK→users], verified_at, approved_by [FK→users], approved_at, verification_token [UK], file_path, attachment_path, version, document_hash, generated_at)
-LETTER_ATTACHMENTS (id [PK], letter_id [FK→letters], judul_lampiran, file_path, mime_type, file_size)
-DOCUMENT_SEQUENCES (id [PK], document_type, year, month, last_number)
-COMPLAINTS (id [PK], ticket_number [UK], citizen_id [FK→citizens], user_id [FK→users], kategori, title, description, lokasi, is_anonymous, status, priority, assigned_admin_id [FK→users], admin_response, attachment_path, version)
-SECURITY_REPORTS (id [PK], ticket_number [UK], citizen_id [FK→citizens], reporter_user_id [FK→users], category, severity, title, description, location, incident_at, is_anonymous, status, assigned_to [FK→users], resolution, resolved_at, version)
-RESIDENT_DUES (id [PK], citizen_id [FK→citizens], period_year, period_month, amount_due_idr, due_date, status, notes)
-DUE_PAYMENTS (id [PK], resident_due_id [FK→resident_dues], amount_paid_idr, paid_at, payment_method, receipt_number [UK], proof_path, received_by [FK→users], notes, status, finance_transaction_id [FK→finance_transactions])
-FINANCE_TRANSACTIONS (id [PK], type, category, amount, description, transaction_date, receipt_path, status, created_by [FK→users], published_at, original_transaction_id [FK→finance_transactions], reversal_reason, version, transaction_number [UK], source, amount_idr)
-PURCHASES (id [PK], finance_transaction_id [FK→finance_transactions], vendor_name, purchase_date, invoice_number, purpose, notes, receipt_path, created_by [FK→users], version)
-PURCHASE_ITEMS (id [PK], purchase_id [FK→purchases], item_name, description, quantity, unit, unit_price_idr, subtotal_idr)
-FINANCIAL_REPORTS (id [PK], year, quarter, revision, period_start, period_end, opening_balance_idr, income_idr, expense_idr, closing_balance_idr, dues_assessed_idr, dues_collected_idr, dues_outstanding_idr, status, generated_at, published_at, published_by [FK→users], checksum_sha256, version)
-DOWNLOAD_AUDITS (id [PK], actor_user_id [FK→users], resource_type, resource_id, file_type, period_year, period_quarter, action, result, ip_hash, user_agent_hash)
-AUDIT_LOGS (id [PK], user_id [FK→users], action, entity_type, entity_id, old_values, new_values, ip_address)
-ANNOUNCEMENTS (id [PK], title, category, content, is_pinned, is_published, published_at, version)
-COMMUNITY_EVENTS (id [PK], title, description, location, event_date, start_time, end_time, is_published, version)
-RT_OFFICERS (id [PK], name, position, phone, order_index, photo_url, is_active)
-EMERGENCY_CONTACTS (id [PK], name, category, phone_number, description, order_index, is_active)
-ROUND_SCHEDULES (id [PK], day_of_week, shift_name, officer_names, pos_location, notes, is_active)
-```
-
-Aturan integritas penting: `citizens.user_id` dan `users.warga_id` satu-ke-satu; `resident_dues` unik per (citizen, tahun, bulan); `financial_reports` unik per (tahun, triwulan, revisi); `document_sequences` unik per (jenis, tahun, bulan); transaksi kas yang sudah terbit tidak dihapus, hanya di-*reverse*.
+| Modul | Diagram LRS |
+|---|---|
+| Akun dan akses | [lrs-1-akun-akses.svg](diagrams/lrs-1-akun-akses.svg) |
+| Kependudukan | [lrs-2-kependudukan.svg](diagrams/lrs-2-kependudukan.svg) |
+| Surat pengantar | [lrs-3-surat.svg](diagrams/lrs-3-surat.svg) |
+| Keuangan dan iuran | [lrs-4-keuangan.svg](diagrams/lrs-4-keuangan.svg) |
+| Pengaduan dan keamanan | [lrs-5-pengaduan-keamanan.svg](diagrams/lrs-5-pengaduan-keamanan.svg) |
+| Informasi RT dan audit | [lrs-6-informasi-audit.svg](diagrams/lrs-6-informasi-audit.svg) |
 
 ---
 

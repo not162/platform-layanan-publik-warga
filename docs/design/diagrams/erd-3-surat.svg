@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1082 508" width="1082" height="508" role="img" aria-label="Surat Pengantar">
 <rect width="1082" height="508" fill="#ffffff"/>
-<path d="M674.8 274.2 H767.7 V400.7 H878.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M674.8 349.6 H776.7 V427.3 H878.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M439.6 236.5 H353.6 V151.5 H249.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M674.8 198.8 H767.7 V272.0 H878.6" fill="none" stroke="#111827" stroke-width="1.2"/>
-<path d="M864.8 109.0 H769.8 V123.4 H674.8" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M674.8 274.2 H782.0 V400.7 H878.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M674.8 349.6 H768.0 V427.3 H878.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M439.6 236.5 H344.6 V151.5 H249.6" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M674.8 198.8 H796.0 V272.0 H878.6" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M864.8 109.0 H754.0 V123.4 H674.8" fill="none" stroke="#111827" stroke-width="1.2"/>
 <rect x="40.0" y="40.0" width="209.6" height="223.0" fill="#f3eef5" stroke="#111827" stroke-width="1.3"/>
 <rect x="40.0" y="40.0" width="209.6" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
 <text x="144.8" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">jenis_surat</text>

@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 584" width="1050" height="584" role="img" aria-label="Akun dan Akses">
 <rect width="1050" height="584" fill="#ffffff"/>
-<path d="M217.6 83.5 H313.2 V104.0 H426.8" fill="none" stroke="#111827" stroke-width="1.2"/>
-<path d="M236.8 242.0 H331.8 V160.0 H426.8" fill="none" stroke="#111827" stroke-width="1.2"/>
-<path d="M233.6 434.5 H339.2 V216.0 H426.8" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M840.2 490.0 H726.1 V216.0 H630.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M823.2 109.0 H726.6 V104.0 H630.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
-<path d="M820.0 310.0 H734.0 V160.0 H630.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M217.6 83.5 H314.1 V104.0 H426.8" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M236.8 242.0 H328.1 V160.0 H426.8" fill="none" stroke="#111827" stroke-width="1.2"/>
+<path d="M233.6 434.5 H342.1 V216.0 H426.8" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M840.2 490.0 H714.9 V216.0 H630.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M823.2 109.0 H742.9 V104.0 H630.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
+<path d="M820.0 310.0 H728.9 V160.0 H630.0" fill="none" stroke="#111827" stroke-width="1.2" stroke-dasharray="7 5"/>
 <rect x="426.8" y="40.0" width="203.2" height="240.0" fill="#f3eef5" stroke="#111827" stroke-width="1.3"/>
 <rect x="426.8" y="40.0" width="203.2" height="28" fill="#e1d5e7" stroke="#111827" stroke-width="1.3"/>
 <text x="528.4" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">users</text>
