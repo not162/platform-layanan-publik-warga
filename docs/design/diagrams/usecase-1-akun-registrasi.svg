@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 761.0" width="820" height="761.0" role="img" aria-label="Sistem PRISMA RT 04: Akun dan Registrasi Warga">
+<defs><marker id="open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1f2937" stroke-width="1.4"/></marker><marker id="tri" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto"><path d="M1 1 L11 6 L1 11 Z" fill="#ffffff" stroke="#1f2937" stroke-width="1.3"/></marker></defs>
+<rect width="820" height="761.0" fill="#ffffff"/>
+<rect x="245" y="20" width="330" height="721.0" fill="#cdeaf8" stroke="#1f2937" stroke-width="1.5"/>
+<text x="410" y="44" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Sistem PRISMA RT 04: Akun dan Registrasi</text>
+<text x="410" y="59" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#111827" font-family="Arial, Helvetica, sans-serif">Warga</text>
+<line x1="410" y1="123" x2="410" y2="149" stroke="#1f2937" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#open)"/>
+<rect x="416" y="128.0" width="65.4" height="15" fill="#cdeaf8"/>
+<text x="419" y="140.0" font-size="11.5" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">«include»</text>
+<line x1="410" y1="313" x2="410" y2="287" stroke="#1f2937" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#open)"/>
+<rect x="416" y="292.0" width="58.8" height="15" fill="#cdeaf8"/>
+<text x="419" y="304.0" font-size="11.5" font-style="italic" fill="#111827" font-family="Arial, Helvetica, sans-serif">«extend»</text>
+<line x1="122" y1="85.0" x2="276.9" y2="90.4" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="122" y1="331.0" x2="323.8" y2="280.5" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="122" y1="331.0" x2="276.9" y2="336.4" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="122" y1="331.0" x2="336.5" y2="399.5" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="698" y1="536.0" x2="529.8" y2="517.9" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="698" y1="536.0" x2="512.7" y2="568.8" stroke="#1f2937" stroke-width="1.1"/>
+<line x1="698" y1="661.0" x2="494.8" y2="608.8" stroke="#1f2937" stroke-width="1.1"/>
+<ellipse cx="410" cy="95" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="410" y="99" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mendaftar Akun Warga</text>
+<ellipse cx="410" cy="177" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="410" y="181" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Memvalidasi NIK dan No. KK</text>
+<ellipse cx="410" cy="259" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="410" y="263" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Masuk ke Sistem</text>
+<ellipse cx="410" cy="341" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="410" y="345" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengatur Ulang Kata Sandi</text>
+<ellipse cx="410" cy="423" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="410" y="427" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengelola Profil dan Foto</text>
+<ellipse cx="410" cy="505" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="410" y="509" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Memverifikasi Pendaftar Baru</text>
+<ellipse cx="410" cy="587" rx="135" ry="28" fill="#eef8fd" stroke="#1f2937" stroke-width="1.3"/>
+<text x="410" y="591" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Mengelola Data Warga</text>
+<g stroke="#1f2937" stroke-width="1.6" fill="none">
+<circle cx="105" cy="65.0" r="10" fill="#ffffff"/>
+<line x1="105" y1="75.0" x2="105" y2="105.0"/>
+<line x1="88" y1="85.0" x2="122" y2="85.0"/>
+<line x1="105" y1="105.0" x2="91" y2="127.0"/>
+<line x1="105" y1="105.0" x2="119" y2="127.0"/></g>
+<text x="105" y="145.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Pengunjung</text>
+<g stroke="#1f2937" stroke-width="1.6" fill="none">
+<circle cx="105" cy="311.0" r="10" fill="#ffffff"/>
+<line x1="105" y1="321.0" x2="105" y2="351.0"/>
+<line x1="88" y1="331.0" x2="122" y2="331.0"/>
+<line x1="105" y1="351.0" x2="91" y2="373.0"/>
+<line x1="105" y1="351.0" x2="119" y2="373.0"/></g>
+<text x="105" y="391.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Warga</text>
+<g stroke="#1f2937" stroke-width="1.6" fill="none">
+<circle cx="715" cy="516.0" r="10" fill="#ffffff"/>
+<line x1="715" y1="526.0" x2="715" y2="556.0"/>
+<line x1="698" y1="536.0" x2="732" y2="536.0"/>
+<line x1="715" y1="556.0" x2="701" y2="578.0"/>
+<line x1="715" y1="556.0" x2="729" y2="578.0"/></g>
+<text x="715" y="596.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Sekretaris RT</text>
+<g stroke="#1f2937" stroke-width="1.6" fill="none">
+<circle cx="715" cy="641.0" r="10" fill="#ffffff"/>
+<line x1="715" y1="651.0" x2="715" y2="681.0"/>
+<line x1="698" y1="661.0" x2="732" y2="661.0"/>
+<line x1="715" y1="681.0" x2="701" y2="703.0"/>
+<line x1="715" y1="681.0" x2="729" y2="703.0"/></g>
+<text x="715" y="721.0" text-anchor="middle" font-size="12.5" fill="#111827" font-family="Arial, Helvetica, sans-serif">Admin</text>
+</svg>

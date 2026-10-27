@@ -417,76 +417,42 @@ Aturan integritas penting: `citizens.user_id` dan `users.warga_id` satu-ke-satu;
 
 ### 3. Use Case Diagram & Spesifikasi Aktor
 
-```mermaid
-flowchart LR
-    W([Warga])
-    SEK([Sekretaris RT])
-    KET([Ketua RT])
-    BEN([Bendahara RT])
-    KEM([Petugas Keamanan])
-    ADM([Admin / Pengurus RT])
-    SUP([Superadmin])
-    PUB([Pengunjung Publik])
+Use case dipecah per modul agar terbaca. Notasi mengikuti UML: aktor di luar batas sistem, use case berupa elips berawalan kata kerja, `«include»` untuk langkah yang selalu dijalankan, `«extend»` untuk perilaku opsional, dan panah segitiga kosong untuk pewarisan aktor (Superadmin mewarisi seluruh wewenang Admin). Pengunjung adalah pengguna publik tanpa login; hak akses tiap peran diambil dari `User::hasPermission()`.
 
-    subgraph PRISMA["Sistem PRISMA RT 04"]
-        UC1(Registrasi mandiri: NIK, No. KK, Nama, Username)
-        UC2(Login, kunci 5x gagal, lupa password)
-        UC3(Ajukan surat pengantar + lampiran)
-        UC4(Verifikasi surat & pendaftar baru)
-        UC5(Sahkan surat: nomor, hash SHA-256, QR)
-        UC6(Lacak tiket surat & verifikasi QR)
-        UC7(Lihat iuran saya & riwayat bayar)
-        UC8(Catat iuran, pembayaran, transaksi kas)
-        UC9(Terbitkan / koreksi kas: reversal)
-        UC10(Laporan keuangan triwulan + checksum)
-        UC11(Pengaduan lingkungan)
-        UC12(Laporan keamanan & tindak lanjut)
-        UC13(Kelola warta, agenda, ronda, kontak, pengurus)
-        UC14(Kelola pengguna, peran & izin)
-        UC15(Audit log & unduhan)
-        UC16(Notifikasi real-time & PWA)
-    end
+**3.1. Akun dan Registrasi Warga**
 
-    PUB --> UC6
-    PUB --> UC11
-    W --> UC1
-    W --> UC2
-    W --> UC3
-    W --> UC6
-    W --> UC7
-    W --> UC11
-    W --> UC12
-    W --> UC16
-    SEK --> UC4
-    SEK --> UC13
-    KET --> UC5
-    KET --> UC9
-    KET --> UC11
-    KET --> UC12
-    BEN --> UC8
-    BEN --> UC9
-    BEN --> UC10
-    KEM --> UC12
-    KEM --> UC13
-    ADM --> UC14
-    ADM --> UC13
-    ADM --> UC15
-    SUP --> UC14
-    SUP --> UC15
-    UC3 -. include .-> UC2
-    UC5 -. include .-> UC4
-    UC9 -. include .-> UC8
-```
+![Use case akun dan registrasi warga](diagrams/usecase-1-akun-registrasi.svg)
 
-| Tingkat | Peran | Use case utama |
+**3.2. Layanan Surat Pengantar**
+
+![Use case layanan surat pengantar](diagrams/usecase-2-surat-pengantar.svg)
+
+**3.3. Keuangan dan Iuran RT**
+
+![Use case keuangan dan iuran RT](diagrams/usecase-3-keuangan-rt.svg)
+
+**3.4. Pengaduan dan Keamanan Lingkungan**
+
+![Use case pengaduan dan keamanan lingkungan](diagrams/usecase-4-pengaduan-keamanan.svg)
+
+*Pengurus RT* pada diagram ini mewakili peran yang memiliki izin `complaint.manage`: Ketua RT, Sekretaris RT, dan Admin.
+
+**3.5. Informasi RT dan Administrasi Sistem**
+
+![Use case informasi RT dan administrasi sistem](diagrams/usecase-5-informasi-administrasi.svg)
+
+**Spesifikasi aktor**
+
+| Aktor | Peran sistem | Wewenang utama |
 |---|---|---|
-| Superadmin | `SUPERADMIN` | UC14, UC15, semua modul |
-| Admin | `ADMIN` | UC13, UC14 (selain Superadmin/Admin), UC15 |
-| Admin | `SEKRETARIS` | UC4, UC13 |
-| Admin | `KETUA_RT` | UC5, UC9, supervisi UC11 dan UC12 |
-| Admin | `BENDAHARA` | UC8, UC9, UC10 |
-| Admin | `PETUGAS_KEAMANAN` | UC12, jadwal ronda dan kontak darurat |
-| User | `WARGA` | UC1, UC2, UC3, UC6, UC7, UC11, UC12, UC16 |
+| Pengunjung | tanpa login | Melihat kas publik, warta, agenda, struktur pengurus, ronda, dan kontak darurat; mendaftar akun; melacak surat dengan nomor tiket; memeriksa keaslian surat lewat QR |
+| Warga | `WARGA` | Mengajukan dan memantau surat, melihat iuran, mengirim pengaduan dan laporan keamanan, mengelola profil |
+| Sekretaris RT | `SEKRETARIS` | Memverifikasi surat dan pendaftar baru, menerbitkan dokumen, mengelola data warga, templat surat, pengumuman, agenda, dan struktur pengurus |
+| Ketua RT | `KETUA_RT` | Mengesahkan atau menolak surat, menanggapi pengaduan, menerbitkan laporan triwulan, meninjau kas dan audit unduhan (kas hanya dibaca) |
+| Bendahara RT | `BENDAHARA` | Membuat tagihan iuran, mencatat pembayaran, transaksi, dan pembelian, menerbitkan atau mengoreksi transaksi, menyusun laporan triwulan |
+| Petugas Keamanan | `PETUGAS_KEAMANAN` | Menindaklanjuti laporan keamanan, mengelola jadwal ronda dan kontak darurat |
+| Admin | `ADMIN` | Mengelola akun pengguna, data warga, pengumuman, agenda, struktur pengurus, pengaduan, dan melihat audit log |
+| Superadmin | `SUPERADMIN` | Seluruh wewenang Admin, ditambah mengelola semua peran dan izin |
 
 ---
 
