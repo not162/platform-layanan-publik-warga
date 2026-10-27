@@ -49,11 +49,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function getUsernameAttribute(): string
-    {
-        return $this->name;
-    }
-
     public function citizen(): HasOne
     {
         return $this->hasOne(Citizen::class, 'user_id');
@@ -96,6 +91,10 @@ class User extends Authenticatable
 
         if (! $user && ctype_digit(ltrim($login, '+'))) {
             $user = Citizen::query()->where('phone', $login)->first()?->user;
+        }
+
+        if (! $user && strlen($login) === 16 && ctype_digit($login)) {
+            $user = Citizen::query()->where('nik_hash', hash('sha256', $login))->first()?->user;
         }
 
         return $user;

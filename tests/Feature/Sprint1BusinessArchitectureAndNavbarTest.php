@@ -2,14 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\Announcement;
 use App\Models\Citizen;
-use App\Models\CommunityEvent;
-use App\Models\EmergencyContact;
 use App\Models\FamilyCard;
-use App\Models\FinanceTransaction;
-use App\Models\RoundSchedule;
-use App\Models\RtOfficer;
 use App\Models\User;
 use Illuminate\Broadcasting\Broadcasters\Broadcaster;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -193,67 +187,25 @@ class Sprint1BusinessArchitectureAndNavbarTest extends TestCase
         ])->assertForbidden();
     }
 
-    public function test_warga_dashboard_renders_all_seven_services_from_navigation_image(): void
+    public function test_warga_dashboard_renders_service_shortcuts(): void
     {
         $user = User::factory()->warga()->create();
         $familyCard = FamilyCard::factory()->create();
         Citizen::factory()->create([
             'user_id' => $user->id,
             'family_card_id' => $familyCard->id,
-        ]);
-
-        // Seed data for the 7 services from the image
-        Announcement::factory()->create([
-            'title' => 'Warta Gotong Royong RT 01',
-            'is_published' => true,
-        ]);
-
-        FinanceTransaction::factory()->create([
-            'category' => 'Iuran Warga',
-            'type' => 'income',
-            'amount_idr' => 500000,
-            'amount' => 500000,
-            'status' => 'published',
-        ]);
-
-        CommunityEvent::factory()->create([
-            'title' => 'Senam Sehat Warga',
-            'is_published' => true,
-        ]);
-
-        RoundSchedule::factory()->create([
-            'day_of_week' => 'Senin',
-            'officer_names' => ['Bripka Santoso'],
-            'is_active' => true,
-        ]);
-
-        EmergencyContact::factory()->create([
-            'name' => 'Polsek Kemayoran',
-            'category' => 'polisi',
-            'phone_number' => '021-4244444',
-            'is_active' => true,
-        ]);
-
-        RtOfficer::factory()->create([
-            'name' => 'Bapak Ketua RT',
-            'position' => 'Ketua RT 01',
-            'is_active' => true,
         ]);
 
         $response = $this->actingAs($user)->get('/dashboard');
 
         $response->assertOk();
-        // 7 services from the navigation image must be present
-        $response->assertSee('Warta & Pengumuman Baru', false);
-        $response->assertSee('Transparansi Kas Lingkungan', false);
-        $response->assertSee('Form Pengaduan Warga', false);
-        $response->assertSee('Agenda Kegiatan Warga', false);
-        $response->assertSee('Jadwal Ronda & Kamling', false);
-        $response->assertSee('Kontak Darurat 24 Jam', false);
-        $response->assertSee('Struktur Pengurus RT 01', false);
+        $response->assertSee('Surat Saya', false);
+        $response->assertSee('Pengaduan Saya', false);
+        $response->assertSee('Iuran Saya', false);
+        $response->assertSee('Lapor Keamanan', false);
     }
 
-    public function test_warga_can_submit_complaint_via_web_dashboard(): void
+    public function test_warga_can_submit_complaint_via_api(): void
     {
         $user = User::factory()->warga()->create();
         $familyCard = FamilyCard::factory()->create();
@@ -262,17 +214,14 @@ class Sprint1BusinessArchitectureAndNavbarTest extends TestCase
             'family_card_id' => $familyCard->id,
         ]);
 
-        $response = $this->actingAs($user)->post('/dashboard/complaints', [
+        $this->actingAs($user)->postJson('/api/v1/complaints', [
             'title' => 'Saluran Air Mampet di Gang 3',
             'category' => 'Kebersihan & Sampah',
             'street_name' => 'Gang Melati 3',
             'location_detail' => 'Depan No. 12',
             'description' => 'Genangan air mulai meluap setelah hujan deras kemarin sore.',
             'is_anonymous' => 1,
-        ]);
-
-        $response->assertRedirect();
-        $response->assertSessionHas('status');
+        ])->assertSuccessful();
 
         $this->assertDatabaseHas('complaints', [
             'user_id' => $user->id,

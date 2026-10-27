@@ -122,9 +122,13 @@ class DashboardApiController extends Controller
             ];
         });
 
+        // Kartu & aktivitas terbaru untuk UI PRISMA digabung dengan ringkasan Sprint 5.
+        $ui = app(SummaryController::class)->dashboard($request)->getData(true)['data'] ?? [];
+
         return response()->json([
-            'data' => $data,
+            'data' => $data + $ui,
             'meta' => [
+                'server_time' => now()->toIso8601String(),
                 'request_id' => (string) Str::uuid(),
                 'role' => $data['role'],
                 'version' => 1,
