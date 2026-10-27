@@ -11,286 +11,369 @@ Pemodelan diagram relasi entitas berikut mencerminkan skema fisik aktual basis d
 
 ```mermaid
 erDiagram
-    USERS ||--o| CITIZENS : "1-to-0..1 via citizens.user_id (UNIQUE)"
-    USERS ||--o{ ADMIN_PERMISSIONS : "has permissions (CASCADE)"
-    USERS ||--o{ AUDIT_LOGS : "performed action (SET NULL)"
-    USERS ||--o{ COMPLAINTS : "submits complaint (SET NULL)"
-    USERS ||--o{ SECURITY_REPORTS : "reports incident (SET NULL)"
-    USERS ||--o{ FINANCE_TRANSACTIONS : "records ledger (SET NULL)"
-    USERS ||--o{ FINANCIAL_REPORTS : "publishes report (SET NULL)"
-    USERS ||--o{ PURCHASES : "records purchase (SET NULL)"
-    USERS ||--o{ PUSH_SUBSCRIPTIONS : "subscribes webpush (SET NULL)"
-    USERS ||--o{ DUE_PAYMENTS : "receives payment (SET NULL)"
-
-    FAMILY_CARDS ||--o{ CITIZENS : "contains family members (CASCADE)"
-    
-    CITIZENS ||--o{ LETTERS : "requests letter (CASCADE)"
-    CITIZENS ||--o{ RESIDENT_DUES : "assessed dues (CASCADE)"
-    CITIZENS ||--o{ COMPLAINTS : "files formal complaint (SET NULL)"
-    CITIZENS ||--o{ SECURITY_REPORTS : "files security report (SET NULL)"
-
-    JENIS_SURAT ||--o{ LETTERS : "categorizes (SET NULL)"
-
-    LETTERS ||--o{ LETTER_ATTACHMENTS : "has requirements (CASCADE)"
-    LETTERS }o--|| USERS : "verified_by (SET NULL)"
-    LETTERS }o--|| USERS : "approved_by (SET NULL)"
-
-    RESIDENT_DUES ||--o{ DUE_PAYMENTS : "payment entries (CASCADE)"
-
-    FINANCE_TRANSACTIONS ||--o{ DUE_PAYMENTS : "backed by cash entry (RESTRICT)"
-    FINANCE_TRANSACTIONS ||--o{ PURCHASES : "allocated expenditure (SET NULL)"
-    FINANCE_TRANSACTIONS ||--o| FINANCE_TRANSACTIONS : "reversal_of (SET NULL)"
-
-    PURCHASES ||--o{ PURCHASE_ITEMS : "contains items (CASCADE)"
-
-    %% ================= ENTITY DEFINITIONS =================
     USERS {
-        bigint id PK
-        string name "Nama Akun / Username"
-        string email UK "Email unik terverifikasi"
-        timestamp email_verified_at "Nullable"
-        string password "Bcrypt hashed"
-        string role "superadmin, admin, rt, rw, bendahara, warga"
-        string phone "Nullable"
-        boolean is_active "Default true"
-        timestamp last_login_at "Nullable"
-        bigint warga_id UK "LEGACY (Deprecated, Nullable)"
-        timestamp created_at
-        timestamp updated_at
+        int id PK
+        int warga_id UK
+        string name
+        string email UK
+        string password
+        string role
+        bool is_active
+        datetime email_verified_at
+        datetime last_login_at
+        string remember_token
+        string avatar_url
+        string username UK
     }
-
+    ADMIN_PERMISSIONS {
+        int id PK
+        int user_id FK
+        string permission
+    }
+    PERSONAL_ACCESS_TOKENS {
+        int id PK
+        string tokenable_type
+        int tokenable_id
+        text name
+        string token UK
+        text abilities
+        datetime last_used_at
+        datetime expires_at
+    }
+    PASSWORD_RESET_REQUESTS {
+        int id PK
+        int user_id FK
+        string token_hash UK
+        string ip_address
+        datetime expires_at
+        datetime used_at
+    }
+    NOTIFICATIONS {
+        string id PK
+        string type
+        string notifiable_type
+        int notifiable_id
+        text data
+        datetime read_at
+    }
+    PUSH_SUBSCRIPTIONS {
+        int id PK
+        int user_id FK
+        text endpoint
+        string endpoint_hash
+        text public_key
+        text auth_token
+        string content_encoding
+    }
     FAMILY_CARDS {
-        bigint id PK
-        text no_kk "Encrypted AES-256-CBC"
-        char(64) no_kk_hash UK "SHA-256 Deterministic Lookup"
-        string head_of_family_name
+        int id PK
+        text no_kk
+        string no_kk_hash UK
         string address
         string rt
         string rw
-        string postal_code "Nullable"
         string province
         string city
         string district
         string village
-        int version "Optimistic Locking"
-        timestamp created_at
-        timestamp updated_at
+        string postal_code
+        int version
     }
-
     CITIZENS {
-        bigint id PK
-        bigint family_card_id FK "family_cards.id (CASCADE)"
-        bigint user_id FK_UK "users.id (1:0..1, SET NULL)"
-        text nik "Encrypted AES-256-CBC"
-        char(64) nik_hash UK "SHA-256 Deterministic Lookup"
-        string name "Nama lengkap warga"
+        int id PK
+        int family_card_id FK
+        int user_id FK, UK
+        text nik
+        string nik_hash UK
+        string full_name
+        string gender
         string place_of_birth
         date date_of_birth
-        string gender "L / P"
         string religion
-        string education "Nullable"
-        string occupation "Nullable"
-        string marital_status "Nullable"
-        string family_relationship_status "Kepala Keluarga, Istri, Anak, dll"
-        string citizenship "WNI / WNA"
-        string address "Nullable (fallback ke family_card)"
-        string rt "Nullable"
-        string rw "Nullable"
-        string phone "Nullable"
-        string status "tetap, kontrak, kos, pindah, meninggal"
-        boolean is_active "Default true"
-        int version "Optimistic Locking"
-        timestamp created_at
-        timestamp updated_at
+        string blood_type
+        string occupation
+        string phone
+        string email
+        string status_warga
+        bool is_active
+        int version
+        datetime phone_verified_at
+        string ktp_file_path
+        text verification_notes
+        string full_name_key
     }
-
     JENIS_SURAT {
-        bigint id PK
-        string kode_surat UK "SKD, SKU, SKTM, dll"
-        string nama_surat "Nama resmi jenis surat"
-        text deskripsi "Nullable"
-        json template_fields "Definisi isian dinamis"
-        json required_attachments "Daftar syarat berkas wajib"
-        boolean is_active "Default true"
-        int version "Optimistic Locking"
-        timestamp created_at
-        timestamp updated_at
+        int id PK
+        string kode_surat UK
+        string nama_surat
+        string format_penomoran
+        text syarat_dokumen
+        bool is_active
+        string template_key
+        int template_version
+        text form_schema
+        text approval_flow
+        int estimated_process_hours
     }
-
     LETTERS {
-        bigint id PK
-        bigint citizen_id FK "citizens.id (CASCADE)"
-        bigint jenis_surat_id FK "jenis_surat.id (SET NULL)"
-        string type "Nama/Kategori Surat"
-        string ticket_number UK "SRT-YYYYMMDD-XXXX"
-        string letter_number UK "Nomor Surat Resmi RT (Nullable)"
-        string status "draft, submitted, verified, approved, completed, rejected"
-        json form_data "Isian dinamis warga"
-        text rejection_reason "Nullable"
-        timestamp submitted_at "Nullable"
-        timestamp verified_at "Nullable"
-        bigint verified_by FK "users.id (SET NULL)"
-        timestamp approved_at "Nullable"
-        bigint approved_by FK "users.id (SET NULL)"
-        timestamp completed_at "Nullable"
-        string verification_token UK "QR Code Token (Nullable)"
-        string document_hash "SHA-256 PDF Hash (Nullable)"
-        string pdf_path "Nullable (storage/letters/completed)"
-        int version "Optimistic Locking"
-        timestamp created_at
-        timestamp updated_at
+        int id PK
+        int citizen_id FK
+        int jenis_surat_id FK
+        string type
+        string ticket_number UK
+        string keperluan
+        text data_tambahan
+        string status
+        string letter_number UK
+        text catatan_admin
+        text rejection_reason
+        int verified_by FK
+        datetime verified_at
+        int approved_by FK
+        datetime approved_at
+        string verification_token UK
+        string file_path
+        string attachment_path
+        int version
+        string document_hash
+        datetime generated_at
     }
-
     LETTER_ATTACHMENTS {
-        bigint id PK
-        bigint letter_id FK "letters.id (CASCADE)"
-        string attachment_type "KTP, KK, Surat Pengantar RT Asal"
-        string file_path "storage/letters/attachments"
-        string original_file_name
+        int id PK
+        int letter_id FK
+        string judul_lampiran
+        string file_path
         string mime_type
-        bigint file_size
-        timestamp created_at
-        timestamp updated_at
+        int file_size
     }
-
-    RESIDENT_DUES {
-        bigint id PK
-        bigint citizen_id FK "citizens.id (CASCADE)"
-        smallint period_year "Tahun Buku (e.g. 2026)"
-        tinyint period_month "Bulan Buku (1-12)"
-        bigint amount_due_idr "Nominal tagihan dalam IDR"
-        date due_date "Jatuh tempo pembayaran"
-        string status "UNPAID, PARTIAL, PAID, OVERDUE"
-        text notes "Nullable"
-        timestamp created_at
-        timestamp updated_at
+    DOCUMENT_SEQUENCES {
+        int id PK
+        string document_type
+        int year
+        int month
+        int last_number
     }
-
-    DUE_PAYMENTS {
-        bigint id PK
-        bigint resident_due_id FK "resident_dues.id (CASCADE)"
-        bigint finance_transaction_id FK "finance_transactions.id (RESTRICT)"
-        bigint amount_paid_idr "Nominal terbayar dalam IDR"
-        timestamp paid_at "Waktu bayar"
-        string payment_method "cash, transfer, qris"
-        string receipt_number UK "KW-YYYYMM-XXXX"
-        string proof_path "storage/proofs (Nullable)"
-        bigint received_by FK "users.id (SET NULL)"
-        string status "PAID"
-        text notes "Nullable"
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    FINANCE_TRANSACTIONS {
-        bigint id PK
-        string transaction_number UK "TXN-YYYYMM-XXXX"
-        string type "income, expense"
-        string category "iuran_kebersihan, keamanan, perbaikan, kas_sosial"
-        bigint amount_idr "Nominal presisi integer IDR"
-        text description
-        string status "draft, published, reversed"
-        timestamp transaction_date
-        bigint created_by FK "users.id (SET NULL)"
-        bigint original_transaction_id FK "finance_transactions.id (SET NULL)"
-        boolean is_reversal "Default false"
-        int version "Optimistic Locking"
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    PURCHASES {
-        bigint id PK
-        string purchase_number UK "PO-YYYYMM-XXXX"
-        string vendor_name
-        bigint total_amount_idr "Total belanja dalam IDR"
-        date purchase_date
-        string proof_invoice_path "Nullable"
-        bigint finance_transaction_id FK "finance_transactions.id (SET NULL)"
-        bigint created_by FK "users.id (SET NULL)"
-        string status "draft, verified, published"
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    PURCHASE_ITEMS {
-        bigint id PK
-        bigint purchase_id FK "purchases.id (CASCADE)"
-        string item_name
-        int quantity
-        string unit "pcs, sak, meter, paket"
-        bigint unit_price_idr
-        bigint subtotal_idr
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    FINANCIAL_REPORTS {
-        bigint id PK
-        smallint year "Tahun Buku"
-        tinyint quarter "Triwulan 1-4"
-        int revision "Revisi 1, 2, ..."
-        bigint total_income_idr
-        bigint total_expense_idr
-        bigint ending_balance_idr
-        string status "draft, published, archived"
-        bigint published_by FK "users.id (SET NULL)"
-        timestamp published_at "Nullable"
-        timestamp created_at
-        timestamp updated_at
-    }
-
     COMPLAINTS {
-        bigint id PK
-        bigint citizen_id FK "citizens.id (SET NULL, Nullable)"
-        bigint user_id FK "users.id (SET NULL, Nullable)"
-        string ticket_number UK "ADU-YYYYMMDD-XXXX"
-        string category "kebersihan, keamanan, fasilitas, ketertiban"
+        int id PK
+        string ticket_number UK
+        int citizen_id FK
+        int user_id FK
+        string kategori
         string title
         text description
-        string location
-        boolean is_anonymous "Default false"
-        string status "submitted, reviewed, processing, resolved, closed, rejected"
-        string priority "rendah, sedang, tinggi, darurat"
-        bigint assigned_admin_id FK "users.id (SET NULL)"
-        text admin_response "Nullable"
-        timestamp resolved_at "Nullable"
-        string attachment_path "Nullable"
-        int version "Optimistic Locking"
-        timestamp created_at
-        timestamp updated_at
+        string lokasi
+        bool is_anonymous
+        string status
+        string priority
+        int assigned_admin_id FK
+        text admin_response
+        string attachment_path
+        int version
     }
-
     SECURITY_REPORTS {
-        bigint id PK
-        string ticket_number UK "SEC-YYYYMMDD-XXXX"
-        bigint reporter_user_id FK "users.id (SET NULL, Nullable)"
-        bigint citizen_id FK "citizens.id (SET NULL, Nullable)"
-        string incident_type "pencurian, keributan, kebakaran, orang_mencurigakan"
+        int id PK
+        string ticket_number UK
+        int citizen_id FK
+        int reporter_user_id FK
+        string category
+        string severity
         string title
         text description
         string location
-        string status "open, investigating, resolved, false_alarm"
-        bigint assigned_to FK "users.id (SET NULL, Nullable)"
-        text incident_action_notes "Nullable"
-        timestamp resolved_at "Nullable"
-        int version "Optimistic Locking"
-        timestamp created_at
-        timestamp updated_at
+        datetime incident_at
+        bool is_anonymous
+        string status
+        int assigned_to FK
+        text resolution
+        datetime resolved_at
+        int version
+    }
+    RESIDENT_DUES {
+        int id PK
+        int citizen_id FK
+        int period_year
+        int period_month
+        int amount_due_idr
+        date due_date
+        string status
+        text notes
+    }
+    DUE_PAYMENTS {
+        int id PK
+        int resident_due_id FK
+        int amount_paid_idr
+        datetime paid_at
+        string payment_method
+        string receipt_number UK
+        string proof_path
+        int received_by FK
+        text notes
+        string status
+        int finance_transaction_id FK
+    }
+    FINANCE_TRANSACTIONS {
+        int id PK
+        string type
+        string category
+        decimal amount
+        string description
+        date transaction_date
+        string receipt_path
+        string status
+        int created_by FK
+        datetime published_at
+        int original_transaction_id FK
+        text reversal_reason
+        int version
+        string transaction_number UK
+        string source
+        int amount_idr
+    }
+    PURCHASES {
+        int id PK
+        int finance_transaction_id FK
+        string vendor_name
+        date purchase_date
+        string invoice_number
+        string purpose
+        text notes
+        string receipt_path
+        int created_by FK
+        int version
+    }
+    PURCHASE_ITEMS {
+        int id PK
+        int purchase_id FK
+        string item_name
+        string description
+        int quantity
+        string unit
+        int unit_price_idr
+        int subtotal_idr
+    }
+    FINANCIAL_REPORTS {
+        int id PK
+        int year
+        int quarter
+        int revision
+        date period_start
+        date period_end
+        int opening_balance_idr
+        int income_idr
+        int expense_idr
+        int closing_balance_idr
+        int dues_assessed_idr
+        int dues_collected_idr
+        int dues_outstanding_idr
+        string status
+        datetime generated_at
+        datetime published_at
+        int published_by FK
+        string checksum_sha256
+        int version
+    }
+    DOWNLOAD_AUDITS {
+        string id PK
+        int actor_user_id FK
+        string resource_type
+        string resource_id
+        string file_type
+        int period_year
+        int period_quarter
+        string action
+        string result
+        string ip_hash
+        string user_agent_hash
+    }
+    AUDIT_LOGS {
+        int id PK
+        int user_id FK
+        string action
+        string entity_type
+        int entity_id
+        text old_values
+        text new_values
+        string ip_address
+    }
+    ANNOUNCEMENTS {
+        int id PK
+        string title
+        string category
+        text content
+        bool is_pinned
+        bool is_published
+        datetime published_at
+        int version
+    }
+    COMMUNITY_EVENTS {
+        int id PK
+        string title
+        text description
+        string location
+        date event_date
+        time start_time
+        time end_time
+        bool is_published
+        int version
+    }
+    RT_OFFICERS {
+        int id PK
+        string name
+        string position
+        string phone
+        int order_index
+        string photo_url
+        bool is_active
+    }
+    EMERGENCY_CONTACTS {
+        int id PK
+        string name
+        string category
+        string phone_number
+        string description
+        int order_index
+        bool is_active
+    }
+    ROUND_SCHEDULES {
+        int id PK
+        string day_of_week
+        string shift_name
+        text officer_names
+        string pos_location
+        text notes
+        bool is_active
     }
 
-    AUDIT_LOGS {
-        bigint id PK
-        bigint user_id FK "users.id (SET NULL, Nullable)"
-        string action "CREATE, UPDATE, DELETE, VERIFY, APPROVE, REVERSE"
-        string entity_type "App\\Models\\Citizen, Letter, dll"
-        bigint entity_id
-        json old_values "Nullable"
-        json new_values "Nullable"
-        string ip_address "Nullable"
-        string user_agent "Nullable"
-        timestamp created_at
-    }
+    USERS ||--o{ ADMIN_PERMISSIONS : "user_id"
+    USERS ||--o{ PASSWORD_RESET_REQUESTS : "user_id"
+    USERS o|--o{ PUSH_SUBSCRIPTIONS : "user_id"
+    USERS o|--o| CITIZENS : "user_id"
+    FAMILY_CARDS o|--o{ CITIZENS : "family_card_id"
+    USERS o|--o{ LETTERS : "approved_by"
+    USERS o|--o{ LETTERS : "verified_by"
+    JENIS_SURAT o|--o{ LETTERS : "jenis_surat_id"
+    CITIZENS ||--o{ LETTERS : "citizen_id"
+    LETTERS ||--o{ LETTER_ATTACHMENTS : "letter_id"
+    USERS o|--o{ COMPLAINTS : "assigned_admin_id"
+    USERS o|--o{ COMPLAINTS : "user_id"
+    CITIZENS o|--o{ COMPLAINTS : "citizen_id"
+    USERS o|--o{ SECURITY_REPORTS : "assigned_to"
+    USERS o|--o{ SECURITY_REPORTS : "reporter_user_id"
+    CITIZENS o|--o{ SECURITY_REPORTS : "citizen_id"
+    CITIZENS ||--o{ RESIDENT_DUES : "citizen_id"
+    FINANCE_TRANSACTIONS o|--o{ DUE_PAYMENTS : "finance_transaction_id"
+    RESIDENT_DUES ||--o{ DUE_PAYMENTS : "resident_due_id"
+    USERS o|--o{ DUE_PAYMENTS : "received_by"
+    FINANCE_TRANSACTIONS o|--o{ FINANCE_TRANSACTIONS : "original_transaction_id"
+    USERS o|--o{ FINANCE_TRANSACTIONS : "created_by"
+    USERS o|--o{ PURCHASES : "created_by"
+    FINANCE_TRANSACTIONS o|--o{ PURCHASES : "finance_transaction_id"
+    PURCHASES ||--o{ PURCHASE_ITEMS : "purchase_id"
+    USERS o|--o{ FINANCIAL_REPORTS : "published_by"
+    USERS o|--o{ DOWNLOAD_AUDITS : "actor_user_id"
+    USERS o|--o{ AUDIT_LOGS : "user_id"
+    USERS ||--o{ NOTIFICATIONS : "notifiable (polimorfik)"
+    USERS ||--o{ PERSONAL_ACCESS_TOKENS : "tokenable (polimorfik)"
 ```
 
 ---
