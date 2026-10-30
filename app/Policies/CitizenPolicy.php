@@ -60,12 +60,10 @@ class CitizenPolicy
 
     /**
      * Determine whether the user can verify pending citizen application.
+     * Hanya berdasarkan izin (citizen.manage); Superadmin sudah tercakup lewat hasPermission.
      */
     public function verify(User $user, Citizen $citizen): bool
     {
-        return $user->isSuperadmin()
-            || $user->isSekretaris()
-            || $user->isKetuaRt()
-            || $user->hasPermission('citizen.manage');
+        return $user->hasPermission('citizen.manage');
     }
 }

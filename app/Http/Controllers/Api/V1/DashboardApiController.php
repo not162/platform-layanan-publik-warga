@@ -9,6 +9,7 @@ use App\Models\Complaint;
 use App\Models\Letter;
 use App\Models\ResidentDue;
 use App\Models\SecurityReport;
+use App\Models\User;
 use App\Services\FinanceService;
 use App\Services\ResidentDueService;
 use Carbon\Carbon;
@@ -84,42 +85,48 @@ class DashboardApiController extends Controller
                 ];
             }
 
-            // Admin / RT Officers summary
-            $letters = [
-                'pending_verification' => Letter::query()->where('status', 'submitted')->count(),
-                'pending_approval' => Letter::query()->where('status', 'verified')->count(),
-                'total' => Letter::query()->count(),
+            // Admin / RT Officers summary: tiap blok hanya untuk pemegang izin terkait.
+            $summary = ['role' => $user->role?->name ?? 'ADMIN'];
+
+            if ($this->canAny($user, ['letter.read', 'letter.verify', 'letter.approve'])) {
+                $summary['letters'] = [
+                    'pending_verification' => Letter::query()->where('status', 'submitted')->count(),
+                    'pending_approval' => Letter::query()->where('status', 'verified')->count(),
+                    'total' => Letter::query()->count(),
+                ];
+            }
+
+            if ($this->canAny($user, ['complaint.read', 'complaint.manage'])) {
+                $summary['complaints'] = [
+                    'open' => Complaint::query()->whereIn('status', ['submitted', 'reviewed', 'processing', 'in_progress'])->count(),
+                    'resolved' => Complaint::query()->whereIn('status', ['resolved', 'closed'])->count(),
+                    'total' => Complaint::query()->count(),
+                ];
+            }
+
+            if ($this->canAny($user, ['security.read', 'security.manage'])) {
+                $summary['security_reports'] = [
+                    'active' => SecurityReport::query()->whereIn('status', ['submitted', 'reported', 'assigned', 'processing'])->count(),
+                    'total' => SecurityReport::query()->count(),
+                ];
+            }
+
+            if ($user->hasPermission('citizen.read')) {
+                $summary['citizens'] = [
+                    'total' => Citizen::query()->count(),
+                    'pending_verification' => Citizen::query()->where('status_warga', 'pending_verification')->count(),
+                ];
+            }
+
+            // Saldo kas memang publik (beranda), jadi tetap disertakan untuk semua pengurus.
+            $summary['finance'] = [
+                'net_balance_idr' => $financeSummary['net_balance_idr'] ?? 0,
+                'total_income_idr' => $financeSummary['total_income_idr'] ?? 0,
+                'total_expense_idr' => $financeSummary['total_expense_idr'] ?? 0,
+                'total_transactions' => $financeSummary['total_transactions'] ?? 0,
             ];
 
-            $complaints = [
-                'open' => Complaint::query()->whereIn('status', ['submitted', 'reviewed', 'processing', 'in_progress'])->count(),
-                'resolved' => Complaint::query()->whereIn('status', ['resolved', 'closed'])->count(),
-                'total' => Complaint::query()->count(),
-            ];
-
-            $security = [
-                'active' => SecurityReport::query()->whereIn('status', ['submitted', 'reported', 'assigned', 'processing'])->count(),
-                'total' => SecurityReport::query()->count(),
-            ];
-
-            $citizens = [
-                'total' => Citizen::query()->count(),
-                'pending_verification' => Citizen::query()->where('status_warga', 'pending_verification')->count(),
-            ];
-
-            return [
-                'role' => $user->role?->name ?? 'ADMIN',
-                'letters' => $letters,
-                'complaints' => $complaints,
-                'security_reports' => $security,
-                'citizens' => $citizens,
-                'finance' => [
-                    'net_balance_idr' => $financeSummary['net_balance_idr'] ?? 0,
-                    'total_income_idr' => $financeSummary['total_income_idr'] ?? 0,
-                    'total_expense_idr' => $financeSummary['total_expense_idr'] ?? 0,
-                    'total_transactions' => $financeSummary['total_transactions'] ?? 0,
-                ],
-            ];
+            return $summary;
         });
 
         // Kartu & aktivitas terbaru untuk UI PRISMA digabung dengan ringkasan Sprint 5.
@@ -160,12 +167,12 @@ class DashboardApiController extends Controller
             $since = now()->subDay();
         }
 
-        $isWargaOnly = $user->isWarga() && ! $user->isSuperadmin() && ! $user->isAdmin();
-        $citizenId = $user->citizen?->id;
+        // Cakupan per izin, bukan per peran: tanpa izin modul, pengguna hanya menerima datanya sendiri.
+        $citizenId = $user->citizen?->id ?? 0;
 
         // 1. Letters updated since
         $lettersQuery = Letter::query()->where('updated_at', '>=', $since);
-        if ($isWargaOnly) {
+        if (! $this->canAny($user, ['letter.read', 'letter.verify', 'letter.approve'])) {
             $lettersQuery->where('citizen_id', $citizenId);
         }
         $letters = $lettersQuery->latest('updated_at')->limit(50)->get()->map(fn ($l) => [
@@ -180,7 +187,7 @@ class DashboardApiController extends Controller
 
         // 2. Complaints updated since
         $complaintsQuery = Complaint::query()->where('updated_at', '>=', $since);
-        if ($isWargaOnly) {
+        if (! $this->canAny($user, ['complaint.read', 'complaint.manage'])) {
             $complaintsQuery->where('user_id', $user->id);
         }
         $complaints = $complaintsQuery->latest('updated_at')->limit(50)->get()->map(fn ($c) => [
@@ -209,7 +216,7 @@ class DashboardApiController extends Controller
 
         // 4. Resident dues updated since
         $duesQuery = ResidentDue::query()->where('updated_at', '>=', $since);
-        if ($isWargaOnly) {
+        if (! $this->canAny($user, ['finance.dues.read', 'finance.dues.manage'])) {
             $duesQuery->where('citizen_id', $citizenId);
         }
         $dues = $duesQuery->latest('updated_at')->limit(50)->get()->map(fn ($d) => [
@@ -217,7 +224,7 @@ class DashboardApiController extends Controller
             'period_year' => $d->period_year,
             'period_month' => $d->period_month,
             'amount_due_idr' => $d->amount_due_idr,
-            'status' => $d->status,
+            'status' => $d->effectiveStatus(),
             'updated_at' => $d->updated_at?->toIso8601String(),
         ]);
 
@@ -239,5 +246,19 @@ class DashboardApiController extends Controller
             ],
             'message' => 'OK',
         ]);
+    }
+
+    /**
+     * @param  array<int, string>  $permissions
+     */
+    protected function canAny(User $user, array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            if ($user->hasPermission($permission)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

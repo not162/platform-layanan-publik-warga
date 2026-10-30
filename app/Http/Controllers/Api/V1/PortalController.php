@@ -19,7 +19,8 @@ class PortalController extends Controller
      */
     public function index(): JsonResponse
     {
-        $published = FinanceTransaction::query()->where('status', 'published');
+        // Transaksi terkoreksi dihitung bersama jurnal pembaliknya (lihat FinanceTransaction::scopeCountable).
+        $published = FinanceTransaction::query()->countable();
         $income = (int) (clone $published)->where('type', 'income')->sum('amount_idr');
         $expense = (int) (clone $published)->where('type', 'expense')->sum('amount_idr');
 
@@ -42,10 +43,11 @@ class PortalController extends Controller
                     'income' => $income,
                     'expense' => $expense,
                     'balance' => $income - $expense,
-                    'recent' => FinanceTransaction::query()->where('status', 'published')
+                    'recent' => FinanceTransaction::query()->countable()
                         ->orderByDesc('transaction_date')->orderByDesc('id')->limit(6)->get()
                         ->map(fn ($t) => [
-                            'type' => $t->type, 'category' => $t->category, 'description' => $t->description,
+                            // Keterangan disamarkan: nama pembayar iuran tidak tampil di beranda publik.
+                            'type' => $t->type, 'category' => $t->category, 'description' => $t->publicDescription(),
                             'amount' => (int) $t->amount_idr, 'date' => $t->transaction_date?->toDateString(),
                         ]),
                 ],

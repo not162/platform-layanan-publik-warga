@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Middleware\AuthenticateWebSession;
 use App\Http\Middleware\EnsureUserHasPermission;
 use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\ETagMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,6 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
 
+        // Sesi web: logout otomatis bila password diganti di perangkat lain atau akun dinonaktifkan.
+        $middleware->web(append: [
+            AuthenticateWebSession::class,
+            EnsureUserIsActive::class,
+        ]);
+
         $middleware->api(append: [
             ETagMiddleware::class,
         ]);
@@ -26,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
             'permission' => EnsureUserHasPermission::class,
+            'active' => EnsureUserIsActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

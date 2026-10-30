@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Letter;
 use App\Models\User;
+use App\Services\LetterService;
 
 class LetterPolicy
 {
@@ -96,13 +97,11 @@ class LetterPolicy
 
     /**
      * Determine whether the user can reject the letter.
+     * Mengikuti tahap: 'submitted' oleh pemverifikasi, 'verified' oleh pengesah.
      */
     public function reject(User $user, Letter $letter): bool
     {
-        return $user->isSuperadmin()
-            || $user->hasPermission('letter.reject')
-            || $user->hasPermission('letter.verify')
-            || $user->hasPermission('letter.approve');
+        return LetterService::canReject($user, $letter);
     }
 
     /**

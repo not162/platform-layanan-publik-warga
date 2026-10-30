@@ -64,8 +64,9 @@ class FinanceService
                 abort(409, 'Konflik data: Transaksi kas telah diubah oleh pengguna lain.');
             }
 
-            if ($locked->status === 'published') {
-                abort(409, 'Transaksi telah dipublikasikan sebelumnya.');
+            // Hanya draft yang boleh diterbitkan; transaksi 'reversed' tidak boleh dihitung ulang.
+            if ($locked->status !== 'draft') {
+                abort(409, 'Hanya transaksi draft yang dapat diterbitkan.');
             }
 
             $oldValues = $locked->toArray();
@@ -105,6 +106,19 @@ class FinanceService
 
             if ($version !== (int) $locked->version) {
                 abort(409, 'Konflik data: Transaksi kas telah diubah.');
+            }
+
+            if ($locked->isReversal()) {
+                abort(422, 'Jurnal pembalik tidak dapat dikoreksi lagi. Catat transaksi baru bila diperlukan.');
+            }
+
+            // Transaksi otomatis iuran/belanja harus dikoreksi dari modul asalnya
+            // agar status tagihan atau berkas belanja tidak berbeda dengan buku kas.
+            if ($locked->isSystem()) {
+                $isDues = $locked->source === FinanceTransaction::SOURCE_DUES || $locked->duePayment()->exists();
+                abort(422, $isDues
+                    ? 'Transaksi ini dibuat otomatis dari pembayaran iuran. Koreksi melalui halaman Iuran Warga (/app/dues).'
+                    : 'Transaksi ini dibuat otomatis dari pencatatan belanja. Koreksi melalui halaman Belanja (/app/purchases).');
             }
 
             if (trim($reason) === '') {
@@ -171,16 +185,18 @@ class FinanceService
         $y = $year ?? 'all';
         $m = $month ?? 'all';
         $q = $quarter ?? 'all';
+        $v = (int) Cache::get('public_finance_summary_version', 0);
 
-        return "public_finance_summary_{$y}_{$m}_{$q}";
+        return "public_finance_summary_v{$v}_{$y}_{$m}_{$q}";
     }
 
+    /**
+     * Batalkan seluruh varian cache ringkasan (semua periode, dengan/tanpa daftar transaksi)
+     * dengan menaikkan nomor versi kunci cache.
+     */
     public function clearCache(?int $year = null, ?int $month = null, ?int $quarter = null): void
     {
-        Cache::forget($this->getCacheKey(null, null, null));
-        if ($year || $month || $quarter) {
-            Cache::forget($this->getCacheKey($year, $month, $quarter));
-        }
+        Cache::forever('public_finance_summary_version', (int) Cache::get('public_finance_summary_version', 0) + 1);
         Cache::forget('public_finance_summary');
     }
 
@@ -192,7 +208,7 @@ class FinanceService
         $cacheKey = $this->getCacheKey($year, $month, $quarter).($includeTransactions ? '_with_txns' : '');
 
         return Cache::remember($cacheKey, 1800, function () use ($year, $month, $quarter, $includeTransactions) {
-            $query = FinanceTransaction::query()->where('status', 'published');
+            $query = FinanceTransaction::query()->countable();
 
             if ($year && $quarter) {
                 $startMonth = ($quarter - 1) * 3 + 1;

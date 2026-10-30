@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Citizen;
 use App\Models\Complaint;
 use App\Models\LetterAttachment;
+use App\Models\Purchase;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * Penyajian berkas privat (lampiran surat, foto pengaduan, KTP) setelah otorisasi per pemilik/peran.
+ * Penyajian berkas privat (lampiran surat, foto pengaduan, KTP, nota belanja) setelah otorisasi per pemilik/peran.
  */
 class FileController extends Controller
 {
@@ -60,10 +61,33 @@ class FileController extends Controller
         return $this->serve((string) $user->avatar_url, 'avatar-'.$user->id);
     }
 
-    protected function serve(string $path, string $name): StreamedResponse
+    public function purchaseReceipt(Request $request, int $id): StreamedResponse
     {
-        abort_if($path === '' || ! Storage::disk('local')->exists($path), 404, 'Berkas tidak ditemukan.');
+        /** @var User $user */
+        $user = $request->user();
+        // Aturan sama dengan PurchaseController (daftar belanja): finance.purchase.read atau finance.manage.
+        abort_unless(
+            $user->hasPermission('finance.purchase.read') || $user->hasPermission('finance.manage'),
+            403,
+            'Hanya pengurus keuangan yang boleh membuka nota belanja.'
+        );
 
-        return Storage::disk('local')->response($path, $name, ['Cache-Control' => 'private, no-store']);
+        $purchase = Purchase::query()->findOrFail($id);
+        $path = (string) $purchase->receipt_path;
+        $name = 'nota-belanja-'.$purchase->id.($path !== '' ? '.'.pathinfo($path, PATHINFO_EXTENSION) : '');
+
+        // Nota lama tersimpan di disk publik; sajikan tetap lewat jalur berotorisasi ini.
+        if ($path !== '' && ! Storage::disk('local')->exists($path) && Storage::disk('public')->exists($path)) {
+            return $this->serve($path, $name, 'public');
+        }
+
+        return $this->serve($path, $name);
+    }
+
+    protected function serve(string $path, string $name, string $disk = 'local'): StreamedResponse
+    {
+        abort_if($path === '' || ! Storage::disk($disk)->exists($path), 404, 'Berkas tidak ditemukan.');
+
+        return Storage::disk($disk)->response($path, $name, ['Cache-Control' => 'private, no-store']);
     }
 }

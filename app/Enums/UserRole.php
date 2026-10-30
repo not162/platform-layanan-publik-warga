@@ -26,15 +26,40 @@ enum UserRole: string
     }
 
     /**
-     * Tingkat hak akses: superadmin > admin (semua pengurus) > user (warga).
+     * Tingkat hak akses: superadmin (Ketua RT & akun Superadmin sistem)
+     * > admin (Sekretaris, Bendahara, pengurus lain) > user (warga).
      */
     public function tier(): string
     {
         return match ($this) {
-            self::SUPERADMIN => 'superadmin',
+            self::SUPERADMIN, self::KETUA_RT => 'superadmin',
             self::WARGA => 'user',
             default => 'admin',
         };
+    }
+
+    public function tierLabel(): string
+    {
+        return match ($this->tier()) {
+            'superadmin' => 'Superadmin',
+            'admin' => 'Admin',
+            default => 'User (Warga)',
+        };
+    }
+
+    public function isSuperadminTier(): bool
+    {
+        return $this->tier() === 'superadmin';
+    }
+
+    /**
+     * Semua peran tingkat superadmin (penerima notifikasi pengesahan, dsb.).
+     *
+     * @return array<int, self>
+     */
+    public static function superadminTier(): array
+    {
+        return array_values(array_filter(self::cases(), fn (self $r) => $r->isSuperadminTier()));
     }
 
     public function isStaff(): bool
@@ -44,6 +69,8 @@ enum UserRole: string
 
     /**
      * Peran yang boleh ditetapkan oleh peran ini lewat manajemen pengguna.
+     * Tidak ada peran yang dapat menetapkan peran setingkat atau di atasnya,
+     * kecuali akun Superadmin sistem.
      *
      * @return array<int, self>
      */
@@ -51,7 +78,8 @@ enum UserRole: string
     {
         return match ($this) {
             self::SUPERADMIN => self::cases(),
-            self::ADMIN => [self::KETUA_RT, self::SEKRETARIS, self::BENDAHARA, self::PETUGAS_KEAMANAN, self::WARGA],
+            self::KETUA_RT => [self::ADMIN, self::SEKRETARIS, self::BENDAHARA, self::PETUGAS_KEAMANAN, self::WARGA],
+            self::ADMIN => [self::SEKRETARIS, self::BENDAHARA, self::PETUGAS_KEAMANAN, self::WARGA],
             default => [],
         };
     }

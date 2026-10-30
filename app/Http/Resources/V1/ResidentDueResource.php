@@ -30,6 +30,8 @@ class ResidentDueResource extends JsonResource
             'remaining_due_idr' => $this->getRemainingDueIdr(),
             'due_date' => $this->due_date?->toDateString(),
             'status' => $this->status,
+            // Status efektif: UNPAID yang lewat jatuh tempo dilaporkan OVERDUE walau penjadwal belum berjalan.
+            'effective_status' => $this->effectiveStatus(),
             'notes' => $this->notes,
             'payments' => DuePaymentResource::collection($this->whenLoaded('payments')),
             'created_at' => $this->created_at?->toIso8601String(),

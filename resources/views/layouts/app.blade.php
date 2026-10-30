@@ -11,7 +11,7 @@
     $groups = collect($nav)->groupBy('group');
     $initial = mb_strtoupper(mb_substr($user->name, 0, 1));
     $avatarUrl = $user->avatar_url ? url('/api/v1/files/avatar/'.$user->id).'?v='.$user->updated_at->timestamp : null;
-    $tierLabel = ['superadmin' => 'Superadmin', 'admin' => 'Admin', 'user' => 'User'][$user->tier()];
+    $tierLabel = $user->role->tierLabel();
 @endphp
 
 {{-- Konten menu dipakai ulang oleh sidebar (desktop) dan drawer (mobile) --}}

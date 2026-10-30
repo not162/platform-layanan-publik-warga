@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Citizen;
 use App\Models\FinanceTransaction;
+use App\Models\ResidentDue;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -36,6 +37,15 @@ class FinanceReportBackupTest extends TestCase
         ]);
 
         $citizen = Citizen::factory()->create(['full_name' => 'Budi Santoso']);
+        // Rekap iuran dibangun dari tagihan periode (ResidentDue), bukan dari teks keterangan kas.
+        ResidentDue::query()->create([
+            'citizen_id' => $citizen->id,
+            'period_year' => now()->year,
+            'period_month' => now()->month,
+            'amount_due_idr' => 250000,
+            'due_date' => now()->endOfMonth()->toDateString(),
+            'status' => 'UNPAID',
+        ]);
 
         $resMonthly = $this->actingAs($bendahara)->get('/api/v1/admin/finance/reports/monthly?year='.now()->year.'&month='.now()->month.'&format=html');
         $resMonthly->assertStatus(200);

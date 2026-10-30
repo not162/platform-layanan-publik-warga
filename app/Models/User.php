@@ -100,9 +100,19 @@ class User extends Authenticatable
         return $user;
     }
 
+    /**
+     * Akun Superadmin sistem (bypass semua izin). Ketua RT berada di tingkat
+     * superadmin tetapi tetap memakai matriks izin agar pemisahan tugas
+     * keuangan (Bendahara mencatat, Ketua RT mengesahkan) terjaga.
+     */
     public function isSuperadmin(): bool
     {
         return $this->role === UserRole::SUPERADMIN;
+    }
+
+    public function isSuperadminTier(): bool
+    {
+        return $this->role->isSuperadminTier();
     }
 
     public function isAdmin(): bool
@@ -146,12 +156,11 @@ class User extends Authenticatable
             return true;
         }
 
-        // Check explicit permissions assigned in admin_permissions table
-        if ($this->relationLoaded('permissions')) {
-            if ($this->permissions->contains('permission', $permission)) {
-                return true;
-            }
-        } elseif ($this->permissions()->where('permission', $permission)->exists()) {
+        // Check explicit permissions assigned in admin_permissions table (loaded once per request)
+        if (! $this->relationLoaded('permissions')) {
+            $this->setRelation('permissions', $this->exists ? $this->permissions()->get() : collect());
+        }
+        if ($this->permissions->contains('permission', $permission)) {
             return true;
         }
 
@@ -203,7 +212,13 @@ class User extends Authenticatable
                 'emergency.manage',
             ],
             UserRole::KETUA_RT => [
+                // Tingkat superadmin: kelola pengguna & pengurus, verifikasi warga, tindak keamanan
+                'user.manage',
+                'officer.manage',
                 'citizen.read',
+                'citizen.manage',
+                'citizens.manage',
+                'security.manage',
                 'letter.read',
                 'letter.approve',
                 'letter.reject',
@@ -289,11 +304,13 @@ class User extends Authenticatable
     public function givePermission(string $permission): void
     {
         $this->permissions()->firstOrCreate(['permission' => $permission]);
+        $this->unsetRelation('permissions');
     }
 
     public function revokePermission(string $permission): void
     {
         $this->permissions()->where('permission', $permission)->delete();
+        $this->unsetRelation('permissions');
     }
 
     public function syncPermissions(array $permissions): void
@@ -302,5 +319,6 @@ class User extends Authenticatable
         foreach ($permissions as $perm) {
             $this->permissions()->create(['permission' => $perm]);
         }
+        $this->unsetRelation('permissions');
     }
 }

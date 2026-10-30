@@ -31,11 +31,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/profile', [AppController::class, 'profile'])->name('profile');
     Route::get('/app/{page}', [AppController::class, 'page'])->name('app.page');
 
-    Route::get('/dashboard/finance/reports/monthly', [FinanceTransactionController::class, 'downloadMonthlyReport'])->name('finance.report.monthly');
-    Route::get('/dashboard/finance/reports/citizen-dues', [FinanceTransactionController::class, 'downloadCitizenDuesReport'])->name('finance.report.citizen-dues');
-    Route::post('/dashboard/finance/backups', [FinanceTransactionController::class, 'createBackupStore'])->name('finance.backup.create');
-    Route::get('/dashboard/finance/backups', [FinanceTransactionController::class, 'listBackups'])->name('finance.backup.list');
-    Route::get('/dashboard/finance/backups/{filename}', [FinanceTransactionController::class, 'downloadBackup'])->name('finance.backup.download');
+    // Laporan & backup kas: izin yang sama dengan jalur /api/v1/admin/finance/* (bukan nama peran).
+    Route::middleware('permission:finance.report.read,finance.read')->group(function () {
+        Route::get('/dashboard/finance/reports/monthly', [FinanceTransactionController::class, 'downloadMonthlyReport'])->name('finance.report.monthly');
+        Route::get('/dashboard/finance/reports/citizen-dues', [FinanceTransactionController::class, 'downloadCitizenDuesReport'])->name('finance.report.citizen-dues');
+        Route::get('/dashboard/finance/backups', [FinanceTransactionController::class, 'listBackups'])->name('finance.backup.list');
+        Route::get('/dashboard/finance/backups/{filename}', [FinanceTransactionController::class, 'downloadBackup'])->name('finance.backup.download');
+    });
+    Route::post('/dashboard/finance/backups', [FinanceTransactionController::class, 'createBackupStore'])
+        ->middleware('permission:finance.report.generate,finance.manage')
+        ->name('finance.backup.create');
 });
 
 // -----------------------------------------------------------------

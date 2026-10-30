@@ -36,6 +36,7 @@ class AppController extends Controller
 
         abort_unless(Navigation::allowed($user, $page), 403, 'Anda tidak memiliki akses ke halaman ini.');
 
+        $user->loadMissing('permissions');
         $items = Navigation::for($user);
 
         $extra = $page === 'system' ? $this->rbacMatrix() : [];
@@ -46,7 +47,7 @@ class AppController extends Controller
             'pageDef' => Navigation::pages()[$page],
             'canCreate' => Navigation::canCreate($user, $page),
             'nav' => $items,
-            'bottomNav' => Navigation::bottom($items),
+            'bottomNav' => Navigation::bottom($items, $user),
         ]);
     }
 
@@ -63,6 +64,9 @@ class AppController extends Controller
             'Kelola data warga & verifikasi pendaftar' => 'citizen.manage',
             'Verifikasi berkas surat' => 'letter.verify',
             'Sahkan surat (Ketua RT)' => 'letter.approve',
+            'Tolak surat' => 'letter.reject',
+            'Selesaikan / serahkan surat' => 'letter.complete',
+            'Kelola jenis & syarat surat' => 'letter.template.manage',
             'Tanggapi pengaduan' => 'complaint.manage',
             'Tindak laporan keamanan' => 'security.manage',
             'Lihat buku kas' => 'finance.transaction.read',
@@ -70,6 +74,9 @@ class AppController extends Controller
             'Terbitkan transaksi kas' => 'finance.transaction.publish',
             'Kelola tagihan iuran' => 'finance.dues.manage',
             'Catat pembayaran iuran' => 'finance.payment.manage',
+            'Catat belanja RT' => 'finance.purchase.create',
+            'Susun laporan triwulan (Bendahara)' => 'finance.report.generate',
+            'Sahkan laporan triwulan (Ketua RT)' => 'finance.report.publish',
             'Kelola pengumuman' => 'announcement.manage',
             'Kelola agenda' => 'event.manage',
             'Kelola struktur pengurus' => 'officer.manage',
@@ -80,8 +87,9 @@ class AppController extends Controller
 
         $roles = [];
         $matrix = [];
-        foreach (UserRole::cases() as $role) {
-            $roles[$role->value] = ['label' => $role->label(), 'tier' => $role->tier()];
+        $byTier = collect(UserRole::cases())->sortBy(fn (UserRole $r) => array_search($r->tier(), ['superadmin', 'admin', 'user'], true));
+        foreach ($byTier as $role) {
+            $roles[$role->value] = ['label' => $role->label(), 'tier' => $role->tier(), 'tier_label' => $role->tierLabel()];
             $probe = (new User)->forceFill(['role' => $role]);
             $probe->setRelation('permissions', collect());
             foreach ($features as $label => $permission) {

@@ -23,7 +23,8 @@ class PurchaseResource extends JsonResource
             'invoice_number' => $this->invoice_number,
             'purpose' => $this->purpose,
             'notes' => $this->notes,
-            'receipt_url' => $this->receipt_path ? asset('storage/'.$this->receipt_path) : null,
+            // Nota bersifat privat: disajikan lewat FileController::purchaseReceipt (izin finance.purchase.read).
+            'receipt_url' => $this->receipt_path ? url('/api/v1/files/purchase-receipts/'.$this->id) : null,
             'total_amount_idr' => $this->calculateTotalIdr(),
             'finance_transaction_id' => $this->finance_transaction_id,
             'transaction_number' => $this->transaction?->transaction_number,

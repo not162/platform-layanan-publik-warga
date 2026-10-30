@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\AuthenticateWebSession;
+use App\Http\Middleware\EnsureUserIsActive;
 use App\Services\AuditService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
@@ -84,10 +87,16 @@ class AccountController extends Controller
             throw ValidationException::withMessages(['current_password' => ['Password saat ini salah.']]);
         }
 
-        $user->update(['password' => $data['password']]);
+        $user->forceFill(['password' => $data['password'], 'remember_token' => Str::random(60)])->save();
+
+        // Keluarkan perangkat lain: token API & sesi lain dicabut, sesi ini tetap aktif.
+        // Sesi lain yang tersisa (driver non-database) ditolak AuthenticateWebSession karena hash password berubah.
+        EnsureUserIsActive::revokeAccess($user, $request);
+        AuthenticateWebSession::remember($request);
+
         $this->audit->log('account.password_changed', 'User', $user->id);
 
-        return response()->json(['message' => 'Password berhasil diganti.']);
+        return response()->json(['message' => 'Password berhasil diganti. Perangkat lain telah dikeluarkan.']);
     }
 
     /**

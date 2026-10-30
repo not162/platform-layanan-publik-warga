@@ -262,9 +262,9 @@ sequenceDiagram
 
 <section data-panel="rbac" hidden>
     <div class="card"><div class="card-title">Matriks hak akses (dihitung langsung dari kode)</div>
-    <p class="muted" style="margin-bottom:1rem">Tiga tingkat akses: <b>Superadmin</b> (penuh), <b>Admin</b> (Admin, Ketua RT, Sekretaris, Bendahara, Petugas Keamanan — sesuai tugas), dan <b>User</b> (Warga — hanya data sendiri).</p>
+    <p class="muted" style="margin-bottom:1rem">Tiga tingkat akses: @foreach (collect($roles)->groupBy('tier_label', true) as $tierLabel => $tierRoles)<b>{{ $tierLabel }}</b> ({{ collect($tierRoles)->pluck('label')->implode(', ') }}){{ $loop->last ? '.' : ($loop->remaining === 1 ? ', dan ' : ', ') }}@endforeach Ketua RT berada di tingkat Superadmin namun tetap tidak mencatat kas (pemisahan tugas dengan Bendahara).</p>
     <div class="table-wrap" style="overflow:auto"><table class="tbl perm-table">
-        <thead><tr><th>Fitur</th>@foreach ($roles as $r)<th>{{ $r['label'] }}<br><small>{{ $r['tier'] }}</small></th>@endforeach</tr></thead>
+        <thead><tr><th>Fitur</th>@foreach ($roles as $r)<th>{{ $r['label'] }}<br><small>{{ $r['tier_label'] }}</small></th>@endforeach</tr></thead>
         <tbody>
         @foreach ($matrix as $feature => $cells)
             <tr><td data-label="Fitur">{{ $feature }}</td>@foreach ($cells as $roleKey => $ok)<td data-label="{{ $roles[$roleKey]['label'] }}">{!! $ok ? '<span class="badge green">✓</span>' : '<span class="muted">—</span>' !!}</td>@endforeach</tr>

@@ -117,7 +117,8 @@ class ResidentDueController extends Controller
         }
 
         if ($request->filled('status')) {
-            $query->where('status', '=', strtoupper((string) $request->query('status')), 'and');
+            // 'overdue' juga mencakup UNPAID yang sudah melewati jatuh tempo.
+            $query->whereEffectiveStatus((string) $request->query('status'));
         }
 
         if ($request->filled('citizen_id')) {

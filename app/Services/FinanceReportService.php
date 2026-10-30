@@ -2,11 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Citizen;
 use App\Models\FinanceTransaction;
+use App\Models\ResidentDue;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class FinanceReportService
 {
@@ -36,15 +35,17 @@ class FinanceReportService
         $ketuaName = config('rt.officers.ketua');
         $bendaharaName = config('rt.officers.bendahara');
         $disk = Storage::disk('local');
+        // Transaksi terkoreksi tetap tampil bersama jurnal pembaliknya agar saldo bersih benar.
         $transactions = FinanceTransaction::query()
-            ->where('status', 'published')
+            ->countable()
             ->whereYear('transaction_date', $year)
             ->whereMonth('transaction_date', $month)
             ->orderBy('transaction_date', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
-        $totalIncome = $transactions->where('type', 'income')->sum('amount');
-        $totalExpense = $transactions->where('type', 'expense')->sum('amount');
+        $totalIncome = $transactions->where('type', 'income')->sum(fn (FinanceTransaction $t) => $t->amountIdr());
+        $totalExpense = $transactions->where('type', 'expense')->sum(fn (FinanceTransaction $t) => $t->amountIdr());
         $balance = $totalIncome - $totalExpense;
 
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
@@ -54,7 +55,8 @@ class FinanceReportService
             $csvContent = "ID,Tanggal,Kategori,Tipe,Jumlah,Keterangan\n";
             foreach ($transactions as $t) {
                 $cleanDesc = str_replace(['"', "\n", "\r"], ['""', ' ', ' '], $t->description ?? '');
-                $csvContent .= "{$t->id},\"{$t->transaction_date->toDateString()}\",\"{$t->category}\",\"{$t->type}\",{$t->amount},\"{$cleanDesc}\"\n";
+                $cleanCategory = str_replace(['"', "\n", "\r"], ['""', ' ', ' '], $t->category ?? '');
+                $csvContent .= "{$t->id},\"{$t->transaction_date->toDateString()}\",\"{$cleanCategory}\",\"{$t->type}\",{$t->amountIdr()},\"{$cleanDesc}\"\n";
             }
             $fileName = "{$this->monthlyDir}/Laporan_Kas_RT_{$year}_{$month}.csv";
             $disk->put($fileName, $csvContent);
@@ -73,16 +75,20 @@ class FinanceReportService
             $num = $index + 1;
             $typeColor = $t->type === 'income' ? '#059669' : '#DC2626';
             $typeLabel = $t->type === 'income' ? 'Pemasukan' : 'Pengeluaran';
-            $amountFormatted = 'Rp '.number_format($t->amount, 0, ',', '.');
+            $amountFormatted = 'Rp '.number_format($t->amountIdr(), 0, ',', '.');
             $dateFormatted = $t->transaction_date->translatedFormat('d F Y');
+            // Kategori & keterangan berasal dari input pengguna: escape agar berkas HTML aman dibuka.
+            $category = e($t->category);
+            $description = e($t->description);
+            $statusNote = $t->status === 'reversed' ? " <em style='color: #DC2626;'>(dikoreksi)</em>" : '';
 
             $rowsHtml .= "<tr>
                 <td style='text-align: center;'>{$num}</td>
                 <td>{$dateFormatted}</td>
-                <td>{$t->category}</td>
+                <td>{$category}{$statusNote}</td>
                 <td style='color: {$typeColor}; font-weight: 600;'>{$typeLabel}</td>
                 <td style='text-align: right; font-weight: 600;'>{$amountFormatted}</td>
-                <td>{$t->description}</td>
+                <td>{$description}</td>
             </tr>";
         }
 
@@ -185,17 +191,16 @@ class FinanceReportService
         $ketuaName = config('rt.officers.ketua');
         $bendaharaName = config('rt.officers.bendahara');
         $disk = Storage::disk('local');
-        $citizens = Citizen::query()->with('familyCard')->get();
-        $duesTransactions = FinanceTransaction::query()
-            ->where('status', 'published')
-            ->where('type', 'income')
-            ->where(function ($q) {
-                $q->where('category', 'like', '%Iuran%')
-                    ->orWhere('category', 'like', '%Warga%');
-            })
-            ->whereYear('transaction_date', $year)
-            ->whereMonth('transaction_date', $month)
-            ->get();
+
+        // Sumber kebenaran adalah tagihan periode (ResidentDue) beserta pembayarannya,
+        // bukan pencocokan teks keterangan transaksi kas.
+        $dues = ResidentDue::query()
+            ->with(['citizen.familyCard', 'payments' => fn ($q) => $q->where('status', 'PAID')->orderBy('paid_at')])
+            ->where('period_year', $year)
+            ->where('period_month', $month)
+            ->get()
+            ->sortBy(fn (ResidentDue $d) => mb_strtolower((string) $d->citizen?->full_name))
+            ->values();
 
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
         $period = "{$monthName} {$year}";
@@ -204,27 +209,34 @@ class FinanceReportService
         $totalCollected = 0;
         $paidCount = 0;
 
-        foreach ($citizens as $idx => $citizen) {
+        $statusStyles = [
+            'PAID' => ['LUNAS', '#ECFDF5', '#059669'],
+            'PARTIAL' => ['SEBAGIAN', '#EFF6FF', '#1D4ED8'],
+            'OVERDUE' => ['TERLAMBAT', '#FEF2F2', '#DC2626'],
+            'UNPAID' => ['BELUM BAYAR', '#FFFBEB', '#D97706'],
+        ];
+
+        foreach ($dues as $idx => $due) {
             $num = $idx + 1;
-            $paid = $duesTransactions->first(function ($t) use ($citizen) {
-                return Str::contains($t->description ?? '', $citizen->full_name) || Str::contains($t->description ?? '', (string) $citizen->id);
-            });
+            $paidAmount = $due->getTotalPaidIdr();
+            $lastPayment = $due->payments->last();
 
-            $statusText = $paid ? 'LUNAS' : 'BELUM BAYAR';
-            $statusBg = $paid ? '#ECFDF5' : '#FFFBEB';
-            $statusColor = $paid ? '#059669' : '#D97706';
-            $nominalText = $paid ? 'Rp '.number_format($paid->amount, 0, ',', '.') : 'Rp 0';
-            $payDate = $paid ? $paid->transaction_date->translatedFormat('d M Y') : '—';
+            [$statusText, $statusBg, $statusColor] = $statusStyles[$due->effectiveStatus()] ?? $statusStyles['UNPAID'];
+            $nominalText = 'Rp '.number_format($paidAmount, 0, ',', '.').' / Rp '.number_format((int) $due->amount_due_idr, 0, ',', '.');
+            $payDate = $lastPayment?->paid_at ? $lastPayment->paid_at->translatedFormat('d M Y') : '—';
 
-            if ($paid) {
-                $totalCollected += $paid->amount;
+            $totalCollected += $paidAmount;
+            if ($due->status === 'PAID') {
                 $paidCount++;
             }
 
+            $name = e($due->citizen?->full_name ?? 'Warga #'.$due->citizen_id);
+            $address = e($due->citizen?->familyCard?->address ?? '—');
+
             $rowsHtml .= "<tr>
                 <td style='text-align: center;'>{$num}</td>
-                <td><strong>{$citizen->full_name}</strong></td>
-                <td>{$citizen->address}</td>
+                <td><strong>{$name}</strong></td>
+                <td>{$address}</td>
                 <td style='text-align: center; background: {$statusBg}; color: {$statusColor}; font-weight: bold;'>{$statusText}</td>
                 <td style='text-align: right;'>{$nominalText}</td>
                 <td style='text-align: center;'>{$payDate}</td>
@@ -252,7 +264,7 @@ class FinanceReportService
   </div>
 
   <div style='margin-bottom: 15px; background: #F1F5F9; padding: 10px; border: 1px solid #CBD5E1;'>
-    <p>Total Warga: <strong>{$citizens->count()} Warga</strong> | Warga Telah Bayar: <strong>{$paidCount} Warga</strong> | Total Kas Terhimpun: <strong style='color: #059669;'>{$totalCollectedFormatted}</strong></p>
+    <p>Total Tagihan: <strong>{$dues->count()} Warga</strong> | Warga Telah Lunas: <strong>{$paidCount} Warga</strong> | Total Kas Terhimpun: <strong style='color: #059669;'>{$totalCollectedFormatted}</strong></p>
   </div>
 
   <table>
@@ -292,8 +304,8 @@ class FinanceReportService
         $disk = Storage::disk('local');
         $allTransactions = FinanceTransaction::query()->orderBy('id', 'asc')->get();
         $summary = [
-            'total_income' => $allTransactions->where('type', 'income')->where('status', 'published')->sum('amount'),
-            'total_expense' => $allTransactions->where('type', 'expense')->where('status', 'published')->sum('amount'),
+            'total_income' => $allTransactions->where('type', 'income')->whereIn('status', FinanceTransaction::COUNTABLE_STATUSES)->sum(fn (FinanceTransaction $t) => $t->amountIdr()),
+            'total_expense' => $allTransactions->where('type', 'expense')->whereIn('status', FinanceTransaction::COUNTABLE_STATUSES)->sum(fn (FinanceTransaction $t) => $t->amountIdr()),
             'total_records' => $allTransactions->count(),
             'backup_timestamp' => now()->toIso8601String(),
             'executed_by' => $actor ? ['id' => $actor->id, 'name' => $actor->name, 'role' => $actor->role] : null,

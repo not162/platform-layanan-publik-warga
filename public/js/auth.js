@@ -21,11 +21,20 @@
     ['nik', 'no_kk'].forEach((n) => digits($(`[name="${n}"]`, reg)));
     $('[name="username"]', reg).addEventListener('input', (e) => (e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, '')));
 
-    let timer; let seq = 0;
+    let timer; let seq = 0; let last = '';
     const check = () => {
       clearTimeout(timer);
       timer = setTimeout(async () => {
-        const body = { nik: reg.nik.value, no_kk: reg.no_kk.value, name: reg.elements.name.value, username: reg.username.value };
+        const v = (n) => reg.elements[n].value.trim();
+        const nik = v('nik'); const kk = v('no_kk'); const name = v('name'); const username = v('username');
+        // Isian yang belum lengkap dicek di browser saja; server hanya dipanggil untuk nilai lengkap (kuota pemeriksaan dibatasi).
+        if (nik && nik.length < 16) hint('nik', null, `${nik.length}/16 digit`);
+        if (kk && kk.length < 16) hint('no_kk', null, `${kk.length}/16 digit`);
+        if (username && username.length < 4) hint('username', null, 'Minimal 4 karakter.');
+        const body = { nik: nik.length === 16 ? nik : '', no_kk: kk.length === 16 ? kk : '', name: name.length >= 3 ? name : '', username: username.length >= 4 ? username : '' };
+        const key = JSON.stringify(body);
+        if (key === last || !Object.values(body).some(Boolean)) return;
+        last = key;
         const mine = ++seq;
         try {
           const r = await P.post('/api/v1/auth/check-citizen', body);
@@ -36,10 +45,10 @@
           if (body.username) hint('username', r.checks.username.ok, r.checks.username.message);
           const al = $('#reg-alert');
           if (['ALREADY_REGISTERED', 'PENDING_VERIFICATION'].includes(r.status)) {
-            al.className = 'alert warning'; al.innerHTML = '<div>' + r.message + (r.status === 'ALREADY_REGISTERED' ? ' <a class="link" href="/login">Masuk</a> · <a class="link" href="/forgot-password">Lupa password</a>' : '') + '</div>'; al.hidden = false;
+            al.className = 'alert warning'; al.innerHTML = '<div>' + P.esc(r.message) + (r.status === 'ALREADY_REGISTERED' ? ' <a class="link" href="/login">Masuk</a> · <a class="link" href="/forgot-password">Lupa password</a>' : '') + '</div>'; al.hidden = false;
           } else al.hidden = true;
-        } catch (e) { /* abaikan galat jaringan sementara */ }
-      }, 350);
+        } catch (e) { last = ''; /* abaikan galat jaringan / batas kuota sementara; pendaftaran tetap divalidasi saat dikirim */ }
+      }, 450);
     };
     ['nik', 'no_kk', 'name', 'username'].forEach((n) => $(`[name="${n}"]`, reg).addEventListener('input', check));
 
@@ -73,9 +82,9 @@
       const al = $('#forgot-alert'); al.hidden = true;
       try {
         const r = await P.post('/api/v1/auth/forgot-password', { username: forgot.username.value, nik: forgot.nik.value, no_kk: forgot.no_kk.value });
-        P.ok('Identitas terverifikasi', r.message);
-        if (r.reset_url) { setTimeout(() => (location.href = r.reset_url), 700); return; }
-        forgot.innerHTML = `<div class="alert success">${P.icon('check-circle')}<div>${P.esc(r.message)}<br><small>Periksa kotak masuk dan folder spam. Tautan berlaku ${r.expires_in_minutes} menit.</small></div></div><a class="btn btn-block" href="/login">Kembali ke halaman masuk</a>`;
+        // Tautan reset tidak pernah dikirim ke browser: lewat email, atau diserahkan pengurus RT.
+        P.ok('Permintaan diterima');
+        forgot.innerHTML = `<div class="alert success">${P.icon('check-circle')}<div>${P.esc(r.message)}<br><small>Periksa kotak masuk dan folder spam (tautan email berlaku 20 menit). Tidak punya email? Temui Ketua atau Sekretaris RT dengan membawa KTP untuk menerima tautan.</small></div></div><a class="btn btn-block" href="/login">Kembali ke halaman masuk</a>`;
       } catch (err) {
         busy(btn, false); al.textContent = err.message; al.hidden = false; showErrors(forgot, err);
       }

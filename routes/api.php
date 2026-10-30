@@ -29,7 +29,7 @@ Route::prefix('v1')->group(function () {
     // Public Endpoints (No Authentication Required)
     // -------------------------------------------------------------
     Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:10,1');
-    Route::post('/auth/check-citizen', [AuthController::class, 'checkCitizen'])->middleware('throttle:90,1');
+    Route::post('/auth/check-citizen', [AuthController::class, 'checkCitizen'])->middleware('throttle:20,1');
     Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:6,1');
     Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:10,1');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:20,1');
@@ -62,14 +62,15 @@ Route::prefix('v1')->group(function () {
     Route::get('/public/emergency-contacts', [PublicContentController::class, 'emergencyContacts']);
     Route::get('/public/schedules', [PublicContentController::class, 'roundSchedules']);
 
-    // Web push subscription registration
-    Route::post('/push/subscribe', [PushSubscriptionController::class, 'store']);
-
     // -------------------------------------------------------------
     // Authenticated Citizen & General User Endpoints
     // -------------------------------------------------------------
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum', 'active'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
+
+        // Web push subscription registration (terikat ke akun yang login)
+        Route::post('/push/subscribe', [PushSubscriptionController::class, 'store'])->middleware('throttle:30,1');
+
         Route::get('/me', [ProfileController::class, 'show']);
         Route::patch('/me', [ProfileController::class, 'update']);
         Route::get('/me/export', [ProfileController::class, 'export']);
@@ -77,6 +78,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/files/letter-attachments/{id}', [FileController::class, 'letterAttachment'])->whereNumber('id');
         Route::get('/files/complaints/{id}', [FileController::class, 'complaintPhoto'])->whereNumber('id');
         Route::get('/files/ktp/{id}', [FileController::class, 'ktp'])->whereNumber('id');
+        Route::get('/files/purchase-receipts/{id}', [FileController::class, 'purchaseReceipt'])->whereNumber('id')
+            ->middleware('permission:finance.purchase.read,finance.read,finance.manage');
 
         Route::get('/files/avatar/{id}', [FileController::class, 'avatar'])->whereNumber('id');
         Route::post('/me/photo', [AccountController::class, 'photo']);
@@ -85,7 +88,6 @@ Route::prefix('v1')->group(function () {
         Route::post('/me/password', [AccountController::class, 'password']);
 
         // Ringkasan dashboard & notifikasi (di-poll UI untuk data real-time)
-        Route::get('/dashboard/summary', [SummaryController::class, 'dashboard']);
         Route::get('/roles', [SummaryController::class, 'roles']);
         Route::get('/notifications', [NotificationController::class, 'index']);
         Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);
@@ -107,18 +109,18 @@ Route::prefix('v1')->group(function () {
         // Letters management
         Route::get('/letters', [LetterController::class, 'index']);
         Route::post('/letters', [LetterController::class, 'store']);
-        Route::get('/letters/{id}', [LetterController::class, 'show']);
-        Route::patch('/letters/{id}', [LetterController::class, 'update']);
-        Route::patch('/letters/{id}/status', [LetterController::class, 'update']); // Backward compatibility
-        Route::delete('/letters/{id}', [LetterController::class, 'destroy']);
+        Route::get('/letters/{id}', [LetterController::class, 'show'])->whereNumber('id');
+        Route::patch('/letters/{id}', [LetterController::class, 'update'])->whereNumber('id');
+        Route::patch('/letters/{id}/status', [LetterController::class, 'update'])->whereNumber('id'); // Backward compatibility
+        Route::delete('/letters/{id}', [LetterController::class, 'destroy'])->whereNumber('id');
 
         // Letter actions & attachments
-        Route::post('/letters/{id}/submit', [LetterController::class, 'submit']);
-        Route::get('/letters/{id}/preview', [LetterController::class, 'preview']);
-        Route::match(['GET', 'POST'], '/letters/{id}/export-payload', [LetterController::class, 'exportPayload']);
-        Route::match(['GET', 'POST'], '/letters/{id}/download', [LetterController::class, 'download']);
-        Route::post('/letters/{id}/attachments', [LetterController::class, 'addAttachment']);
-        Route::delete('/letters/{id}/attachments/{attachment}', [LetterController::class, 'deleteAttachment']);
+        Route::post('/letters/{id}/submit', [LetterController::class, 'submit'])->whereNumber('id');
+        Route::get('/letters/{id}/preview', [LetterController::class, 'preview'])->whereNumber('id');
+        Route::match(['GET', 'POST'], '/letters/{id}/export-payload', [LetterController::class, 'exportPayload'])->whereNumber('id');
+        Route::match(['GET', 'POST'], '/letters/{id}/download', [LetterController::class, 'download'])->whereNumber('id');
+        Route::post('/letters/{id}/attachments', [LetterController::class, 'addAttachment'])->whereNumber('id');
+        Route::delete('/letters/{id}/attachments/{attachment}', [LetterController::class, 'deleteAttachment'])->whereNumber(['id', 'attachment']);
 
         // Complaints (authenticated citizen scope)
         Route::get('/complaints', [ComplaintController::class, 'index']);
@@ -166,13 +168,13 @@ Route::prefix('v1')->group(function () {
             // Letters admin actions
             Route::get('/letters', [LetterController::class, 'adminIndex'])
                 ->middleware('permission:letter.read,letter.verify,letter.approve');
-            Route::match(['POST', 'PATCH'], '/letters/{id}/verify', [LetterController::class, 'adminVerify'])
+            Route::match(['POST', 'PATCH'], '/letters/{id}/verify', [LetterController::class, 'adminVerify'])->whereNumber('id')
                 ->middleware('permission:letter.verify');
-            Route::match(['POST', 'PATCH'], '/letters/{id}/approve', [LetterController::class, 'adminApprove'])
+            Route::match(['POST', 'PATCH'], '/letters/{id}/approve', [LetterController::class, 'adminApprove'])->whereNumber('id')
                 ->middleware('permission:letter.approve');
-            Route::match(['POST', 'PATCH'], '/letters/{id}/reject', [LetterController::class, 'adminReject'])
+            Route::match(['POST', 'PATCH'], '/letters/{id}/reject', [LetterController::class, 'adminReject'])->whereNumber('id')
                 ->middleware('permission:letter.reject,letter.verify,letter.approve');
-            Route::post('/letters/{id}/complete', [LetterController::class, 'adminComplete'])
+            Route::post('/letters/{id}/complete', [LetterController::class, 'adminComplete'])->whereNumber('id')
                 ->middleware('permission:letter.complete,letter.approve');
 
             // Security reports management
@@ -242,7 +244,7 @@ Route::prefix('v1')->group(function () {
                 ->middleware('permission:finance.purchase.read,finance.read,finance.manage');
             Route::post('/finance/purchases', [PurchaseController::class, 'store'])
                 ->middleware('permission:finance.purchase.manage,finance.purchase.create,finance.manage');
-            Route::get('/finance/purchases/{id}', [PurchaseController::class, 'show'])
+            Route::get('/finance/purchases/{id}', [PurchaseController::class, 'show'])->whereNumber('id')
                 ->middleware('permission:finance.purchase.read,finance.read,finance.manage');
 
             // Quarterly financial reports & integrity sealing
@@ -250,7 +252,7 @@ Route::prefix('v1')->group(function () {
                 ->middleware('permission:finance.report.read,finance.manage');
             Route::post('/finance/reports/quarterly/generate', [FinancialReportController::class, 'generate'])
                 ->middleware('permission:finance.report.generate');
-            Route::post('/finance/reports/quarterly/{id}/publish', [FinancialReportController::class, 'publish'])
+            Route::post('/finance/reports/quarterly/{id}/publish', [FinancialReportController::class, 'publish'])->whereNumber('id')
                 ->middleware('permission:finance.report.publish');
 
             // Legacy Finance Resource for backward compatibility

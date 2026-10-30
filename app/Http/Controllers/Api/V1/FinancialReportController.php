@@ -76,10 +76,19 @@ class FinancialReportController extends Controller
             abort(401, 'Unauthenticated.');
         }
 
+        $validated = $request->validate([
+            'version' => ['nullable', 'integer', 'min:1'],
+        ]);
+
         /** @var FinancialReport $report */
         $report = FinancialReport::query()->findOrFail($id);
 
-        $publishedReport = $this->reportService->publishQuarterlyReport($report, $publisher);
+        // Versi opsional untuk klien lama; bila dikirim, wajib sama (409 jika berbeda).
+        $publishedReport = $this->reportService->publishQuarterlyReport(
+            $report,
+            $publisher,
+            isset($validated['version']) ? (int) $validated['version'] : null
+        );
 
         return (new FinancialReportResource($publishedReport))
             ->response()

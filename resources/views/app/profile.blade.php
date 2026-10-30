@@ -9,7 +9,7 @@
         <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem">
             <div class="avatar" id="avatar-box" style="width:72px;height:72px;font-size:1.6rem;border-radius:20px">@if ($user->avatar_url)<img src="{{ url('/api/v1/files/avatar/'.$user->id).'?v='.$user->updated_at->timestamp }}" alt="Foto profil" width="72" height="72">@else{{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}@endif</div>
             <div><b>{{ $user->role->label() }}</b><br>
-                <span class="badge blue">Akses {{ ['superadmin' => 'Superadmin', 'admin' => 'Admin', 'user' => 'User (Warga)'][$user->tier()] }}</span>
+                <span class="badge blue">Akses {{ $user->role->tierLabel() }}</span>
                 @if ($user->citizen?->status_warga === 'pending_verification') <span class="badge amber">Menunggu verifikasi</span> @endif
             </div>
         </div>

@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateLetterRequest;
 use App\Http\Resources\V1\LetterResource;
 use App\Models\Letter;
 use App\Models\LetterType;
+use App\Models\User;
 use App\Services\DocumentExportService;
 use App\Services\DocumentGeneratorService;
 use App\Services\LetterService;
@@ -14,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class LetterController extends Controller
@@ -123,9 +125,7 @@ class LetterController extends Controller
         $letter = Letter::query()->findOrFail($id);
         $user = $request->user();
 
-        if ($user->isWarga() && $letter->citizen_id !== ($user->citizen?->id ?? null)) {
-            abort(Response::HTTP_FORBIDDEN, 'Anda tidak berwenang mengajukan surat ini.');
-        }
+        $this->ensureOwnerOrSuperadmin($letter, $user, 'Anda tidak berwenang mengajukan surat ini.');
 
         $version = (int) $request->input('version', $letter->version);
         $submitted = $this->letterService->submit($letter, $user, $version);
@@ -142,6 +142,10 @@ class LetterController extends Controller
         $letter = Letter::query()->findOrFail($id);
         $data = $request->validated();
         $user = $request->user();
+
+        if (! isset($data['status'])) {
+            throw ValidationException::withMessages(['status' => ['Status surat wajib diisi.']]);
+        }
 
         $newStatus = $data['status'];
         $currentStatus = $letter->status;
@@ -186,9 +190,7 @@ class LetterController extends Controller
         $letter = Letter::query()->findOrFail($id);
         $user = $request->user();
 
-        if ($user->isWarga() && $letter->citizen_id !== ($user->citizen?->id ?? null)) {
-            abort(Response::HTTP_FORBIDDEN, 'Anda tidak berwenang menghapus surat ini.');
-        }
+        $this->ensureOwnerOrSuperadmin($letter, $user, 'Anda tidak berwenang menghapus surat ini.');
 
         if ($letter->status !== 'draft') {
             abort(Response::HTTP_CONFLICT, 'Hanya surat berstatus draf yang dapat dihapus.');
@@ -276,6 +278,16 @@ class LetterController extends Controller
             abort(Response::HTTP_FORBIDDEN, 'Akses tinjau surat ditolak.');
         }
 
+        // Pemohon hanya boleh melihat dokumen yang sudah disahkan (draf/ditolak bukan dokumen resmi).
+        if (! $hasStaffAccess && ! $this->isIssued($letter)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dokumen resmi hanya dapat ditinjau setelah disetujui (status: approved atau completed).',
+                'reason' => $this->pendingReason($letter),
+                'status' => $letter->status,
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         if (! $letter->file_path || ! Storage::disk('local')->exists($letter->file_path)) {
             $this->documentGeneratorService->generateLetterDocument($letter);
             $letter->refresh();
@@ -304,20 +316,12 @@ class LetterController extends Controller
             abort(Response::HTTP_FORBIDDEN, 'Akses data ekspor surat ditolak.');
         }
 
-        // Security requirement: warga only exports approved or completed letters
-        if ($user?->isWarga() && ! in_array($letter->status, ['approved', 'completed'], true)) {
-            $reason = match ($letter->status) {
-                'draft' => 'Permohonan surat masih berstatus DRAF (belum diajukan). Harap lengkapi dan ajukan permohonan terlebih dahulu.',
-                'submitted' => 'Permohonan surat sedang menunggu proses verifikasi berkas oleh Sekretaris RT sebelum diajukan ke Ketua RT.',
-                'verified' => 'Surat sudah diverifikasi oleh Sekretaris RT dan saat ini sedang menunggu pengesahan serta tanda tangan digital oleh Ketua RT.',
-                'rejected' => 'Permohonan surat telah DITOLAK oleh pengurus RT. Alasan penolakan: "'.($letter->rejection_reason ?: 'Berkas atau persyaratan belum memenuhi ketentuan').'". Dokumen tidak dapat diterbitkan.',
-                default => 'Surat belum disahkan oleh Ketua RT (status saat ini: '.strtoupper($letter->status).').',
-            };
-
+        // Security requirement: pemohon (non-pengurus) only exports approved or completed letters
+        if (! $hasStaffAccess && ! $this->isIssued($letter)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Dokumen resmi hanya dapat diekspor setelah disetujui (status: approved atau completed).',
-                'reason' => $reason,
+                'reason' => $this->pendingReason($letter),
                 'status' => $letter->status,
             ], Response::HTTP_CONFLICT);
         }
@@ -394,19 +398,12 @@ class LetterController extends Controller
 
         $format = strtolower((string) ($request->input('format') ?? $request->query('format') ?? ''));
 
-        if ($user?->isWarga() && ! in_array($letter->status, ['approved', 'completed'], true) && ($format !== '' || $request->expectsJson())) {
-            $reason = match ($letter->status) {
-                'draft' => 'Permohonan surat masih berstatus DRAF (belum diajukan). Harap lengkapi dan ajukan permohonan terlebih dahulu.',
-                'submitted' => 'Permohonan surat sedang menunggu proses verifikasi berkas oleh Sekretaris RT sebelum diajukan ke Ketua RT.',
-                'verified' => 'Surat sudah diverifikasi oleh Sekretaris RT dan saat ini sedang menunggu pengesahan serta tanda tangan digital oleh Ketua RT.',
-                'rejected' => 'Permohonan surat telah DITOLAK oleh pengurus RT. Alasan penolakan: "'.($letter->rejection_reason ?: 'Berkas atau persyaratan belum memenuhi ketentuan').'". Dokumen resmi tidak dapat diterbitkan.',
-                default => 'Surat belum disahkan oleh Ketua RT (status saat ini: '.strtoupper($letter->status).').',
-            };
-
+        // Gerbang status berlaku untuk semua permintaan pemohon, termasuk navigasi browser tanpa format.
+        if (! $hasStaffAccess && ! $this->isIssued($letter)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Dokumen resmi hanya dapat diunduh setelah disetujui (status: approved atau completed).',
-                'reason' => $reason,
+                'reason' => $this->pendingReason($letter),
                 'status' => $letter->status,
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -453,9 +450,7 @@ class LetterController extends Controller
         $letter = Letter::query()->findOrFail($id);
         $user = $request->user();
 
-        if ($user->isWarga() && $letter->citizen_id !== ($user->citizen?->id ?? null)) {
-            abort(Response::HTTP_FORBIDDEN, 'Anda tidak berwenang menambahkan lampiran pada surat ini.');
-        }
+        $this->ensureOwnerOrSuperadmin($letter, $user, 'Anda tidak berwenang menambahkan lampiran pada surat ini.');
 
         if ($letter->status !== 'draft') {
             abort(Response::HTTP_CONFLICT, 'Lampiran hanya dapat ditambahkan pada surat berstatus draf.');
@@ -489,9 +484,7 @@ class LetterController extends Controller
         $letter = Letter::query()->findOrFail($id);
         $user = $request->user();
 
-        if ($user->isWarga() && $letter->citizen_id !== ($user->citizen?->id ?? null)) {
-            abort(Response::HTTP_FORBIDDEN, 'Anda tidak berwenang menghapus lampiran surat ini.');
-        }
+        $this->ensureOwnerOrSuperadmin($letter, $user, 'Anda tidak berwenang menghapus lampiran surat ini.');
 
         if ($letter->status !== 'draft') {
             abort(Response::HTTP_CONFLICT, 'Lampiran hanya dapat dihapus pada surat berstatus draf.');
@@ -504,6 +497,32 @@ class LetterController extends Controller
         return response()->json([
             'message' => 'Lampiran berkas berhasil dihapus.',
         ]);
+    }
+
+    /**
+     * Aksi pada draf (ajukan, hapus, lampiran) hanya untuk pemilik surat atau Superadmin sistem.
+     */
+    protected function ensureOwnerOrSuperadmin(Letter $letter, ?User $user, string $message): void
+    {
+        $isOwner = $user?->citizen !== null && (int) $user->citizen->id === (int) $letter->citizen_id;
+
+        abort_unless($isOwner || $user?->isSuperadmin(), Response::HTTP_FORBIDDEN, $message);
+    }
+
+    protected function isIssued(Letter $letter): bool
+    {
+        return in_array($letter->status, ['approved', 'completed'], true);
+    }
+
+    protected function pendingReason(Letter $letter): string
+    {
+        return match ($letter->status) {
+            'draft' => 'Permohonan surat masih berstatus DRAF (belum diajukan). Harap lengkapi dan ajukan permohonan terlebih dahulu.',
+            'submitted' => 'Permohonan surat sedang menunggu proses verifikasi berkas oleh Sekretaris RT sebelum diajukan ke Ketua RT.',
+            'verified' => 'Surat sudah diverifikasi oleh Sekretaris RT dan saat ini sedang menunggu pengesahan serta tanda tangan digital oleh Ketua RT.',
+            'rejected' => 'Permohonan surat telah DITOLAK oleh pengurus RT. Alasan penolakan: "'.($letter->rejection_reason ?: 'Berkas atau persyaratan belum memenuhi ketentuan').'". Dokumen resmi tidak dapat diterbitkan.',
+            default => 'Surat belum disahkan oleh Ketua RT (status saat ini: '.strtoupper($letter->status).').',
+        };
     }
 
     public function verifyPublic(string $token): JsonResponse

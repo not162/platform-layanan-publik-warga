@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\UserRole;
 use App\Models\DuePayment;
 use App\Models\FinanceTransaction;
 use App\Models\FinancialReport;
@@ -27,16 +28,16 @@ class FinancialReportService
         $startDate = $dates['start'];
         $endDate = $dates['end'];
 
-        return DB::transaction(function () use ($year, $quarter, $startDate, $endDate) {
+        $report = DB::transaction(function () use ($year, $quarter, $startDate, $endDate) {
             // Saldo awal: seluruh pemasukan dikurangi pengeluaran sebelum periode kuartal ini
             $priorIncome = (int) FinanceTransaction::query()
-                ->where('status', '=', 'published', 'and')
+                ->countable()
                 ->where('type', '=', 'income', 'and')
                 ->where('transaction_date', '<', $startDate, 'and')
                 ->sum('amount_idr');
 
             $priorExpense = (int) FinanceTransaction::query()
-                ->where('status', '=', 'published', 'and')
+                ->countable()
                 ->where('type', '=', 'expense', 'and')
                 ->where('transaction_date', '<', $startDate, 'and')
                 ->sum('amount_idr');
@@ -45,13 +46,13 @@ class FinancialReportService
 
             // Transaksi berjalan dalam kuartal
             $incomeIdr = (int) FinanceTransaction::query()
-                ->where('status', '=', 'published', 'and')
+                ->countable()
                 ->where('type', '=', 'income', 'and')
                 ->whereBetween('transaction_date', [$startDate, $endDate])
                 ->sum('amount_idr');
 
             $expenseIdr = (int) FinanceTransaction::query()
-                ->where('status', '=', 'published', 'and')
+                ->countable()
                 ->where('type', '=', 'expense', 'and')
                 ->whereBetween('transaction_date', [$startDate, $endDate])
                 ->sum('amount_idr');
@@ -131,48 +132,109 @@ class FinancialReportService
 
             return $report;
         });
+
+        // Pengesahan adalah wewenang tingkat superadmin (Ketua RT); beri tahu setelah commit.
+        app(NotifyService::class)->toRoles(
+            UserRole::superadminTier(),
+            'Laporan triwulan menunggu pengesahan',
+            "Laporan Triwulan {$quarter} tahun {$year} (revisi {$report->revision}) siap disahkan.",
+            '/app/reports',
+            'warning'
+        );
+
+        return $report;
     }
 
     /**
      * Publikasikan laporan triwulan resmi kepada seluruh warga.
+     * Revisi lebih lama pada triwulan yang sama ditandai 'superseded'
+     * sehingga publik hanya melihat satu laporan terbit per triwulan.
+     *
+     * @param  int|null  $version  Versi yang dilihat pengguna (optimistic lock); null = tanpa pemeriksaan.
      */
-    public function publishQuarterlyReport(FinancialReport $report, User $publisher): FinancialReport
+    public function publishQuarterlyReport(FinancialReport $report, User $publisher, ?int $version = null): FinancialReport
     {
-        if ($report->status === 'published') {
-            return $report;
-        }
+        $published = DB::transaction(function () use ($report, $publisher, $version) {
+            /** @var FinancialReport $locked */
+            $locked = FinancialReport::query()->lockForUpdate()->findOrFail($report->id);
 
-        $report->status = 'published';
-        $report->published_at = now();
-        $report->published_by = $publisher->id;
-        $report->version = $report->version + 1;
+            if ($version !== null && $version !== (int) $locked->version) {
+                abort(409, 'Konflik data: Laporan triwulan telah diubah oleh pengguna lain. Muat ulang halaman.');
+            }
 
-        $report->checksum_sha256 = $this->calculateChecksum(
-            $report->year,
-            $report->quarter,
-            $report->revision,
-            $report->opening_balance_idr,
-            $report->income_idr,
-            $report->expense_idr,
-            $report->closing_balance_idr
+            if ($locked->status !== 'draft') {
+                abort(409, $locked->status === 'published'
+                    ? 'Laporan triwulan ini sudah diterbitkan.'
+                    : 'Laporan triwulan ini sudah digantikan revisi lain dan tidak dapat diterbitkan.');
+            }
+
+            // Kunci seluruh revisi pada triwulan yang sama agar dua pengesahan bersamaan tidak sama-sama lolos.
+            $siblings = FinancialReport::query()
+                ->where('year', $locked->year)
+                ->where('quarter', $locked->quarter)
+                ->whereKeyNot($locked->id)
+                ->lockForUpdate()
+                ->get();
+
+            if ($siblings->contains(fn (FinancialReport $r) => $r->status === 'published' && $r->revision > $locked->revision)) {
+                abort(409, 'Revisi yang lebih baru untuk triwulan ini sudah diterbitkan.');
+            }
+
+            $locked->status = 'published';
+            $locked->published_at = now();
+            $locked->published_by = $publisher->id;
+            $locked->version = (int) $locked->version + 1;
+
+            $locked->checksum_sha256 = $this->calculateChecksum(
+                $locked->year,
+                $locked->quarter,
+                $locked->revision,
+                $locked->opening_balance_idr,
+                $locked->income_idr,
+                $locked->expense_idr,
+                $locked->closing_balance_idr
+            );
+
+            $locked->save();
+
+            // Revisi lama (terbit maupun draf) digantikan oleh revisi yang baru disahkan.
+            $supersededIds = $siblings
+                ->filter(fn (FinancialReport $r) => $r->revision < $locked->revision && in_array($r->status, ['draft', 'published'], true))
+                ->pluck('id');
+
+            if ($supersededIds->isNotEmpty()) {
+                FinancialReport::query()->whereKey($supersededIds->all())->update([
+                    'status' => 'superseded',
+                    'version' => DB::raw('version + 1'),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            $this->auditService->log(
+                'financial_report.published',
+                FinancialReport::class,
+                $locked->id,
+                null,
+                [
+                    'year' => $locked->year,
+                    'quarter' => $locked->quarter,
+                    'revision' => $locked->revision,
+                    'checksum' => $locked->checksum_sha256,
+                    'superseded_ids' => $supersededIds->values()->all(),
+                ]
+            );
+
+            return $locked;
+        });
+
+        app(NotifyService::class)->toEveryone(
+            'Laporan keuangan triwulan terbit',
+            "Laporan Triwulan {$published->quarter} tahun {$published->year} telah disahkan dan dapat dilihat warga.",
+            '/#keuangan',
+            'success'
         );
 
-        $report->save();
-
-        $this->auditService->log(
-            'financial_report.published',
-            FinancialReport::class,
-            $report->id,
-            null,
-            [
-                'year' => $report->year,
-                'quarter' => $report->quarter,
-                'revision' => $report->revision,
-                'checksum' => $report->checksum_sha256,
-            ]
-        );
-
-        return $report->load('publisher');
+        return $published->load('publisher');
     }
 
     /**

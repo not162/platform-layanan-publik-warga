@@ -18,7 +18,10 @@ class ResidentDueService
     public function __construct(protected AuditService $auditService) {}
 
     /**
-     * Generate monthly dues for all registered citizens.
+     * Terbitkan tagihan bulanan untuk warga tetap (status_warga 'tetap').
+     * Warga pindah/nonaktif dan pendaftar yang belum diverifikasi tidak ditagih.
+     *
+     * @return int Jumlah tagihan baru yang dibuat (0 bila periode sudah lengkap).
      */
     public function generateMonthlyDues(
         int $year,
@@ -35,7 +38,7 @@ class ResidentDueService
             ? Carbon::parse($dueDate)->toDateString()
             : Carbon::create($year, $month, 10)->toDateString();
 
-        $citizens = Citizen::query()->get();
+        $citizens = Citizen::query()->where('status_warga', 'tetap')->get();
         $generatedCount = 0;
 
         DB::transaction(function () use ($citizens, $year, $month, $amountDueIdr, $dueDateTime, $notes, &$generatedCount) {
@@ -79,7 +82,7 @@ class ResidentDueService
             abort(422, 'Jumlah pembayaran harus lebih besar dari 0 Rupiah.');
         }
 
-        return DB::transaction(function () use ($due, $amountPaidIdr, $paymentMethod, $receiver, $notes, $proofPath) {
+        $payment = DB::transaction(function () use ($due, $amountPaidIdr, $paymentMethod, $receiver, $notes, $proofPath) {
             /** @var ResidentDue $lockedDue */
             $lockedDue = ResidentDue::query()->lockForUpdate()->findOrFail($due->id);
 
@@ -118,30 +121,27 @@ class ResidentDueService
 
             if ($totalPaid >= $lockedDue->amount_due_idr) {
                 $newStatus = 'PAID';
-            } elseif ($totalPaid > 0) {
-                $newStatus = 'PARTIAL';
-            } elseif (now()->toDateString() > $lockedDue->due_date->toDateString()) {
-                $newStatus = 'OVERDUE';
             } else {
-                $newStatus = 'UNPAID';
+                $newStatus = 'PARTIAL';
             }
 
             $lockedDue->status = $newStatus;
             $lockedDue->save();
 
-            // Link to FinanceTransaction for general ledger integrity
-            $citizenName = $lockedDue->citizen?->full_name ?? 'Warga';
+            // Link to FinanceTransaction for general ledger integrity.
+            // Keterangan buku kas tampil di portal publik, jadi tidak memuat nama pembayar;
+            // identitas pembayar tetap tersimpan privat di DuePayment (finance_transaction_id).
             $txNumber = 'TX-DUE-'.date('Ymd').'-'.strtoupper(Str::random(6));
 
             $tx = FinanceTransaction::query()->create([
                 'transaction_number' => $txNumber,
-                'source' => 'Iuran Kas Warga',
+                'source' => FinanceTransaction::SOURCE_DUES,
                 'amount_idr' => $amountPaidIdr,
                 'created_by' => $receiver?->id,
                 'category' => 'Iuran Kas Warga',
                 'type' => 'income',
                 'amount' => $amountPaidIdr,
-                'description' => "Pembayaran iuran kas RT {$lockedDue->period_month}/{$lockedDue->period_year} oleh {$citizenName} (Kuitansi: {$receiptNumber})",
+                'description' => "Pembayaran iuran kas RT {$lockedDue->period_month}/{$lockedDue->period_year} (Kuitansi: {$receiptNumber})",
                 'transaction_date' => now(),
                 'status' => 'published',
                 'version' => 1,
@@ -155,6 +155,24 @@ class ResidentDueService
 
             return $payment;
         });
+
+        // Saldo kas berubah: ringkasan publik/dashboard tidak boleh menunggu cache 30 menit.
+        app(FinanceService::class)->clearCache();
+
+        return $payment;
+    }
+
+    /**
+     * Tandai tagihan UNPAID yang melewati jatuh tempo sebagai OVERDUE (dijalankan harian).
+     *
+     * @return int Jumlah tagihan yang ditandai.
+     */
+    public function markOverdueDues(): int
+    {
+        return ResidentDue::query()
+            ->where('status', 'UNPAID')
+            ->whereDate('due_date', '<', today()->toDateString())
+            ->update(['status' => 'OVERDUE', 'updated_at' => now()]);
     }
 
     /**
@@ -185,10 +203,11 @@ class ResidentDueService
             'total_assessed_idr' => $totalAssessedIdr,
             'total_paid_idr' => $totalPaidIdr,
             'total_outstanding_idr' => $totalOutstandingIdr,
-            'unpaid_count' => $dues->where('status', 'UNPAID')->count(),
+            // unpaid_count = belum dibayar sama sekali (termasuk yang terlambat); overdue_count = bagian yang terlambat.
+            'unpaid_count' => $dues->whereIn('status', ['UNPAID', 'OVERDUE'])->count(),
             'partial_count' => $dues->where('status', 'PARTIAL')->count(),
             'paid_count' => $dues->where('status', 'PAID')->count(),
-            'overdue_count' => $dues->where('status', 'OVERDUE')->count(),
+            'overdue_count' => $dues->filter(fn (ResidentDue $d) => $d->effectiveStatus() === 'OVERDUE')->count(),
         ];
     }
 
@@ -206,7 +225,7 @@ class ResidentDueService
         }
 
         if ($status) {
-            $query->where('status', '=', strtoupper($status), 'and');
+            $query->whereEffectiveStatus($status);
         }
 
         return $query->orderBy('period_year', 'desc')

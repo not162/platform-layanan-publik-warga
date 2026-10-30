@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\UserRole;
 use App\Events\CitizenRegistered;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\EnsureUserIsActive;
 use App\Mail\ResetPasswordMail;
 use App\Models\Citizen;
 use App\Models\FamilyCard;
@@ -21,9 +22,17 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
+    /** Masa berlaku tautan reset yang dikirim lewat email. */
+    protected const RESET_EMAIL_MINUTES = 20;
+
+    /** Masa berlaku tautan reset yang diserahkan langsung oleh pengurus RT. */
+    protected const RESET_HANDOVER_MINUTES = 1440;
+
     public function __construct(
         protected NotifyService $notify,
         protected AuditService $audit,
@@ -54,7 +63,7 @@ class AuthController extends Controller
                 $status = $citizen->status_warga === 'pending_verification' ? 'PENDING_VERIFICATION' : 'PRE_REGISTERED_RT';
                 $message = $status === 'PENDING_VERIFICATION'
                     ? 'Pengajuan untuk NIK ini masih diverifikasi pengurus RT.'
-                    : 'NIK terdata di master warga RT atas nama '.$this->maskName($citizen->full_name).'. Isi nama persis sesuai KTP untuk aktivasi akun.';
+                    : 'NIK terdata di master warga RT. Isi nama persis sesuai KTP untuk aktivasi akun.';
             } else {
                 $status = 'NOT_FOUND';
                 $message = 'NIK belum terdata. Anda dapat mendaftar sebagai warga baru (menunggu verifikasi pengurus).';
@@ -104,8 +113,6 @@ class AuthController extends Controller
             'status' => $status,
             'message' => $message,
             'exists' => $citizen !== null,
-            'has_account' => $citizen?->user_id !== null,
-            'registered_name' => $citizen ? $this->maskName($citizen->full_name) : null,
             'allow_new_application' => $status === 'NOT_FOUND',
             'checks' => $checks,
         ]);
@@ -226,7 +233,7 @@ class AuthController extends Controller
         $this->audit->log('auth.registered', 'User', $user->id, null, ['username' => $user->username, 'pending' => $isNewApplicant]);
 
         $this->notify->toRoles(
-            [UserRole::SEKRETARIS, UserRole::ADMIN, UserRole::KETUA_RT],
+            [...UserRole::superadminTier(), UserRole::SEKRETARIS, UserRole::ADMIN],
             $isNewApplicant ? 'Warga baru menunggu verifikasi' : 'Warga mengaktifkan akun',
             "{$user->name} (@{$user->username}) mendaftar lewat portal.",
             '/app/citizens',
@@ -253,14 +260,16 @@ class AuthController extends Controller
                 : 'Registrasi berhasil. Akun Anda telah aktif.',
             'is_pending_verification' => $isNewApplicant,
             'redirect_url' => route('dashboard'),
-            'access_token' => $user->createToken('auth_token')->plainTextToken,
-            'token_type' => 'Bearer',
+            ...$this->tokenPayload($request, $user),
             'user' => $this->userPayload($user) + ['citizen' => ['id' => $citizen->id, 'status_warga' => $citizen->status_warga]],
         ], 201);
     }
 
     /**
-     * Lupa password: identitas diverifikasi lewat username + NIK + No. KK, lalu diterbitkan tautan sekali pakai.
+     * Lupa password: identitas diverifikasi lewat username + NIK + No. KK. Tautan sekali pakai
+     * TIDAK pernah dikirim ke browser: dikirim ke email akun, atau (tanpa email / SMTP gagal)
+     * diteruskan ke pengurus RT agar diserahkan langsung setelah identitas warga dicek.
+     * Respons selalu sama agar tidak membocorkan kecocokan data maupun ada tidaknya email.
      */
     public function forgotPassword(Request $request): JsonResponse
     {
@@ -273,6 +282,10 @@ class AuthController extends Controller
             'no_kk.digits' => 'No. KK harus 16 digit.',
         ]);
 
+        $generic = response()->json([
+            'message' => 'Jika data cocok, tautan atur ulang password dikirim ke email akun Anda. Akun tanpa email: pengurus RT akan menyerahkan tautan secara langsung setelah mencocokkan KTP Anda.',
+        ]);
+
         $user = User::findByLogin(strtolower($data['username']));
         $citizen = $user?->citizen()->with('familyCard')->first();
 
@@ -281,53 +294,49 @@ class AuthController extends Controller
             && $citizen->familyCard
             && hash_equals((string) $citizen->familyCard->no_kk_hash, hash('sha256', $data['no_kk']));
 
-        if (! $matches) {
-            throw ValidationException::withMessages([
-                'username' => ['Data tidak cocok. Periksa username, NIK, dan No. KK. Akun pengurus: hubungi Superadmin.'],
-            ]);
-        }
-
-        if (! $user->is_active) {
-            throw ValidationException::withMessages(['username' => ['Akun dinonaktifkan. Hubungi pengurus RT.']]);
+        if (! $matches || ! $user->is_active) {
+            return $generic;
         }
 
         $token = Str::random(48);
+        $url = route('password.reset', ['token' => $token]);
+        $emailed = false;
+
+        if ($user->email) {
+            try {
+                Mail::to($user->email)->send(new ResetPasswordMail($user->name, $url, self::RESET_EMAIL_MINUTES));
+                $emailed = true;
+            } catch (\Throwable $e) {
+                Log::warning('Gagal mengirim email reset password: '.$e->getMessage());
+            }
+        }
+
+        // Tanpa email: permintaan menunggu serah-terima oleh pengurus, jadi masa berlakunya lebih panjang.
+        $minutes = $emailed ? self::RESET_EMAIL_MINUTES : self::RESET_HANDOVER_MINUTES;
 
         DB::table('password_reset_requests')->where('user_id', $user->id)->whereNull('used_at')->delete();
         DB::table('password_reset_requests')->insert([
             'user_id' => $user->id,
             'token_hash' => hash('sha256', $token),
             'ip_address' => $request->ip(),
-            'expires_at' => now()->addMinutes(20),
+            'expires_at' => now()->addMinutes($minutes),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        $this->audit->log('auth.password_reset_requested', 'User', $user->id, null, ['ip' => $request->ip()]);
+        $this->audit->log('auth.password_reset_requested', 'User', $user->id, null, ['ip' => $request->ip(), 'channel' => $emailed ? 'email' : 'pengurus']);
 
-        $url = route('password.reset', ['token' => $token]);
-
-        if ($user->email) {
-            try {
-                Mail::to($user->email)->send(new ResetPasswordMail($user->name, $url));
-
-                return response()->json([
-                    'message' => 'Identitas terverifikasi. Tautan atur ulang password dikirim ke '.$this->maskEmail($user->email).' (berlaku 20 menit).',
-                    'emailed' => true,
-                    'expires_in_minutes' => 20,
-                ]);
-            } catch (\Throwable $e) {
-                Log::warning('Gagal mengirim email reset password: '.$e->getMessage());
-            }
+        if (! $emailed) {
+            $this->notify->toRoles(
+                [...UserRole::superadminTier(), UserRole::SEKRETARIS],
+                'Permintaan reset password warga',
+                "{$user->name} (@{$user->username}) meminta reset password. Cocokkan KTP warga secara langsung sebelum menyerahkan tautan ini (sekali pakai, berlaku ".intdiv($minutes, 60)." jam): {$url}",
+                $url,
+                'warning',
+            );
         }
 
-        // Akun tanpa email (atau SMTP belum siap): tautan ditampilkan langsung sebagai cadangan.
-        return response()->json([
-            'message' => 'Identitas terverifikasi. Silakan buat password baru (berlaku 20 menit).',
-            'emailed' => false,
-            'reset_url' => $url,
-            'expires_in_minutes' => 20,
-        ]);
+        return $generic;
     }
 
     public function resetPassword(Request $request): JsonResponse
@@ -349,7 +358,8 @@ class AuthController extends Controller
 
         $user = User::query()->findOrFail($row->user_id);
         $user->forceFill(['password' => $data['password'], 'remember_token' => Str::random(60)])->save();
-        $user->tokens()->delete();
+        // Cabut semua token & sesi lama; sesi lain juga tertolak AuthenticateWebSession karena hash password berubah.
+        EnsureUserIsActive::revokeAccess($user);
 
         DB::table('password_reset_requests')->where('id', $row->id)->update(['used_at' => now(), 'updated_at' => now()]);
 
@@ -365,13 +375,15 @@ class AuthController extends Controller
 
         if ($request->hasSession() || auth()->guard('web')->check()) {
             auth()->guard('web')->login($user, $request->boolean('remember'));
+            if ($request->hasSession()) {
+                $request->session()->regenerate();
+            }
         }
 
         $this->audit->log('auth.login', 'User', $user->id, null, ['ip' => $request->ip()]);
 
         return response()->json([
-            'access_token' => $user->createToken('auth_token')->plainTextToken,
-            'token_type' => 'Bearer',
+            ...$this->tokenPayload($request, $user),
             'redirect_url' => '/dashboard',
             'user' => $this->userPayload($user),
             'message' => 'Login berhasil.',
@@ -400,8 +412,7 @@ class AuthController extends Controller
         if ($request->expectsJson() || $request->wantsJson()) {
             return response()->json([
                 'message' => 'Login berhasil.',
-                'access_token' => $user->createToken('auth_token')->plainTextToken,
-                'token_type' => 'Bearer',
+                ...$this->tokenPayload($request, $user),
                 'redirect_url' => route('dashboard'),
                 'user' => $this->userPayload($user),
             ]);
@@ -429,8 +440,13 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $token = $request->user()?->currentAccessToken();
-        if ($token && method_exists($token, 'delete')) {
+        if ($token instanceof PersonalAccessToken) {
             $token->delete();
+        } elseif ($request->hasSession()) {
+            // Klien SPA (sesi cookie): TransientToken tidak bisa dihapus, jadi akhiri sesinya.
+            auth()->guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
         }
 
         return response()->json(['message' => 'Berhasil logout']);
@@ -471,20 +487,21 @@ class AuthController extends Controller
     }
 
     /**
-     * Samarkan nama untuk endpoint publik (mis. "Siti Aminah" → "S*** A*****").
+     * Token Bearer hanya untuk klien non-SPA (aplikasi pihak ketiga / mobile).
+     * Web shell memakai cookie sesi sehingga tidak perlu token yang tidak pernah kedaluwarsa.
+     *
+     * @return array<string, string>
      */
-    protected function maskEmail(string $email): string
+    protected function tokenPayload(Request $request, User $user): array
     {
-        [$local, $domain] = array_pad(explode('@', $email, 2), 2, '');
+        if (EnsureFrontendRequestsAreStateful::fromFrontend($request)) {
+            return [];
+        }
 
-        return mb_substr($local, 0, 1).str_repeat('*', max(mb_strlen($local) - 1, 2)).'@'.$domain;
-    }
-
-    protected function maskName(string $name): string
-    {
-        return collect(preg_split('/\s+/', trim($name)))
-            ->map(fn (string $w) => mb_substr($w, 0, 1).str_repeat('*', max(mb_strlen($w) - 1, 0)))
-            ->implode(' ');
+        return [
+            'access_token' => $user->createToken('auth_token')->plainTextToken,
+            'token_type' => 'Bearer',
+        ];
     }
 
     /**

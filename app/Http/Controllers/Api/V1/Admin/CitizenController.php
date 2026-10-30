@@ -22,7 +22,7 @@ class CitizenController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        abort_if(! $request->user()?->hasPermission('citizen.manage'), Response::HTTP_FORBIDDEN, 'Akses ditolak.');
+        abort_if(! $request->user()?->hasPermission('citizen.read') && ! $request->user()?->hasPermission('citizen.manage'), Response::HTTP_FORBIDDEN, 'Akses ditolak.');
 
         $query = Citizen::query()->with(['familyCard', 'user']);
 
@@ -52,7 +52,7 @@ class CitizenController extends Controller
      */
     public function show(Request $request, string $id): CitizenResource
     {
-        abort_if(! $request->user()?->hasPermission('citizen.manage'), Response::HTTP_FORBIDDEN, 'Akses ditolak.');
+        abort_if(! $request->user()?->hasPermission('citizen.read') && ! $request->user()?->hasPermission('citizen.manage'), Response::HTTP_FORBIDDEN, 'Akses ditolak.');
 
         $citizen = Citizen::with(['familyCard', 'user'])->findOrFail($id);
 
@@ -88,13 +88,9 @@ class CitizenController extends Controller
      */
     public function verifyCitizen(Request $request, string $id): JsonResponse
     {
-        abort_if(! $request->user()?->hasPermission('citizen.manage') && ! $request->user()?->isSuperadmin() && ! $request->user()?->isSekretaris() && ! $request->user()?->isKetuaRt(), Response::HTTP_FORBIDDEN, 'Akses verifikasi warga ditolak.');
+        $data = $request->validate(['notes' => ['nullable', 'string', 'max:500']]);
 
-        $citizen = Citizen::findOrFail($id);
-        $citizen->update([
-            'status_warga' => 'tetap',
-            'verification_notes' => 'Telah diverifikasi dan disahkan oleh pengurus RT: '.($request->user()?->name ?? 'Admin RT'),
-        ]);
+        $citizen = $this->service->verify(Citizen::findOrFail($id), $request->user(), $data['notes'] ?? null);
 
         return response()->json([
             'message' => "Data warga {$citizen->full_name} berhasil diverifikasi dan disahkan.",
@@ -107,14 +103,10 @@ class CitizenController extends Controller
      */
     public function rejectCitizen(Request $request, string $id): JsonResponse
     {
-        abort_if(! $request->user()?->hasPermission('citizen.manage') && ! $request->user()?->isSuperadmin() && ! $request->user()?->isSekretaris() && ! $request->user()?->isKetuaRt(), Response::HTTP_FORBIDDEN, 'Akses penolakan warga ditolak.');
+        $data = $request->validate(['reason' => ['nullable', 'string', 'max:500']]);
+        $reason = $data['reason'] ?? 'Berkas identitas tidak valid atau bukan merupakan warga lingkungan RT '.config('rt.rt').'.';
 
-        $citizen = Citizen::findOrFail($id);
-        $reason = $request->input('reason', 'Berkas identitas tidak valid atau bukan merupakan warga lingkungan RT 01.');
-        $citizen->update([
-            'status_warga' => 'ditolak',
-            'verification_notes' => 'Ditolak: '.$reason,
-        ]);
+        $citizen = $this->service->reject(Citizen::findOrFail($id), $request->user(), $reason);
 
         return response()->json([
             'message' => "Pengajuan warga {$citizen->full_name} telah ditolak.",

@@ -30,10 +30,7 @@ class PengurusSeeder extends Seeder
         ];
 
         foreach ($accounts as $i => [$username, $name, $role, $email, $position]) {
-            User::updateOrCreate(
-                ['username' => $username],
-                ['name' => $name, 'email' => $email, 'password' => 'password', 'role' => $role, 'is_active' => true]
-            );
+            self::account($username, $email, ['name' => $name, 'role' => $role]);
 
             if ($position) {
                 RtOfficer::updateOrCreate(
@@ -57,10 +54,8 @@ class PengurusSeeder extends Seeder
             ]
         );
 
-        $warga = User::updateOrCreate(
-            ['username' => 'warga'],
-            ['name' => 'Budi Santoso', 'email' => 'warga@warga.local', 'password' => 'password', 'role' => UserRole::WARGA, 'is_active' => true, 'warga_id' => $citizen->id]
-        );
+        $warga = self::account('warga', 'warga@warga.local', ['name' => 'Budi Santoso', 'role' => UserRole::WARGA, 'warga_id' => $citizen->id]);
+        Citizen::query()->where('user_id', $warga->id)->where('id', '!=', $citizen->id)->update(['user_id' => null]);
         $citizen->update(['user_id' => $warga->id]);
 
         // Warga master RT yang belum punya akun — dipakai untuk mencoba aktivasi akun lewat halaman Daftar
@@ -71,5 +66,19 @@ class PengurusSeeder extends Seeder
                 'place_of_birth' => 'Bandung', 'date_of_birth' => '1992-05-15', 'status_warga' => 'tetap', 'version' => 1,
             ]
         );
+    }
+
+    /**
+     * Akun demo dicocokkan lewat username ATAU email, karena migrasi username
+     * mengisi akun lama dengan akhiran id (mis. "superadmin2").
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    protected static function account(string $username, string $email, array $attributes): User
+    {
+        $user = User::query()->where('username', $username)->orWhere('email', $email)->orderByRaw('username = ? DESC', [$username])->first() ?? new User;
+        $user->fill($attributes + ['username' => $username, 'email' => $email, 'password' => 'password', 'is_active' => true])->save();
+
+        return $user;
     }
 }

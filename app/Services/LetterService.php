@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\UserRole;
 use App\Events\LetterStatusUpdated;
 use App\Models\DocumentSequence;
 use App\Models\Letter;
@@ -9,13 +10,32 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class LetterService
 {
     public function __construct(
         protected AuditService $auditService,
-        protected DocumentGeneratorService $documentGeneratorService
+        protected DocumentGeneratorService $documentGeneratorService,
+        protected NotifyService $notifyService
     ) {}
+
+    /**
+     * Penolakan mengikuti tahap alur: surat 'submitted' ditolak pemverifikasi (Sekretaris, letter.verify),
+     * surat 'verified' ditolak pengesah (Ketua RT, letter.approve). Superadmin sistem tetap bypass.
+     */
+    public static function canReject(User $user, Letter $letter): bool
+    {
+        if ($user->isSuperadmin()) {
+            return in_array($letter->status, ['submitted', 'verified'], true);
+        }
+
+        return match ($letter->status) {
+            'submitted' => $user->hasPermission('letter.verify'),
+            'verified' => $user->hasPermission('letter.approve'),
+            default => false,
+        };
+    }
 
     /**
      * Create a new letter request (draft or directly submitted).
@@ -80,6 +100,10 @@ class LetterService
             abort(403, 'Akses ditolak: Membutuhkan izin verifikasi surat (letter.verify).');
         }
 
+        if ($notes !== null && mb_strlen($notes) > 500) {
+            throw ValidationException::withMessages(['notes' => ['Catatan verifikasi maksimal 500 karakter.']]);
+        }
+
         return DB::transaction(function () use ($letter, $user, $version, $notes) {
             /** @var Letter $locked */
             $locked = Letter::query()->lockForUpdate()->findOrFail($letter->id);
@@ -119,7 +143,7 @@ class LetterService
             abort(403, 'Akses ditolak: Membutuhkan izin persetujuan surat (letter.approve).');
         }
 
-        return DB::transaction(function () use ($letter, $user, $version, $customLetterNumber) {
+        $approved = DB::transaction(function () use ($letter, $user, $version, $customLetterNumber) {
             /** @var Letter $locked */
             $locked = Letter::query()->lockForUpdate()->findOrFail($letter->id);
 
@@ -149,6 +173,17 @@ class LetterService
 
             return $locked;
         });
+
+        // Sekretaris (letter.complete) menyerahkan surat lalu menandainya selesai.
+        $this->notifyService->toRoles(
+            [UserRole::SEKRETARIS],
+            'Surat siap diselesaikan',
+            "{$approved->ticket_number} telah disahkan Ketua RT (No. {$approved->letter_number}). Serahkan ke pemohon lalu tandai selesai.",
+            '/app/letters',
+            'info',
+        );
+
+        return $approved;
     }
 
     /**
@@ -193,7 +228,7 @@ class LetterService
      */
     public function reject(Letter $letter, User $user, int $version, string $reason): Letter
     {
-        if (! $user->hasPermission('letter.verify') && ! $user->hasPermission('letter.approve') && ! $user->hasPermission('letter.reject') && ! $user->isSuperadmin()) {
+        if (! $user->hasPermission('letter.verify') && ! $user->hasPermission('letter.approve') && ! $user->isSuperadmin()) {
             abort(403, 'Akses ditolak: Tidak memiliki wewenang penolakan surat.');
         }
 
@@ -201,7 +236,7 @@ class LetterService
             abort(422, 'Alasan penolakan (rejection_reason) wajib diisi.');
         }
 
-        return DB::transaction(function () use ($letter, $version, $reason) {
+        return DB::transaction(function () use ($letter, $user, $version, $reason) {
             /** @var Letter $locked */
             $locked = Letter::query()->lockForUpdate()->findOrFail($letter->id);
 
@@ -211,6 +246,12 @@ class LetterService
 
             if (! in_array($locked->status, ['submitted', 'verified'], true)) {
                 abort(409, "Transisi tidak sah: Surat berstatus '{$locked->status}' tidak dapat ditolak.");
+            }
+
+            if (! self::canReject($user, $locked)) {
+                abort(403, $locked->status === 'submitted'
+                    ? 'Akses ditolak: Surat yang belum diverifikasi hanya dapat ditolak oleh Sekretaris RT (letter.verify).'
+                    : 'Akses ditolak: Surat terverifikasi hanya dapat ditolak oleh Ketua RT (letter.approve).');
             }
 
             $oldValues = $locked->toArray();

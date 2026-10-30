@@ -133,8 +133,9 @@ class LetterTypeController extends Controller
         $letterType = LetterType::query()->findOrFail($id);
 
         $validated = $request->validate([
-            'kode_surat' => ['nullable', 'string', 'max:30', 'unique:jenis_surat,kode_surat,'.$letterType->id],
-            'nama_surat' => ['nullable', 'string', 'max:150'],
+            // Kolom NOT NULL: boleh tidak dikirim, tetapi tidak boleh dikosongkan.
+            'kode_surat' => ['sometimes', 'required', 'string', 'max:30', 'unique:jenis_surat,kode_surat,'.$letterType->id],
+            'nama_surat' => ['sometimes', 'required', 'string', 'max:150'],
             'template_key' => ['nullable', 'string', 'max:100'],
             'template_version' => ['nullable', 'integer', 'min:1'],
             'format_penomoran' => ['nullable', 'string', 'max:100'],

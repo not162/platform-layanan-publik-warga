@@ -32,6 +32,8 @@ class FinancialReportResource extends JsonResource
             'dues_collected_idr' => (int) $this->dues_collected_idr,
             'dues_outstanding_idr' => (int) $this->dues_outstanding_idr,
             'status' => $this->status,
+            // Hanya draf yang dapat disahkan, oleh pemegang finance.report.publish (Ketua RT).
+            'can_publish' => $this->status === 'draft' && (bool) $request->user()?->hasPermission('finance.report.publish'),
             'generated_at' => $this->generated_at?->toIso8601String(),
             'published_at' => $this->published_at?->toIso8601String(),
             'published_by_name' => $this->publisher?->name,

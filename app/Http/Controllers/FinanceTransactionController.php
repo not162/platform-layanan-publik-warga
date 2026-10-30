@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateFinanceTransactionRequest;
 use App\Http\Resources\V1\FinanceTransactionResource;
 use App\Models\DownloadAudit;
 use App\Models\FinanceTransaction;
+use App\Models\ResidentDue;
 use App\Services\FinanceReportService;
 use App\Services\FinanceService;
 use Illuminate\Http\JsonResponse;
@@ -25,6 +26,7 @@ class FinanceTransactionController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $transactions = FinanceTransaction::query()
+            ->with(['purchase', 'duePayment'])
             ->latest('transaction_date')
             ->paginate(15);
 
@@ -34,7 +36,7 @@ class FinanceTransactionController extends Controller
     public function publicIndex(): AnonymousResourceCollection
     {
         $transactions = FinanceTransaction::query()
-            ->where('status', 'published')
+            ->countable()
             ->latest('transaction_date')
             ->paginate(15);
 
@@ -107,7 +109,7 @@ class FinanceTransactionController extends Controller
     public function publicTransactions(Request $request): AnonymousResourceCollection
     {
         $query = FinanceTransaction::query()
-            ->where('status', 'published')
+            ->countable()
             ->select([
                 'id',
                 'transaction_number',
@@ -120,6 +122,7 @@ class FinanceTransactionController extends Controller
                 'transaction_date',
                 'status',
                 'published_at',
+                'original_transaction_id',
                 'version',
                 'created_at',
                 'updated_at',
@@ -217,14 +220,14 @@ class FinanceTransactionController extends Controller
      */
     public function downloadMonthlyReport(Request $request): Response
     {
-        $this->authorizeFinanceReportAccess($request);
+        $this->authorizeFinancePermission($request, ['finance.report.read', 'finance.read']);
 
         $year = (int) $request->query('year', now()->year);
         $month = (int) $request->query('month', now()->month);
         $format = (string) $request->query('format', 'html');
 
         $hasTransactions = FinanceTransaction::query()
-            ->where('status', '=', 'published', 'and')
+            ->countable()
             ->whereYear('transaction_date', $year)
             ->whereMonth('transaction_date', $month)
             ->exists();
@@ -260,24 +263,19 @@ class FinanceTransactionController extends Controller
      */
     public function downloadCitizenDuesReport(Request $request): Response
     {
-        $this->authorizeFinanceReportAccess($request);
+        $this->authorizeFinancePermission($request, ['finance.report.read', 'finance.read']);
 
         $year = (int) $request->query('year', now()->year);
         $month = (int) $request->query('month', now()->month);
 
-        $hasDues = FinanceTransaction::query()
-            ->where('status', '=', 'published', 'and')
-            ->where('type', '=', 'income', 'and')
-            ->where(function ($q) {
-                $q->where('category', 'like', '%Iuran%')
-                    ->orWhere('category', 'like', '%Warga%');
-            })
-            ->whereYear('transaction_date', $year)
-            ->whereMonth('transaction_date', $month)
+        // Rekap dibangun dari tagihan periode (ResidentDue), jadi syaratnya tagihan periode itu ada.
+        $hasDues = ResidentDue::query()
+            ->where('period_year', $year)
+            ->where('period_month', $month)
             ->exists();
 
         if (! $hasDues) {
-            abort(404, 'Rekapitulasi iuran warga tidak dapat diunduh karena belum ada transaksi iuran tercatat pada periode yang dipilih.');
+            abort(404, 'Rekapitulasi iuran warga tidak dapat diunduh karena belum ada tagihan iuran untuk periode yang dipilih.');
         }
 
         $report = $this->financeReportService->generateCitizenDuesReport($year, $month);
@@ -307,7 +305,7 @@ class FinanceTransactionController extends Controller
      */
     public function createBackupStore(Request $request): JsonResponse
     {
-        $this->authorizeFinanceReportAccess($request);
+        $this->authorizeFinancePermission($request, ['finance.report.generate', 'finance.manage']);
 
         $backup = $this->financeReportService->createBackupStore($request->user());
 
@@ -322,7 +320,7 @@ class FinanceTransactionController extends Controller
      */
     public function listBackups(Request $request): JsonResponse
     {
-        $this->authorizeFinanceReportAccess($request);
+        $this->authorizeFinancePermission($request, ['finance.report.read', 'finance.read']);
 
         $backups = $this->financeReportService->listBackups();
 
@@ -336,7 +334,7 @@ class FinanceTransactionController extends Controller
      */
     public function downloadBackup(Request $request, string $filename): Response
     {
-        $this->authorizeFinanceReportAccess($request);
+        $this->authorizeFinancePermission($request, ['finance.report.read', 'finance.read']);
 
         $cleanFilename = basename($filename);
         $path = "private/financial-reports/backups/{$cleanFilename}";
@@ -353,9 +351,12 @@ class FinanceTransactionController extends Controller
     }
 
     /**
-     * Verify role/permission access: Bendahara, Sekretaris, Ketua RT, and Superadmin
+     * Otorisasi berbasis izin (bukan nama peran) agar jalur web dan API konsisten.
+     * Cukup salah satu izin; Superadmin otomatis lolos lewat hasPermission().
+     *
+     * @param  array<int, string>  $permissions
      */
-    protected function authorizeFinanceReportAccess(Request $request): void
+    protected function authorizeFinancePermission(Request $request, array $permissions): void
     {
         $user = $request->user();
 
@@ -363,16 +364,12 @@ class FinanceTransactionController extends Controller
             abort(401, 'Unauthenticated.');
         }
 
-        if (
-            $user->isSuperadmin() ||
-            $user->isAdmin() ||
-            $user->isBendahara() ||
-            $user->isSekretaris() ||
-            $user->isKetuaRt()
-        ) {
-            return;
+        foreach ($permissions as $permission) {
+            if ($user->hasPermission($permission)) {
+                return;
+            }
         }
 
-        abort(403, 'Akses tidak diizinkan. Hanya peran kepengurusan RT yang dapat mengakses laporan dan rekapitulasi kas.');
+        abort(403, 'Akses tidak diizinkan. Membutuhkan izin '.implode(' atau ', $permissions).'.');
     }
 }

@@ -39,11 +39,13 @@ class PurchaseService
             abort(422, 'Rincian belanja minimal harus memiliki 1 item barang atau jasa.');
         }
 
-        return DB::transaction(function () use ($data, $receipt, $creator) {
+        $purchase = DB::transaction(function () use ($data, $receipt, $creator) {
             $receiptPath = null;
             if ($receipt) {
-                $filename = 'receipt-'.date('Ymd').'-'.Str::random(12).'.'.$receipt->getClientOriginalExtension();
-                $receiptPath = $receipt->storeAs('receipts', $filename, 'public');
+                // Nota disimpan di disk privat; hanya bisa dibuka lewat FileController::purchaseReceipt
+                // (izin finance.purchase.read), tidak lewat /storage publik maupun cache service worker.
+                $filename = 'receipt-'.date('Ymd').'-'.Str::random(12).'.'.($receipt->extension() ?: $receipt->getClientOriginalExtension());
+                $receiptPath = $receipt->storeAs('receipts', $filename, 'local');
             }
 
             /** @var Purchase $purchase */
@@ -82,7 +84,7 @@ class PurchaseService
 
             $transaction = FinanceTransaction::query()->create([
                 'transaction_number' => $txNumber,
-                'source' => 'Pengeluaran Belanja RT',
+                'source' => FinanceTransaction::SOURCE_PURCHASE,
                 'amount_idr' => $totalExpenditureIdr,
                 'created_by' => $creator->id,
                 'category' => 'Belanja & Pengadaan Lingkungan',
@@ -111,6 +113,11 @@ class PurchaseService
 
             return $purchase->load(['items', 'transaction', 'creator']);
         });
+
+        // Saldo kas berubah: segarkan ringkasan publik/dashboard yang di-cache.
+        app(FinanceService::class)->clearCache();
+
+        return $purchase;
     }
 
     /**

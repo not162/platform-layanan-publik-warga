@@ -19,6 +19,7 @@ class PurchaseAndQuarterlyReportSprint4Test extends TestCase
     public function test_bendahara_can_create_itemized_purchase_with_receipt_upload_and_auto_posts_expense(): void
     {
         Storage::fake('public');
+        Storage::fake('local');
 
         $bendahara = User::factory()->bendahara()->create();
         $receiptFile = UploadedFile::fake()->image('nota_semen_dan_cat.jpg');
@@ -87,7 +88,10 @@ class PurchaseAndQuarterlyReportSprint4Test extends TestCase
 
         $purchase = Purchase::findOrFail($purchaseId);
         $this->assertNotNull($purchase->receipt_path);
-        $this->assertTrue(Storage::disk('public')->exists($purchase->receipt_path));
+        // Nota disimpan privat (disk local) dan hanya diakses lewat endpoint berotorisasi.
+        $this->assertTrue(Storage::disk('local')->exists($purchase->receipt_path));
+        $this->assertFalse(Storage::disk('public')->exists($purchase->receipt_path));
+        $response->assertJsonPath('data.receipt_url', url("/api/v1/files/purchase-receipts/{$purchaseId}"));
     }
 
     public function test_bendahara_can_view_purchases_list_and_item_details(): void

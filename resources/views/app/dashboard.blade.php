@@ -8,7 +8,7 @@
 <div class="page-head">
     <div>
         <h2>{{ $greet }}, {{ \Illuminate\Support\Str::of($user->name)->explode(' ')->first() }} 👋</h2>
-        <p>{{ $user->role->label() }} · akses <b>{{ ['superadmin' => 'Superadmin', 'admin' => 'Admin', 'user' => 'User (Warga)'][$user->tier()] }}</b> · <span class="live-dot"></span>data real-time <span id="live-time" class="muted"></span></p>
+        <p>{{ $user->role->label() }} · akses <b>{{ $user->role->tierLabel() }}</b> · <span class="live-dot"></span>data real-time <span id="live-time" class="muted"></span></p>
     </div>
 </div>
 

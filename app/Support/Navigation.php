@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Enums\UserRole;
 use App\Models\User;
 
 /**
@@ -27,9 +28,13 @@ class Navigation
             'letters' => ['label' => 'Verifikasi & Pengesahan Surat', 'short' => 'Surat', 'icon' => 'mail', 'group' => 'Layanan Warga', 'can' => fn (User $u) => $any($u, ['letter.read', 'letter.verify', 'letter.approve'])],
             'complaints' => ['label' => 'Pengaduan Warga', 'short' => 'Aduan', 'icon' => 'alert', 'group' => 'Layanan Warga', 'can' => fn (User $u) => $any($u, ['complaint.read', 'complaint.manage'])],
             'security' => ['label' => 'Laporan Keamanan', 'short' => 'Keamanan', 'icon' => 'shield', 'group' => 'Layanan Warga', 'can' => fn (User $u) => $any($u, ['security.read', 'security.manage'])],
+            'letter-types' => ['label' => 'Jenis & Syarat Surat', 'short' => 'Jenis Surat', 'icon' => 'list', 'group' => 'Layanan Warga', 'can' => fn (User $u) => $u->hasPermission('letter.template.manage')],
             'citizens' => ['label' => 'Data Warga', 'short' => 'Warga', 'icon' => 'users', 'group' => 'Kependudukan', 'can' => fn (User $u) => $u->hasPermission('citizen.read')],
+            'family-cards' => ['label' => 'Kartu Keluarga', 'short' => 'KK', 'icon' => 'building', 'group' => 'Kependudukan', 'can' => fn (User $u) => $u->hasPermission('citizen.read')],
             'finance' => ['label' => 'Buku Kas RT', 'short' => 'Kas', 'icon' => 'wallet', 'group' => 'Keuangan', 'can' => fn (User $u) => $u->hasPermission('finance.transaction.read')],
             'dues' => ['label' => 'Iuran Warga', 'short' => 'Iuran', 'icon' => 'gift', 'group' => 'Keuangan', 'can' => fn (User $u) => $any($u, ['finance.dues.read', 'finance.dues.manage'])],
+            'purchases' => ['label' => 'Belanja RT', 'short' => 'Belanja', 'icon' => 'list', 'group' => 'Keuangan', 'can' => fn (User $u) => $u->hasPermission('finance.purchase.read')],
+            'reports' => ['label' => 'Laporan Keuangan', 'short' => 'Laporan', 'icon' => 'layers', 'group' => 'Keuangan', 'can' => fn (User $u) => $u->hasPermission('finance.report.read')],
             'announcements' => ['label' => 'Pengumuman', 'icon' => 'megaphone', 'group' => 'Konten', 'can' => fn (User $u) => $u->hasPermission('announcement.manage')],
             'events' => ['label' => 'Agenda Kegiatan', 'icon' => 'calendar', 'group' => 'Konten', 'can' => fn (User $u) => $u->hasPermission('event.manage')],
             'officers' => ['label' => 'Struktur Pengurus', 'icon' => 'badge', 'group' => 'Konten', 'can' => fn (User $u) => $u->hasPermission('officer.manage')],
@@ -53,7 +58,10 @@ class Navigation
     {
         return match ($page) {
             'users' => $user->hasPermission('user.manage'),
-            'citizens' => $user->hasPermission('citizen.manage'),
+            'citizens', 'family-cards' => $user->hasPermission('citizen.manage'),
+            'letter-types' => $user->hasPermission('letter.template.manage'),
+            'purchases' => $user->hasPermission('finance.purchase.create'),
+            'reports' => $user->hasPermission('finance.report.generate'),
             'announcements' => $user->hasPermission('announcement.manage'),
             'events' => $user->hasPermission('event.manage'),
             'officers' => $user->hasPermission('officer.manage'),
@@ -90,14 +98,22 @@ class Navigation
     }
 
     /**
-     * Item utama untuk bottom navigation mobile (maks. 4 + tombol "Menu").
+     * Item utama untuk bottom navigation mobile (maks. 4 + tombol "Menu"),
+     * diurutkan menurut tugas utama tiap peran.
      *
      * @param  array<int, array<string, mixed>>  $items
      * @return array<int, array<string, mixed>>
      */
-    public static function bottom(array $items): array
+    public static function bottom(array $items, ?User $user = null): array
     {
-        $priority = ['dashboard', 'my-letters', 'letters', 'finance', 'my-complaints', 'complaints', 'citizens', 'users', 'security', 'my-security', 'announcements'];
+        $priority = match ($user?->role) {
+            UserRole::WARGA => ['dashboard', 'my-letters', 'my-dues', 'my-complaints', 'my-security'],
+            UserRole::KETUA_RT => ['dashboard', 'letters', 'reports', 'complaints', 'users'],
+            UserRole::SEKRETARIS => ['dashboard', 'letters', 'citizens', 'complaints'],
+            UserRole::BENDAHARA => ['dashboard', 'finance', 'dues', 'purchases', 'reports'],
+            UserRole::PETUGAS_KEAMANAN => ['dashboard', 'security', 'schedules', 'contacts'],
+            default => ['dashboard', 'my-letters', 'letters', 'finance', 'my-complaints', 'complaints', 'citizens', 'users', 'security', 'my-security', 'announcements'],
+        };
         $byKey = collect($items)->keyBy('key');
 
         return collect($priority)->map(fn ($k) => $byKey->get($k))->filter()->take(4)->values()->all();
