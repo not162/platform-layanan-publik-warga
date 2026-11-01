@@ -9,6 +9,7 @@ use App\Models\User;
 use Database\Seeders\LetterSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -33,22 +34,39 @@ class DuesAttachmentsAndRecoveryTest extends TestCase
         Mail::fake();
         $warga = $this->wargaWithCitizen('budi@example.com');
 
+        $sekretaris = User::factory()->sekretaris()->create();
+
         $res = $this->postJson('/api/v1/auth/forgot-password', ['username' => $warga->username, 'nik' => '3171041203900001', 'no_kk' => '3171040409950001'])
-            ->assertOk()->assertJsonPath('emailed', true);
+            ->assertOk();
 
         $this->assertArrayNotHasKey('reset_url', $res->json());
-        $this->assertStringContainsString('b***@example.com', $res->json('message'));
+        $this->assertArrayNotHasKey('emailed', $res->json());
+        $this->assertStringNotContainsString('example.com', $res->getContent());
         Mail::assertSent(ResetPasswordMail::class, fn ($m) => $m->hasTo('budi@example.com') && str_contains($m->url, '/reset-password/'));
+        $this->assertSame(0, $sekretaris->notifications()->count());
     }
 
-    public function test_reset_link_falls_back_to_screen_when_account_has_no_email(): void
+    public function test_reset_link_without_email_goes_to_staff_never_to_the_browser(): void
     {
         Mail::fake();
         $warga = $this->wargaWithCitizen();
+        $sekretaris = User::factory()->sekretaris()->create();
+        $ketua = User::factory()->ketuaRt()->create();
+        $bendahara = User::factory()->bendahara()->create();
 
-        $this->postJson('/api/v1/auth/forgot-password', ['username' => $warga->username, 'nik' => '3171041203900001', 'no_kk' => '3171040409950001'])
-            ->assertOk()->assertJsonPath('emailed', false)->assertJsonStructure(['reset_url']);
+        $res = $this->postJson('/api/v1/auth/forgot-password', ['username' => $warga->username, 'nik' => '3171041203900001', 'no_kk' => '3171040409950001'])
+            ->assertOk()->assertJsonMissingPath('reset_url')->assertJsonMissingPath('emailed');
+        $this->assertStringNotContainsString('/reset-password/', $res->getContent());
         Mail::assertNothingSent();
+
+        // Sekretaris & tingkat superadmin (Ketua RT) menerima tautan untuk diserahkan langsung.
+        foreach ([$sekretaris, $ketua] as $staff) {
+            $this->assertStringContainsString('/reset-password/', (string) $staff->notifications()->firstOrFail()->data['url']);
+        }
+        $this->assertSame(0, $bendahara->notifications()->count());
+
+        // Permintaan menunggu serah-terima: berlaku lebih lama dari tautan email (20 menit).
+        $this->assertTrue(now()->addHours(2)->lt(DB::table('password_reset_requests')->value('expires_at')));
     }
 
     public function test_account_is_locked_temporarily_after_five_failed_logins(): void

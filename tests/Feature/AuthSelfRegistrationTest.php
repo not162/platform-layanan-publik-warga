@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\Citizen;
 use App\Models\FamilyCard;
 use App\Models\User;
@@ -13,6 +14,8 @@ use Tests\TestCase;
 class AuthSelfRegistrationTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected string $lastForgotMessage = '';
 
     /**
      * @param  array<string, string>  $override
@@ -30,11 +33,22 @@ class AuthSelfRegistrationTest extends TestCase
         ], $override);
     }
 
+    /**
+     * Akun tanpa email: tautan reset tidak pernah dikirim ke browser, melainkan ke pengurus
+     * (Sekretaris & tingkat superadmin) untuk diserahkan langsung.
+     */
     protected function resetToken(array $identity): string
     {
-        $res = $this->postJson('/api/v1/auth/forgot-password', $identity)->assertOk();
+        $sekretaris = User::query()->where('role', UserRole::SEKRETARIS)->first() ?? User::factory()->sekretaris()->create();
 
-        return basename((string) parse_url($res->json('reset_url'), PHP_URL_PATH));
+        $res = $this->postJson('/api/v1/auth/forgot-password', $identity)->assertOk();
+        $this->assertArrayNotHasKey('reset_url', $res->json());
+        $this->lastForgotMessage = (string) $res->json('message');
+
+        $url = (string) $sekretaris->notifications()->latest()->firstOrFail()->data['url'];
+        $this->assertStringContainsString('/reset-password/', $url);
+
+        return basename((string) parse_url($url, PHP_URL_PATH));
     }
 
     public function test_new_resident_registers_as_pending_with_family_card_and_username(): void
@@ -156,9 +170,12 @@ class AuthSelfRegistrationTest extends TestCase
         $this->postJson('/api/v1/register', $this->payload())->assertCreated();
         $identity = ['username' => 'budi.santoso', 'nik' => '3171041203900001', 'no_kk' => '3171040409950001'];
 
-        $this->postJson('/api/v1/auth/forgot-password', array_merge($identity, ['no_kk' => '3171040409950999']))->assertStatus(422);
+        // Data tidak cocok: respons tetap generik dan tidak ada permintaan reset yang dibuat.
+        $generic = $this->postJson('/api/v1/auth/forgot-password', array_merge($identity, ['no_kk' => '3171040409950999']))->assertOk()->json('message');
+        $this->assertDatabaseCount('password_reset_requests', 0);
 
         $token = $this->resetToken($identity);
+        $this->assertSame($generic, $this->lastForgotMessage, 'Respons cocok & tidak cocok harus identik.');
         auth()->guard('web')->logout();
         $this->get('/reset-password/'.$token)->assertOk()->assertSee('Buat password baru');
 
@@ -187,9 +204,12 @@ class AuthSelfRegistrationTest extends TestCase
             'family_card_id' => $card->id, 'nik' => '3171041203900001', 'nik_hash' => hash('sha256', '3171041203900001'), 'full_name' => 'Siti Aminah',
         ]);
 
-        $check = $this->postJson('/api/v1/auth/check-citizen', ['nik' => '3171041203900001'])->assertOk();
+        $check = $this->postJson('/api/v1/auth/check-citizen', ['nik' => '3171041203900001'])->assertOk()
+            ->assertJsonPath('status', 'PRE_REGISTERED_RT')
+            ->assertJsonMissingPath('registered_name')
+            ->assertJsonMissingPath('has_account');
         $this->assertStringNotContainsString('Siti Aminah', $check->getContent());
-        $check->assertJsonPath('registered_name', 'S*** A*****');
+        $this->assertStringNotContainsString('S*** A*****', $check->getContent());
 
         $wrong = $this->postJson('/api/v1/register', $this->payload(['name' => 'Orang Lain']))->assertStatus(422);
         $this->assertStringNotContainsString('Siti', $wrong->getContent());
@@ -210,6 +230,33 @@ class AuthSelfRegistrationTest extends TestCase
         User::factory()->ketuaRt()->create(['username' => 'ketua_rt']);
 
         $this->postJson('/api/v1/auth/forgot-password', ['username' => 'ketua_rt', 'nik' => '3171041203900001', 'no_kk' => '3171040409950001'])
-            ->assertStatus(422);
+            ->assertOk()->assertJsonMissingPath('reset_url');
+
+        $this->assertDatabaseCount('password_reset_requests', 0);
+        $this->assertDatabaseCount('notifications', 0);
+    }
+
+    public function test_check_citizen_endpoint_is_throttled_per_ip(): void
+    {
+        for ($i = 0; $i < 20; $i++) {
+            $this->postJson('/api/v1/auth/check-citizen', ['username' => 'cek'.$i.'x'])->assertOk();
+        }
+
+        $this->postJson('/api/v1/auth/check-citizen', ['username' => 'cek.lagi'])->assertStatus(429);
+    }
+
+    public function test_spa_login_and_registration_do_not_mint_bearer_tokens(): void
+    {
+        $this->withHeader('Referer', config('app.url'))
+            ->postJson('/api/v1/register', $this->payload())
+            ->assertCreated()->assertJsonMissingPath('access_token');
+
+        auth()->guard('web')->logout();
+
+        $this->withHeader('Referer', config('app.url'))
+            ->postJson('/api/v1/login', ['login' => 'budi.santoso', 'password' => 'rahasia123'])
+            ->assertOk()->assertJsonMissingPath('access_token');
+
+        $this->assertDatabaseCount('personal_access_tokens', 0);
     }
 }

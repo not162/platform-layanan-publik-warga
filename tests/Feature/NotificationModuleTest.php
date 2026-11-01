@@ -15,7 +15,7 @@ class NotificationModuleTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guest_can_register_push_subscription(): void
+    public function test_guest_cannot_register_push_subscription(): void
     {
         $payload = [
             'endpoint' => 'https://fcm.googleapis.com/fcm/send/guest-endpoint-123',
@@ -24,14 +24,11 @@ class NotificationModuleTest extends TestCase
             'content_encoding' => 'aes128gcm',
         ];
 
-        $response = $this->postJson('/api/v1/push/subscribe', $payload);
+        // Langganan push kini terikat ke akun (rute di dalam auth:sanctum).
+        $this->postJson('/api/v1/push/subscribe', $payload)->assertUnauthorized();
 
-        $response->assertStatus(201)
-            ->assertJsonPath('data.endpoint_hash', hash('sha256', $payload['endpoint']));
-
-        $this->assertDatabaseHas('push_subscriptions', [
+        $this->assertDatabaseMissing('push_subscriptions', [
             'endpoint_hash' => hash('sha256', $payload['endpoint']),
-            'user_id' => null,
         ]);
     }
 
@@ -58,14 +55,15 @@ class NotificationModuleTest extends TestCase
     public function test_duplicate_endpoint_updates_existing_record(): void
     {
         $endpoint = 'https://fcm.googleapis.com/fcm/send/unique-endpoint';
+        $user = User::factory()->warga()->create();
 
-        $this->postJson('/api/v1/push/subscribe', [
+        $this->actingAs($user)->postJson('/api/v1/push/subscribe', [
             'endpoint' => $endpoint,
             'public_key' => 'key-1',
             'auth_token' => 'auth-1',
         ])->assertStatus(201);
 
-        $this->postJson('/api/v1/push/subscribe', [
+        $this->actingAs($user)->postJson('/api/v1/push/subscribe', [
             'endpoint' => $endpoint,
             'public_key' => 'key-updated',
             'auth_token' => 'auth-updated',

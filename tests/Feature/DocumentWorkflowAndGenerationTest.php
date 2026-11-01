@@ -158,13 +158,12 @@ class DocumentWorkflowAndGenerationTest extends TestCase
         $unauthorizedDownload = $this->actingAs($otherWarga)->getJson("/api/v1/letters/{$letterId}/download");
         $unauthorizedDownload->assertStatus(403);
 
-        // Owner can preview document
+        // Owner cannot obtain a document for a draft, even via plain browser navigation (no format)
         $ownerPreview = $this->actingAs($wargaUser)->get("/api/v1/letters/{$letterId}/preview");
-        $ownerPreview->assertStatus(200);
+        $ownerPreview->assertStatus(422)->assertJsonPath('status', 'draft');
 
-        // Owner can download document
         $ownerDownload = $this->actingAs($wargaUser)->get("/api/v1/letters/{$letterId}/download");
-        $ownerDownload->assertStatus(200);
+        $ownerDownload->assertStatus(422)->assertJsonPath('status', 'draft');
     }
 
     public function test_dynamic_letter_types_and_form_schemas(): void
