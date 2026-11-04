@@ -18,3 +18,4 @@
 <script>try{if(sessionStorage.getItem('prisma-splash')){document.documentElement.classList.add('no-splash')}}catch(e){}</script>
 <script>try{document.documentElement.dataset.theme=localStorage.getItem('prisma-theme')||'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script>
 <link rel="stylesheet" href="{{ asset('css/prisma.css') }}?v={{ filemtime(public_path('css/prisma.css')) }}">
+@vite('resources/js/app.js')
